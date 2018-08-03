@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mzrd.dao.StaffAccountInfoDAO">
+	<!-- 封装账号 -->
+	<resultMap type="com.mzrd.pojo.StaffAccountInfo" id="getStaffAccountInfoMap">
+		<id property="id" column="id" />
+		<result property="userName" column="userName" />
+		<result property="password" column="password" />
+		<result property="rid" column="rid" />
+		<result property="sname" column="sname" />
+		<result property="phone" column="phone" />
+		<result property="email" column="email" />
+		<result property="state" column="sstate" />
+		<association property="postInfo" javaType="com.mzrd.pojo.PostInfo">
+			<id property="rid" column="rid" />
+			<result property="rname" column="rname" />
+			<result property="did" column="did" />
+			<result property="rselect" column="rselect" />
+			<result property="rinsert" column="rinsert" />
+			<result property="rupdate" column="rupdate" />
+			<result property="rdelete" column="rdelete" />
+		<result property="state" column="pstate" />
+		</association>
+	</resultMap>	
+	<select id="getStaffAccount" parameterType="com.mzrd.pojo.StaffAccountInfo" resultMap="getStaffAccountInfoMap">
+		select id,userName,password,s.rid rid,rname,did,rselect,rinsert,rdelete,rupdate,s.state state,p.state pstate
+		 from staff_account_info s, post_info p
+		 where s.userName=#{userName} and s.password=#{password} and s.rid = p.rid and s.state=1
+	</select>
+	
+	<select id="getStaffAccountByState" parameterType="com.mzrd.pojo.StaffAccountInfo" resultType="com.mzrd.pojo.StaffAccountInfo">
+		select id,userName,password,s.rid rid,rname,did,rselect,rinsert,rdelete,rupdate,sname,phone,email,s.state state,p.state pstate
+		 from staff_account_info s, post_info p
+		 where s.rid = #{rid} and s.rid = p.rid and s.state=#{state}
+	</select>
+	
+	<update id="updateStaffAccount" parameterType="com.mzrd.pojo.StaffAccountInfo" >
+		update staff_account_info set `password`=#{password} where id=#{id}
+	</update>
+	 <!--  加载AdminInfo对象及关联的Functions对象集合 -->
+	<!-- <select id="getAdminInfoFunctions" parameterType="int" resultMap="getAdminInfoFunctionsMap">
+		select ai.id,ai.name,f.id fuid,f.name fname, f.parentid fpid, f.isleaf fisleaf, f.nodeorder fno from admin_info
+		ai left join powers p on ai.id=p.aid left join functions f on
+		p.fid=f.id where ai.id=#{id} ORDER BY fpid
+	</select>
+	<resultMap type="com.mzrd.pojo.AdminInfo" id="getAdminInfoFunctionsMap">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<collection property="fs" ofType="com.digital.pojo.Functions">
+			<id property="id" column="fuid" />
+			<result property="name" column="fname" />
+			<result property="parentid" column="fpid" />
+			<result property="isleaf" column="fisleaf" />
+		</collection>
+	</resultMap>	
+	<select id="getAllAdminInfo" resultType="com.mzrd.pojo.AdminInfo">
+		select * from admin_info
+	</select>
+	<select id="getAdminById" parameterType="int" resultType="com.mzrd.pojo.AdminInfo">
+		select * from admin_info where id=#{id}
+	</select>
+	<select id="addAdminInfo" parameterType="com.mzrd.pojo.AdminInfo">
+		insert into admin_info(name,pwd,role) values(#{name},#{pwd},#{role})
+	</select> -->
+</mapper>

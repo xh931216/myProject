@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>登录页面</title>
+    <script src="Easyui/jquery.min.js"></script>
+    <script src="Easyui/jquery.easyui.min.js"></script>
+	<script src='assets/js/jquery.md5.js'> </script>
+    <link href="Easyui/themes/gray/easyui.css" rel="stylesheet" />
+    <link href="Easyui/themes/icon.css" rel="stylesheet" />
+    <script type="text/javascript">
+        document.onkeydown = function (e) {
+            var event = e || window.event;
+            var code = event.keyCode || event.which || event.charCode;
+            if (code == 13) {
+                login();
+            }
+        }
+        $(function () {
+            $("input[name='login']").focus();
+        });
+        function cleardata() {
+            $('#loginForm').form('clear');
+        }
+        function login() {
+            if ($("input[name='login']").val() == "" || $("input[name='password']").val() == "") {
+                $("#showMsg").html("用户名或密码为空，请输入");
+                $("input[name='login']").focus();
+            } else {
+                //ajax异步提交
+                $.ajax({
+                    type: "POST",   //post提交方式默认是get
+                    url: "staffAccountLogin.action",
+                    data: $("#loginForm").serialize(),   //序列化
+                    success:function(data){
+                    	var result = eval('(' + data + ')');
+    					if (result.success == 'true') {
+    						if(result.message == '管理员'){
+        						window.location.href = 'admin/adminIndex.html';
+    						}
+    					} else {
+    						$("#showMsg").html(result.message);
+    					}
+                    }
+                });
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="loginWin" class="easyui-window" title="登录" style="width:350px;height:200px;padding:5px;" collapsible="false">
+        <div class="easyui-layout" fit="true">
+            <div region="center" border="false" style="padding:5px;background:#fff;border:1px solid #ccc;">
+                <form id="loginForm" method="post">
+                    <div style="padding:5px 0;">
+                        <label for="login"><img src="assets/images/user.png"></label>
+                        <input type="text" name="userName" style="width:260px;" placeholder="请输入账号" />
+                    </div>
+                    <div style="padding:5px 0;">
+                        <label for="password"><img src="assets/images/password.png"></label>
+                        <input type="password" name="password" style="width:260px;" placeholder="请输入密码"/>
+                    </div>
+                    <div style="padding:5px 0;text-align: center;color: red;" id="showMsg"></div>
+                </form>
+            </div>
+            <div region="south" border="false" style="text-align:right;padding:5px 0;">
+                <a class="easyui-linkbutton" iconcls="icon-ok" href="javascript:void(0)" onclick="login();">登录</a>
+                <a  iconcls="icon-ok" class="easyui-linkbutton" onclick="cleardata();">重置</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

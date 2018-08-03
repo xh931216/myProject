@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mzrd.dao.PostInfoDAO">
+	<resultMap type="com.mzrd.pojo.PostInfo" id="getPostInfoMap">
+		<id property="rid" column="rid" />
+		<result property="rname" column="rname" />
+		<result property="did" column="did" />
+		<result property="rselect" column="rselect" />
+		<result property="rinsert" column="rinsert" />
+		<result property="rdelete" column="rdelete" />
+		<result property="rupdate" column="rupdate" />
+		<result property="state" column="rstate" />
+		<association property="di" javaType="com.mzrd.pojo.DepartmentInfo">
+			<id property="did" column="did" />
+			<result property="dname" column="dname" />
+		<result property="state" column="dstate" />
+		</association>
+	</resultMap>
+	<select id="getPostInfoList"  resultMap="getPostInfoMap" parameterType="com.mzrd.pojo.PostInfo">
+		select d.did did,dname,rid,rname,rselect,rinsert,rupdate,rdelete,d.state dstate,p.state rstate
+ 		from department_info d,post_info p 
+		where d.did=p.did and p.rname!='管理员' and p.state=1
+		<if test="rname!=null and rname!=''">
+		 and p.rname like concat('%',#{rname},'%')
+		</if>
+		<if test="did!=null and did!=0">
+		 and d.did = #{did}
+		</if>
+	</select>
+	<select id="getPostInfoPageList"  resultMap="getPostInfoMap" 
+		parameterType="java.util.Map">
+		select d.did did,dname,rid,rname,rselect,rinsert,rupdate,rdelete,d.state dstate,p.state rstate
+ 		from department_info d,post_info p 
+		where d.did=p.did and p.rname!='管理员' and p.state=1
+		<if test="rname!=null and rname!=''">
+		 and p.rname like concat('%',#{rname},'%')
+		</if>
+		<if test="did!=null and did!=0">
+		 and d.did = #{did}
+		</if>
+		<if test="start != null and limit != null">
+		  limit #{start},#{limit}
+		</if>
+	</select>
+	<select id="getPostInfoByStateList"  resultMap="getPostInfoMap" parameterType="com.mzrd.pojo.PostInfo">
+		select d.did did,dname,rid,rname,rselect,rinsert,rupdate,rdelete,d.state dstate,p.state rstate
+ 		from department_info d,post_info p 
+		where d.did=p.did and p.rname!='管理员' and p.state=#{state}
+		 and d.did = #{did}
+	</select>
+	<insert id="addPostInfo" parameterType="com.mzrd.pojo.PostInfo">
+		insert into post_info(rname,did,rselect,rinsert,rdelete,rupdate) 
+		values(#{rname},#{did},#{rselect},#{rinsert},#{rdelete},#{rupdate});
+	</insert>
+	
+	<update id="updatePostInfo" parameterType="com.mzrd.pojo.PostInfo">
+		update post_info 
+		set rname=#{rname},did=#{did}
+		where rid=#{rid}
+	</update>
+	
+	<update id="updatePostInfoByState" parameterType="com.mzrd.pojo.PostInfo">
+		update post_info 
+		set state=#{state}
+		where rid=#{rid}
+	</update>
+	
+	<update id="updatePostInfoPower" parameterType="com.mzrd.pojo.PostInfo">
+		update post_info 
+		set rselect=#{rselect},rinsert=#{rinsert},rdelete=#{rdelete},rupdate=#{rupdate}
+		where rid=#{rid}
+	</update>
+	
+	<delete id="deletePostInfo" parameterType="com.mzrd.pojo.PostInfo">
+		delete from post_info where rid=#{rid}
+	</delete>
+</mapper>

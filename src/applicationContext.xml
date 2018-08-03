@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+	<!-- 开启Spring的Bean自动扫描机制来检查与管理Bean实例 -->  
+    <context:component-scan base-package="com.mzrd" />
+    <!-- 配置数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/mzrd"></property>
+        <property name="user" value="root"></property>
+        <property name="password" value="1234"></property>
+        <property name="maxPoolSize" value="1000"></property>
+        <property name="minPoolSize" value="5"></property>
+	</bean>
+	<!--ajax处理-->
+
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <ref bean="stringConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!--针对于ajax返回字符串中文乱码的字符转换器-->
+    <!--要注册到mvc的converters-->
+    <bean id="stringConverter"
+          class="org.springframework.http.converter.StringHttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/plain;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
+    <!-- 配置SqlSessionFactoryBean -->  
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">  
+        <property name="dataSource" ref="dataSource" />  
+        <!-- 自动扫描mapping.xml文件 -->  
+        <property name="mapperLocations" value="classpath:com/mzrd/mapping/*.xml"></property>  
+    </bean>  
+  
+    <!-- 配置MapperScannerConfigurer,DAO接口所在包名，Spring会自动查找其下的类 -->  
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">  
+        <property name="basePackage" value="com.mzrd.dao" />  
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>  
+    </bean>  
+  
+    <!-- 配置DataSourceTransactionManager(事务管理) -->  
+    <bean id="transactionManager"  
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="dataSource" />  
+    </bean>   
+
+</beans>
