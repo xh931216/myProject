@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.mzrd.pojo.DepartmentInfo;
 import com.mzrd.pojo.PostInfo;
 import com.mzrd.pojo.StaffAccountInfo;
 import com.mzrd.service.PostInfoService;
@@ -35,6 +37,12 @@ public class PostInfoController {
 		result.put("total", totalCount);
 	    result.put("rows", dilist);
 		return result;
+	}
+	//获取职位
+	@RequestMapping("/getPostInfoAndDepartmentInfoList.action")
+	@ResponseBody
+	public List getPostInfoAndDepartmentInfoList(DepartmentInfo di){
+		return postInfoService.getPostInfoAndDepartmentInfoList(di);
 	}
 	//添加职位
 	@RequestMapping(value="/addPostInfo.action", produces = "text/html;charset=UTF-8")
@@ -64,7 +72,7 @@ public class PostInfoController {
 		}
 		return "{\"success\":\"true\",\"message\":\"修改失败\"}";
 	}
-	//修改职位
+	//修改职位权限
 	@RequestMapping(value="/updatePostInfoPower.action", produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String updatePostInfoPower(PostInfo di){
@@ -82,17 +90,16 @@ public class PostInfoController {
 		//在职有，不能删除
 		StaffAccountInfo si = new StaffAccountInfo();
 		si.setRid(di.getRid());
-		byte b = 1;
-		si.setState(b);
+		si.setState(1);
 		List<StaffAccountInfo> sil = staffAccountInfoService.getStaffAccountByState(si);
 		if(sil.size() != 0){
 			return "{\"success\":\"true\",\"message\":\"还有在职人员，不能删除，请先在员工管理删除员工\"}";
 		}
 		//离职中有，修改状态
-		b = 0;
-		si.setState(b);
+		si.setState(0);
 		List<StaffAccountInfo> sil1 = staffAccountInfoService.getStaffAccountByState(si);
 		if(sil1.size() != 0){
+			byte b=0;
 			di.setState(b);
 			int uOK = postInfoService.updatePostInfoByState(di);
 			if(uOK == 1){

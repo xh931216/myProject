@@ -29,7 +29,6 @@ public class DepartmentInfoController {
 	@RequestMapping(value="/addDepartmentInfoList.action", produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String addDepartmentInfo(DepartmentInfo di){
-		System.out.println(di.toString());
 	    DepartmentInfo dinfo =	departmentInfoService.getDepartment(di);
 		if(dinfo != null){
 			return "{\"success\":\"false\",\"message\":\"部门已存在\"}";
@@ -44,7 +43,6 @@ public class DepartmentInfoController {
 	@RequestMapping(value="/updateDepartmentInfo.action", produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String updateDepartmentInfo(DepartmentInfo di){
-		System.out.println(di.toString());
 	    DepartmentInfo dinfo =	departmentInfoService.getDepartment(di);
 		if(dinfo != null){
 			return "{\"success\":\"false\",\"message\":\"部门已存在·\"}";
@@ -59,7 +57,6 @@ public class DepartmentInfoController {
 	@RequestMapping(value="/deleteDepartmentInfo.action", produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String deleteDepartmentInfo(DepartmentInfo di){
-		System.out.println(di.toString());
 		//先查询职位中有没有引用部门
 		//职位 状态为1，先删除职位
 		PostInfo pi = new PostInfo();

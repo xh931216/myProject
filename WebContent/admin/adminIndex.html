@@ -19,11 +19,11 @@
 									{"menuid":"13","menuname":"权限变更","icon":"icon-set","url":"postPowerList.html"}
 										]
 						},{"menuid":"1","icon":"icon-sys","menuname":"员工管理",
-							"menus":[{"menuid":"12","menuname":"新增员工账号","icon":"icon-add","url":""},
-									{"menuid":"32","menuname":"员工列表","icon":"icon-nav","url":"demo2.html"},
-									{"menuid":"32","menuname":"员工重置密码","icon":"icon-users","url":"demo2.html"},
-									{"menuid":"13","menuname":"注销员工账号","icon":"icon-cancel","url":"staffList.html"},
-									{"menuid":"13","menuname":"员工职位变更","icon":"icon-set","url":"staffList.html"}
+							"menus":[{"menuid":"12","menuname":"新增员工账号","icon":"icon-add","url":"staffAdd.html"},
+									{"menuid":"32","menuname":"员工列表","icon":"icon-nav","url":"staffList.html"},
+									{"menuid":"32","menuname":"员工重置密码","icon":"icon-users","url":"staffPassword.html"},
+									{"menuid":"13","menuname":"注销员工账号","icon":"icon-cancel","url":"staffDelete.html"},
+									{"menuid":"13","menuname":"员工职位变更","icon":"icon-set","url":"staffPost.html"}
 								]
 						},{"menuid":"56","icon":"icon-sys","menuname":"供应商管理",
 							"menus":[{"menuid":"31","menuname":"新增供应商账号","icon":"icon-add","url":"demo1.html"},
@@ -75,7 +75,7 @@
                 msgShow('系统提示', '两次密码不一至！请重新输入', 'warning');
                 return false;
             }
-            $.post('updateStaffAccount.action?newpass=' + $newpass.val(), function(msg) {
+            $.post('updateAdmin.action?newpass=' + $newpass.val(), function(msg) {
                 msgShow('系统提示', '<br>' + msg, 'info');
                 $newpass.val('');
                 $rePass.val('');
@@ -144,7 +144,7 @@
 
 	<!--修改密码窗口-->
     <div id="w" class="easyui-window" title="修改密码" collapsible="false" minimizable="false"
-        maximizable="false" icon="icon-save"  style="width: 300px; height: 150px; padding: 5px;
+        maximizable="false" icon="icon-save"  style="width: 400px; height: 300px; padding: 5px;
         background: #fafafa;">
         <div class="easyui-layout" fit="true">
             <div region="center" border="false" style="padding: 10px; background: #fff; border: 1px solid #ccc;">

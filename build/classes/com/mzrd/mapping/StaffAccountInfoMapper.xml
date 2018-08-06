@@ -11,7 +11,7 @@
 		<result property="sname" column="sname" />
 		<result property="phone" column="phone" />
 		<result property="email" column="email" />
-		<result property="state" column="sstate" />
+		<result property="state" column="state" />
 		<association property="postInfo" javaType="com.mzrd.pojo.PostInfo">
 			<id property="rid" column="rid" />
 			<result property="rname" column="rname" />
@@ -20,7 +20,11 @@
 			<result property="rinsert" column="rinsert" />
 			<result property="rupdate" column="rupdate" />
 			<result property="rdelete" column="rdelete" />
-		<result property="state" column="pstate" />
+			<result property="state" column="pstate" />
+		</association>
+		<association property="departmentInfo" javaType="com.mzrd.pojo.DepartmentInfo">
+			<id property="did" column="did" />
+			<result property="dname" column="dname" />
 		</association>
 	</resultMap>	
 	<select id="getStaffAccount" parameterType="com.mzrd.pojo.StaffAccountInfo" resultMap="getStaffAccountInfoMap">
@@ -30,37 +34,54 @@
 	</select>
 	
 	<select id="getStaffAccountByState" parameterType="com.mzrd.pojo.StaffAccountInfo" resultType="com.mzrd.pojo.StaffAccountInfo">
-		select id,userName,password,s.rid rid,rname,did,rselect,rinsert,rdelete,rupdate,sname,phone,email,s.state state,p.state pstate
-		 from staff_account_info s, post_info p
-		 where s.rid = #{rid} and s.rid = p.rid and s.state=#{state}
+		select id,userName,password,s.rid rid,rname,p.did did,rselect,rinsert,rdelete,
+		rupdate,sname,phone,email,s.state state,p.state pstate,dname
+		 from staff_account_info s, post_info p,department_info d
+		 where s.rid = #{rid} and s.rid = p.rid  and d.did = p.did
+		 <if test="state!=null">
+		 and s.state=#{state}
+		 </if>
 	</select>
-	
+	<select id="getStaffNameList" resultType="java.lang.String" 
+		parameterType="com.mzrd.pojo.StaffAccountInfo">
+		select userName from staff_account_info where userName=#{userName}
+	</select>
+	<select id="getStaffAccountPage"  resultMap="getStaffAccountInfoMap" 
+		parameterType="java.util.Map">
+		select id,userName,password,s.rid rid,rname,p.did did,rselect,rinsert,rdelete,
+		rupdate,sname,phone,email,s.state state,p.state pstate,dname
+		 from staff_account_info s, post_info p,department_info d
+		 where s.rid = p.rid  and d.did = p.did
+		 <if test="state != null and state != ''">
+		 and s.state=#{state}
+		 </if>
+		<if test="sname!=null and sname!=''">
+		 and s.sname like concat('%',#{sname},'%')
+		</if>
+		<if test="start != null and limit != null">
+		  limit #{start},#{limit}
+		</if>
+	</select>
 	<update id="updateStaffAccount" parameterType="com.mzrd.pojo.StaffAccountInfo" >
-		update staff_account_info set `password`=#{password} where id=#{id}
+		update staff_account_info set 
+		<if test="password!=null">
+		`password`=#{password}
+		</if>
+		<if test="rid!=0">
+		rid=#{rid}
+		</if>
+		<if test="sname!=null">
+		sname=#{sname}
+		</if>
+		<if test="phone!=null">
+		,phone=#{phone}
+		</if>
+		<if test="email!=null">
+		,email=#{email}
+		</if>
+		 where id=#{id}
 	</update>
-	 <!--  加载AdminInfo对象及关联的Functions对象集合 -->
-	<!-- <select id="getAdminInfoFunctions" parameterType="int" resultMap="getAdminInfoFunctionsMap">
-		select ai.id,ai.name,f.id fuid,f.name fname, f.parentid fpid, f.isleaf fisleaf, f.nodeorder fno from admin_info
-		ai left join powers p on ai.id=p.aid left join functions f on
-		p.fid=f.id where ai.id=#{id} ORDER BY fpid
-	</select>
-	<resultMap type="com.mzrd.pojo.AdminInfo" id="getAdminInfoFunctionsMap">
-		<id property="id" column="id" />
-		<result property="name" column="name" />
-		<collection property="fs" ofType="com.digital.pojo.Functions">
-			<id property="id" column="fuid" />
-			<result property="name" column="fname" />
-			<result property="parentid" column="fpid" />
-			<result property="isleaf" column="fisleaf" />
-		</collection>
-	</resultMap>	
-	<select id="getAllAdminInfo" resultType="com.mzrd.pojo.AdminInfo">
-		select * from admin_info
-	</select>
-	<select id="getAdminById" parameterType="int" resultType="com.mzrd.pojo.AdminInfo">
-		select * from admin_info where id=#{id}
-	</select>
-	<select id="addAdminInfo" parameterType="com.mzrd.pojo.AdminInfo">
-		insert into admin_info(name,pwd,role) values(#{name},#{pwd},#{role})
-	</select> -->
+	<delete id="deleteStaff" parameterType="com.mzrd.pojo.StaffAccountInfo">
+		update staff_account_info set state=0 where id=#{id}
+	</delete>
 </mapper>

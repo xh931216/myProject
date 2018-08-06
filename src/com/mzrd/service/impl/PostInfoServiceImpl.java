@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mzrd.pojo.DepartmentInfo;
 import com.mzrd.pojo.PostInfo;
 import com.mzrd.service.PostInfoService;
 import com.mzrd.dao.PostInfoDAO;
@@ -53,6 +54,12 @@ public class PostInfoServiceImpl implements PostInfoService{
 	@Override
 	public List<PostInfo> getPostInfoPageList(Map di) {
 		return postInfoDao.getPostInfoPageList(di);
+	}
+
+	@Override
+	public List<PostInfo> getPostInfoAndDepartmentInfoList(DepartmentInfo di) {
+		// TODO Auto-generated method stub
+		return postInfoDao.getPostInfoAndDepartmentInfoList(di);
 	}
 
 }

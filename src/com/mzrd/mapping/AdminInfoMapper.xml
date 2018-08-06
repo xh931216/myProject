@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mzrd.dao.AdminInfoDAO">
+	
+	<select id="getAdmin" parameterType="com.mzrd.pojo.AdminInfo"
+		 resultType="com.mzrd.pojo.AdminInfo">
+		select * from admin_info
+		 where name=#{name} and password=#{password} 
+	</select>
+	<select id="getAdminList" resultType="com.mzrd.pojo.AdminInfo">
+		select * from admin_info
+	</select>
+	
+	<select id="getAdminNameList" resultType="java.lang.String" 
+		parameterType="com.mzrd.pojo.AdminInfo">
+		select name from admin_info where name=#{name}
+	</select>
+	<update id="updateAdmin" parameterType="com.mzrd.pojo.AdminInfo" >
+		update admin_info set `password`=#{password} where id=#{id}
+	</update>
+</mapper>

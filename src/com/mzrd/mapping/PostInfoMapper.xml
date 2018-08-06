@@ -20,7 +20,7 @@
 	<select id="getPostInfoList"  resultMap="getPostInfoMap" parameterType="com.mzrd.pojo.PostInfo">
 		select d.did did,dname,rid,rname,rselect,rinsert,rupdate,rdelete,d.state dstate,p.state rstate
  		from department_info d,post_info p 
-		where d.did=p.did and p.rname!='管理员' and p.state=1
+		where d.did=p.did  and p.state=1
 		<if test="rname!=null and rname!=''">
 		 and p.rname like concat('%',#{rname},'%')
 		</if>
@@ -28,11 +28,18 @@
 		 and d.did = #{did}
 		</if>
 	</select>
+	<select id="getPostInfoAndDepartmentInfoList" parameterType="com.mzrd.pojo.DepartmentInfo"
+	resultMap="getPostInfoMap">
+	select p.* from department_info d,post_info p where d.did=p.did
+	<if test="did != null">
+	 and d.did=#{did}
+	</if>
+	</select>
 	<select id="getPostInfoPageList"  resultMap="getPostInfoMap" 
 		parameterType="java.util.Map">
 		select d.did did,dname,rid,rname,rselect,rinsert,rupdate,rdelete,d.state dstate,p.state rstate
  		from department_info d,post_info p 
-		where d.did=p.did and p.rname!='管理员' and p.state=1
+		where d.did=p.did  and p.state=1
 		<if test="rname!=null and rname!=''">
 		 and p.rname like concat('%',#{rname},'%')
 		</if>
@@ -46,7 +53,7 @@
 	<select id="getPostInfoByStateList"  resultMap="getPostInfoMap" parameterType="com.mzrd.pojo.PostInfo">
 		select d.did did,dname,rid,rname,rselect,rinsert,rupdate,rdelete,d.state dstate,p.state rstate
  		from department_info d,post_info p 
-		where d.did=p.did and p.rname!='管理员' and p.state=#{state}
+		where d.did=p.did  and p.state=#{state}
 		 and d.did = #{did}
 	</select>
 	<insert id="addPostInfo" parameterType="com.mzrd.pojo.PostInfo">

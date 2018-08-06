@@ -1,6 +1,10 @@
 package com.mzrd.controller;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -9,56 +13,100 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.mzrd.pojo.AdminInfo;
 import com.mzrd.pojo.StaffAccountInfo;
+import com.mzrd.pojo.SupplierAccountInfo;
+import com.mzrd.service.AdminInfoService;
 import com.mzrd.service.StaffAccountInfoService;
+import com.mzrd.service.SupplierAccountInfoService;
 import com.mzrd.util.SHAUtil;
-
+@RequestMapping("/admin")
 @Controller
 public class StaffAccountInfoController {
 	@Autowired
 	private StaffAccountInfoService staffAccountInfoService;
+	@Autowired 
+	private AdminInfoService adminInfoService;
+	@Autowired
+	private SupplierAccountInfoService supplierAccountInfoService;
 	private SHAUtil shaUitl = new SHAUtil();
-	//员工登录账号
-	@RequestMapping(value = "/staffAccountLogin.action", produces = "text/html;charset=UTF-8")
+	//获取所有员工
+	@RequestMapping("/getStaffInfoList.action")
 	@ResponseBody
-	public String getStaffAccount(StaffAccountInfo sa,HttpSession session){
+	public Map<String, Object> getStaffInfoList(int page, int rows,String state,String sname){
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("sname", sname);
+		params.put("state", state);
+		int totalCount =  staffAccountInfoService.getStaffAccountPage(params).size();
 		
-		try {
-			sa.setPassword(shaUitl.getPassword(sa.getPassword())); 
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-		// 登录验证
-		StaffAccountInfo staffAccountInfo = staffAccountInfoService.getStaffAccount(sa);
-		if (staffAccountInfo != null) {
-			session.setAttribute("staffAccountInfo", staffAccountInfo);
-			//员工级别
-			String rank = staffAccountInfo.getPostInfo().getRname(); 
-			// 以JSON格式向页面发送成功信息
-			return "{\"success\":\"true\",\"message\":\""+rank+"\"}";
-		} else
-			return "{\"success\":\"false\",\"message\":\"登录失败\"}";
+		params.put("start",(page - 1) * rows);
+		params.put("limit",rows);
+		System.out.println(state);
+		List<StaffAccountInfo> dilist = staffAccountInfoService.getStaffAccountPage(params);
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("total", totalCount);
+	    result.put("rows", dilist);
+		return result;
 	}
 	
-	//修改密码
-	@RequestMapping(value = "/admin/updateStaffAccount.action" , produces = "text/html;charset=UTF-8")
+	//删除员工
+	@RequestMapping(value="/deleteStaff.action", produces = "text/html;charset=UTF-8")
 	@ResponseBody
-	public String updateStaffAccount(String newpass,HttpSession session){
-		StaffAccountInfo staffAccountInfo = (StaffAccountInfo) session.getAttribute("staffAccountInfo");
-		if(staffAccountInfo == null){
-			return "请你先登录";
+	public String deleteStaff(StaffAccountInfo si){
+		int dOK = staffAccountInfoService.deleteStaff(si);
+		if(dOK == 1){
+			return "{\"success\":\"true\",\"message\":\"删除成功\"}";
 		}
-		String pass = null;
-		try {
-			pass = shaUitl.getPassword(newpass);
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+		return "{\"success\":\"false\",\"message\":\"删除失败\"}";
+	}
+	
+	//更改员工信息
+	@RequestMapping(value="/updateStaff.action", produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String updateStaffPost(StaffAccountInfo si){
+		if(si.getPassword() != null){
+			String pass = null;
+			try {
+				pass = shaUitl.getPassword(si.getPassword());
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			}
+			si.setPassword(pass);
 		}
-		staffAccountInfo.setPassword(pass);
-		int passOk = staffAccountInfoService.updateStaffAccount(staffAccountInfo);
-		if(passOk == 1){
-			return "密码修改成功";
+		int dOK = staffAccountInfoService.updateStaffAccount(si);
+		if(dOK == 1){
+			return "{\"success\":\"true\",\"message\":\"修改成功\"}";
 		}
-		return "密码修改失败";
+		return "{\"success\":\"false\",\"message\":\"修改失败\"}";
+	}
+	//获取所有的登录名
+	@RequestMapping("/getAllNameList.action")
+	@ResponseBody
+	public String getAllNameList(StaffAccountInfo si,String name){
+		 boolean isOk = false;
+		AdminInfo sa = new AdminInfo();
+		sa.setName(si.getUserName());
+		List<String> ai = adminInfoService.getAdminNameList(sa);
+		if(ai.size() != 0){
+			isOk = true;  
+			return isOk+"";
+		}
+		List<String> sil = staffAccountInfoService.getStaffNameList(si);
+		if(sil.size() != 0){
+			for(int i=0;i<ai.size();i++){
+				if(ai.get(i).equals(name)){
+					isOk = true;  
+					return isOk+"";
+				}
+			}
+		}
+		SupplierAccountInfo supplierAccountInfo = new SupplierAccountInfo();
+		supplierAccountInfo.setUserName(si.getUserName());
+		List<String> sul = supplierAccountInfoService.getSupplierNameList(supplierAccountInfo);
+		if(sul.size() != 0){
+			isOk = true;  
+			return isOk+"";
+		}
+		return isOk+"";
 	}
 }

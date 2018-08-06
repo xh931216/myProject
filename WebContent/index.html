@@ -30,14 +30,12 @@
                 //ajax异步提交
                 $.ajax({
                     type: "POST",   //post提交方式默认是get
-                    url: "staffAccountLogin.action",
+                    url: "login.action",
                     data: $("#loginForm").serialize(),   //序列化
                     success:function(data){
                     	var result = eval('(' + data + ')');
     					if (result.success == 'true') {
-    						if(result.message == '管理员'){
-        						window.location.href = 'admin/adminIndex.html';
-    						}
+        						window.location.href = result.message;
     					} else {
     						$("#showMsg").html(result.message);
     					}

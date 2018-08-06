@@ -8,10 +8,16 @@ public class StaffAccountInfo {
 	private String sname;
 	private long phone;
 	private String email;
-	private byte state;
+	private int state;
 	private PostInfo postInfo;
+	private DepartmentInfo departmentInfo;
 	
-	
+	public DepartmentInfo getDepartmentInfo() {
+		return departmentInfo;
+	}
+	public void setDepartmentInfo(DepartmentInfo departmentInfo) {
+		this.departmentInfo = departmentInfo;
+	}
 	public int getRid() {
 		return rid;
 	}
@@ -36,10 +42,10 @@ public class StaffAccountInfo {
 	public void setPhone(long phone) {
 		this.phone = phone;
 	}
-	public byte getState() {
+	public int getState() {
 		return state;
 	}
-	public void setState(byte state) {
+	public void setState(int state) {
 		this.state = state;
 	}
 	public PostInfo getPostInfo() {
