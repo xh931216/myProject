@@ -25,5 +25,9 @@ public class AdminInfo {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	@Override
+	public String toString() {
+		return "AdminInfo [id=" + id + ", name=" + name + ", password=" + password + "]";
+	}
 	
 }

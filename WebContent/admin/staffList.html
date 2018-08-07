@@ -21,8 +21,8 @@
 	
 	<!-- 工具栏 -->
 	<div id="adminListTb" style="padding:2px 5px;">
-		<a href="javascript:void(0)" class="easyui-linkbutton"
-			iconCls="icon-add" onclick="addStaff();" plain="true">员工新增</a> 
+		<a href="staffAdd.html" class="easyui-linkbutton"
+			iconCls="icon-add" plain="true">员工新增</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton"
 			iconCls="icon-edit" plain="true" onclick="editPassword();">密码重置</a>
 		<a href="javascript:void(0)" class="easyui-linkbutton"
@@ -225,9 +225,6 @@
 				sname : sname,
 				state : state
 			});
-		}
-		function addStaff(){
-			window.open( "staffAdd.html");
 		}
 		var id=0;
         

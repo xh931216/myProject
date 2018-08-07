@@ -36,6 +36,7 @@ public class LoginController {
 		AdminInfo ai = new AdminInfo();
 		ai.setName(userName);
 		ai.setPassword(password);
+		System.out.println(ai.toString());
 		AdminInfo adminInfo = adminInfoService.getAdmin(ai);
 		if (adminInfo != null) {
 			session.setAttribute("userInfo", adminInfo);

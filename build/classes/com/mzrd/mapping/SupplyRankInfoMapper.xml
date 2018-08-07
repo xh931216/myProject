@@ -2,11 +2,32 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mzrd.dao.SupplyRankInfoDAO">
-	<select id="getSupplyRankInfoList" resultMap="com.mzrd.pojo.SupplyRankInfo"
+	<select id="getSupplyRankInfoList" resultType="com.mzrd.pojo.SupplyRankInfo"
 		parameterType="java.util.Map">
-	  	select * from supply_rank_info where 1=1
+	  	select * from supply_rank_info where 1=1 
 	 	 <if test="srname!=null and srname!=''">
 			 and srname like concat('%',#{srname},'%')
 		</if>
+		<if test="start != null and limit != null">
+		  limit #{start},#{limit}
+		</if>
 	</select>
+	
+	<select id="getRankAllNameList" resultType="java.lang.String"
+		parameterType="java.util.Map">
+	  	select * from supply_rank_info where srname = #{srname}
+	 	 <if test="name!=null and name!=''">
+			 and srname != #{name}
+		</if>
+	</select>
+	<update id="updateSupplyRankInfo" parameterType="com.mzrd.pojo.SupplyRankInfo" >
+		update supply_rank_info set srname=#{srname} where srid=#{srid}
+	</update>
+	
+	<insert id="addSuplyRankInfo" parameterType="com.mzrd.pojo.SupplyRankInfo">
+		insert into supply_rank_info(srname) VALUES(#{srname});
+	</insert>
+	<delete id="deleteSupplyRankInfo" parameterType="com.mzrd.pojo.SupplyRankInfo">
+		delete from supply_rank_info WHERE srid=#{srid}
+	</delete>
 </mapper>
