@@ -43,8 +43,11 @@
 		 </if>
 	</select>
 	<select id="getStaffNameList" resultType="java.lang.String" 
-		parameterType="com.mzrd.pojo.StaffAccountInfo">
+		parameterType="java.util.Map">
 		select userName from staff_account_info where userName=#{userName}
+		<if test="name!=null">
+			and userName!=#{name}
+		</if>
 	</select>
 	<select id="getStaffAccountPage"  resultMap="getStaffAccountInfoMap" 
 		parameterType="java.util.Map">
@@ -70,8 +73,11 @@
 		<if test="rid!=0">
 		rid=#{rid}
 		</if>
+		<if test="userName!=null">
+		userName=#{userName}
+		</if>
 		<if test="sname!=null">
-		sname=#{sname}
+		,sname=#{sname}
 		</if>
 		<if test="phone!=null">
 		,phone=#{phone}
@@ -81,6 +87,30 @@
 		</if>
 		 where id=#{id}
 	</update>
+	<insert id="addStaff" parameterType="com.mzrd.pojo.StaffAccountInfo">
+		insert into staff_account_info(userName,password,rid
+		<if test="sname!=null">
+		,sname
+		</if>
+		<if test="phone!=0">
+		,phone
+		</if>
+		<if test="email!=null">
+		,email
+		</if>
+		) values(#{userName},#{password},#{rid}
+		<if test="sname!=null">
+		,#{sname}
+		</if>
+		<if test="phone!=0">
+		,#{phone}
+		</if>
+		<if test="email!=null">
+		,#{email}
+		</if>
+		)
+		
+	</insert>
 	<delete id="deleteStaff" parameterType="com.mzrd.pojo.StaffAccountInfo">
 		update staff_account_info set state=0 where id=#{id}
 	</delete>

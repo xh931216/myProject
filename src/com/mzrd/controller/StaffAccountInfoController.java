@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mzrd.pojo.AdminInfo;
@@ -60,6 +61,27 @@ public class StaffAccountInfoController {
 		return "{\"success\":\"false\",\"message\":\"删除失败\"}";
 	}
 	
+	//添加员工
+	@RequestMapping(value="/addStaff.action", produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String addStaff(StaffAccountInfo si){
+		System.out.println(si.toString());
+		if(si.getPassword() != null){
+			String pass = null;
+			try {
+				pass = shaUitl.getPassword(si.getPassword());
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			}
+			si.setPassword(pass);
+		}
+		int dOK = staffAccountInfoService.addStaff(si);
+		if(dOK == 1){
+			return "{\"success\":\"true\",\"message\":\"添加成功\"}";
+		}
+		return "{\"success\":\"false\",\"message\":\"添加失败\"}";
+	}
+	
 	//更改员工信息
 	@RequestMapping(value="/updateStaff.action", produces = "text/html;charset=UTF-8")
 	@ResponseBody
@@ -80,7 +102,7 @@ public class StaffAccountInfoController {
 		return "{\"success\":\"false\",\"message\":\"修改失败\"}";
 	}
 	//获取所有的登录名
-	@RequestMapping("/getAllNameList.action")
+	@RequestMapping(value="/getAllNameList.action",method = RequestMethod.POST, produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String getAllNameList(StaffAccountInfo si,String name){
 		 boolean isOk = false;
@@ -89,24 +111,17 @@ public class StaffAccountInfoController {
 		List<String> ai = adminInfoService.getAdminNameList(sa);
 		if(ai.size() != 0){
 			isOk = true;  
-			return isOk+"";
 		}
-		List<String> sil = staffAccountInfoService.getStaffNameList(si);
+		List<String> sil = staffAccountInfoService.getStaffNameList(si,name);
 		if(sil.size() != 0){
-			for(int i=0;i<ai.size();i++){
-				if(ai.get(i).equals(name)){
-					isOk = true;  
-					return isOk+"";
-				}
-			}
+			isOk = true;  
 		}
 		SupplierAccountInfo supplierAccountInfo = new SupplierAccountInfo();
 		supplierAccountInfo.setUserName(si.getUserName());
 		List<String> sul = supplierAccountInfoService.getSupplierNameList(supplierAccountInfo);
 		if(sul.size() != 0){
 			isOk = true;  
-			return isOk+"";
 		}
-		return isOk+"";
+		return "{\"message\":\""+isOk+"\"}";
 	}
 }

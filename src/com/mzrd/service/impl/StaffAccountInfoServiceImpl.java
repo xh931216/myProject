@@ -1,5 +1,6 @@
 package com.mzrd.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,9 +39,15 @@ public class StaffAccountInfoServiceImpl implements StaffAccountInfoService{
 	public int deleteStaff(StaffAccountInfo si) {
 		return staffAccountInfoDAO.deleteStaff(si);
 	}
-
 	@Override
-	public List<String> getStaffNameList(StaffAccountInfo sa) {
-		return staffAccountInfoDAO.getStaffNameList(sa);
+	public int addStaff(StaffAccountInfo si) {
+		return staffAccountInfoDAO.addStaff(si);
+	}
+	@Override
+	public List<String> getStaffNameList(StaffAccountInfo sa,String name) {
+		Map<String, String> map = new HashMap<>();
+		map.put("name", name);
+		map.put("userName", sa.getUserName());
+		return staffAccountInfoDAO.getStaffNameList(map);
 	}
 }

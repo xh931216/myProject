@@ -15,74 +15,86 @@
 <script type="text/javascript" src="../Easyui/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="../Easyui/easyui-lang-zh_CN.js"></script>
 </head>
-<body>
+<body >
 	 <!-- 创建一个添加对话框 -->
-	<div id="dlg" class="easyui-layout" title="New Topic"
-		style="width:500px;">
+	 <div style="width: 100%;height: 100%;background-color: #FFFFFF">
+	<div id="dlg" 
+		style="width:500px;background-color: #FFFFFF">
         <div style="padding:10px 60px 20px 60px">
-			<form id="ff" method="POST" action="" enctype="multipart/form-data">
+			<form id="ff" method="POST" class="easyui-form" action="addStaff.action"  >
 				<table cellpadding="5">
+					 <tr>
+						<td>所属部门</td>
+						<td><input  id="dnameupdate" class="easyui-combobox"  name="did" 
+				data-options="required:true,valueField:'did',textField:'dname',url:'getDepartmentInfoList.action',
+				onSelect:function(region){
+					$('#postupdate').combobox('clear');//清除原有项目
+					$('#postupdate').combobox('reload','getPostInfoAndDepartmentInfoList.action?did='+region.did);//重新加载
+				}" /></td>
+					</tr>				
 					<tr>
-						<td>产品类型:</td>
-						<td><input style="width:150px;" id="pi.type.id"
-							class="easyui-combobox" name="pi.type.id"
-							data-options="valueField:'id',textField:'name',url:'getAllType'"></input>
+						<td>所属职位:</td>
+							<td><input id="postupdate" class="easyui-combobox" name="rid"
+						data-options="required:true,url:'getPostInfoAndDepartmentInfoList.action',valueField:'rid',textField:'rname'" />
 						</td>
 					</tr>
 					<tr>
-						<td>产品名称:</td>
-						<td><input class="easyui-textbox" type="text" id="pi.name"
-							name="pi.name" data-options="required:true"></input></td>
+						<td >登录名:</td>
+							<td><input id="username" class="easyui-textbox" type="text" name="userName" 
+							data-options="required:true,validType:'myvalidate'"></input>
+						</td>
 					</tr>
 					<tr>
-						<td>产品编码:</td>
-						<td><input class="easyui-textbox" type="text" id="pi.code"
-							name="pi.code" data-options="required:true"></input></td>
+						<td>输入密码:</td>
+						<td> <input id="txtNewPass" name="pwd" validType="length[4,32]" class="easyui-textbox" 
+                        required="true" type="password" value=""/></td>
 					</tr>
 					<tr>
-						<td>产品品牌:</td>
-						<td><input class="easyui-textbox" type="text" id="pi.brand"
-							name="pi.brand" data-options="required:true"></input></td>
+						<td>再次输入密码:</td>
+						<td><input type="password" name="password" id="txtRePass" required="true" class="easyui-textbox"
+                         validType="equals['#txtNewPass']" invalidMessage="两次输入密码不匹配"/></td>
 					</tr>
 					<tr>
-						<td>产品数量:</td>
-						<td><input class="easyui-textbox" type="text" id="pi.num"
-							name="pi.num" data-options="required:true"></input></td>
+						<td >姓名:</td>
+							<td><input class="easyui-textbox" type="text" id="sname" name="sname"  ></input>
+						</td>
 					</tr>
 					<tr>
-						<td>产品价格:</td>
-						<td><input class="easyui-textbox" type="text" id="pi.price"
-							name="pi.price" data-options="required:true"></input></td>
+						<td >手机号:</td>
+							<td><input class="easyui-textbox" type="text" id="phone" validType="telNum" name="phone" />
+						</td>
 					</tr>
 					<tr>
-						<td>产品描述:</td>
-						<td><input class="easyui-textbox" name="pi.intro"
-							id="pi.intro" data-options="multiline:true" style="height:60px"></input></td>
+						<td >邮箱:</td>
+							<td><input class="easyui-textbox" type="text" id="email" 
+							name="email"  validType="email"></input>
+						</td>
 					</tr>
 				</table>
 			</form>
-			<div style="text-align:center;padding:5px">
-				<a href="javascript:void(0)" class="easyui-linkbutton"
-					onclick="saveStaff();">保存</a> <a href="javascript:void(0)"
+			<div style="text-align:center;padding:3px">
+						<a href="javascript:void(0)" class="easyui-linkbutton"  icon="icon-ok"
+					onclick="saveStaff();">保存</a> <a href="javascript:void(0)" icon="icon-cancel"
 					class="easyui-linkbutton" onclick="clearForm();">清空</a>
 			</div>
 		</div>
      </div>
-		
+		</div>
 	<script type="text/javascript">
 		// 保存新增的员工信息
 		function saveStaff() {
 			$("#ff").form("submit", {
-				url : "staffAdd.action", //使用参数				
-				success : function(result) {
-					var result = eval('(' + result + ')');
-					if (result.success == 'true') {
-						$("#dg").datagrid("reload");
-						$("#dlg").dialog("close");
-					}					
+				onSubmit : function() {
+					return $(this).form('enableValidation').form('validate');
+				},
+				success : function(data) {	
+					var data = eval('(' + data + ')');
+					if (data.success == 'true') {
+						$('#ff').form('clear');
+					}			
 					$.messager.show({
 						title : "提示信息",
-						msg : result.message
+						msg : data.message
 					});
 				}
 			});
@@ -90,6 +102,41 @@
 		function clearForm() {
 			$('#ff').form('clear');
 		}
+		$.extend($.fn.validatebox.defaults.rules, {
+        	myvalidate : {
+                validator : function(value, param) {
+                    var username = $("#username").val().trim();
+                    var haha=" " ;
+                    $.ajax({
+                        type : 'post',
+                        async : false,    
+                        url : 'getAllNameList.action',
+                        data : {
+                            "userName" : username
+                        },
+						dataType : 'json',
+                        success : function(data) {
+							haha = data.message;
+                        }
+                    });
+                    console.log(haha);
+                    return haha.indexOf("true");
+                },
+                message : '登录名已经被占用'
+            },
+            equals: {
+                validator: function(value,param){
+                    return value == $(param[0]).val();
+                },
+                message: '密码不一致！'
+            },
+        	telNum:{ //既验证手机号，又验证座机号
+		      validator: function(value, param){
+		          return /(^(0[0-9]{2,3}\-)?([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$)|(^((\d3)|(\d{3}\-))?(1[358]\d{9})$)/.test(value);
+		         },   
+		       message: '请输入正确的电话号码。'
+		    } 
+        });
 	</script>
 </body>
 </html>

@@ -6,9 +6,10 @@ public class StaffAccountInfo {
 	private String password;
 	private int rid;
 	private String sname;
-	private long phone;
+	private String phone;
 	private String email;
 	private int state;
+	private int did;
 	private PostInfo postInfo;
 	private DepartmentInfo departmentInfo;
 	
@@ -24,6 +25,13 @@ public class StaffAccountInfo {
 	public void setRid(int rid) {
 		this.rid = rid;
 	}
+	
+	public int getDid() {
+		return did;
+	}
+	public void setDid(int did) {
+		this.did = did;
+	}
 	public String getSname() {
 		return sname;
 	}
@@ -36,10 +44,10 @@ public class StaffAccountInfo {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public long getPhone() {
+	public String getPhone() {
 		return phone;
 	}
-	public void setPhone(long phone) {
+	public void setPhone(String phone) {
 		this.phone = phone;
 	}
 	public int getState() {
@@ -77,8 +85,9 @@ public class StaffAccountInfo {
 	}
 	@Override
 	public String toString() {
-		return "StaffAccountInfo [id=" + id + ", userName=" + userName + ", password=" + password + ", postInfo="
-				+ postInfo + "]";
+		return "StaffAccountInfo [id=" + id + ", userName=" + userName + ", password=" + password + ", rid=" + rid
+				+ ", sname=" + sname + ", phone=" + phone + ", email=" + email + ", state=" + state + ", postInfo="
+				+ postInfo + ", departmentInfo=" + departmentInfo + "]";
 	}
 	
 }
