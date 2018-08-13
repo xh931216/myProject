@@ -88,7 +88,7 @@
 		 where id=#{id}
 	</update>
 	<insert id="addStaff" parameterType="com.mzrd.pojo.StaffAccountInfo">
-		insert into staff_account_info(userName,password,rid
+		insert into staff_account_info(userName,password,rid,state
 		<if test="sname!=null">
 		,sname
 		</if>
@@ -98,7 +98,7 @@
 		<if test="email!=null">
 		,email
 		</if>
-		) values(#{userName},#{password},#{rid}
+		) values(#{userName},#{password},#{rid},1
 		<if test="sname!=null">
 		,#{sname}
 		</if>

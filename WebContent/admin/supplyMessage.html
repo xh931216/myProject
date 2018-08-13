@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>供应商列表</title>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="expires" content="0">
+<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+<meta http-equiv="description" content="This is my page">
+<link href="../assets/css/default.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="../Easyui/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="../Easyui/themes/icon.css" />
+<script type="text/javascript" src="../Easyui/jquery.min.js"></script>
+<script type="text/javascript" src="../Easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../Easyui/easyui-lang-zh_CN.js"></script>
+</head>
+<body>
+	 <!-- 创建一个table -->
+	<table id="adminListDg" class="easyui-datagrid"></table>
+	
+	<!-- 工具栏 -->
+	<div id="adminListTb" style="padding:2px 5px;">
+		<a href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-edit" plain="true" onclick="editSupply();">信息变更</a>
+	</div>
+	<!-- 查询窗体 -->
+	<div id="searchOrderTb" style="padding:2px 5px;">
+		<form id="searchPostForm" method="get">
+			&nbsp;&nbsp;&nbsp; 公司姓名/简称 &nbsp;<input class="easyui-textbox" name="supplierName"
+			 id="supplierName" style="width:110px" placeholder="请输入公司姓名/简称"/>
+			 &nbsp;&nbsp;&nbsp; 供应类别 &nbsp;
+			<input style="width:115px;" id="srname" class="easyui-combobox" 
+				data-options="valueField:'srid',textField:'srname',url:'getRankAllNameList.action'" />
+			 &nbsp;&nbsp;&nbsp; 供应状态 &nbsp;
+			 <select id="state"  class="easyui-combobox" name="state" style="width:200px;">
+					<option value="">全部</option>
+					<option value="1" selected>供 应</option>
+					<option value="0">不供应</option>
+				</select>
+			<a href="javascript:void(0)"
+				class="easyui-linkbutton" iconCls="icon-search" plain="true"
+				onclick="searchPostInfo();">查找</a>
+		</form>
+	</div>
+	
+	<!-- 修改信息的对话框  -->
+	<div id="departDlg" class="easyui-dialog" title="修改信息"
+		closed="true" style="width:400px">
+		<div style="padding:10px 60px 20px 60px">
+			<form id="staffForm" method="POST" action="updateSupply.action" class="easyui-form">
+				<table cellpadding="7">					
+					<tr>
+						<td >登录名:</td>
+							<td><input id="susername" class="easyui-textbox" type="text" name="userName" 
+							data-options="required:true,validType:'myvalidate'"/>
+							<input id="sid" class="easyui-textbox" type="hidden" name="sid"/>
+
+						</td>
+					</tr>
+					<tr>
+						<td >公司名称:</td>
+							<td><input class="easyui-textbox" type="text" id="ssupplierName" name="supplierName"  ></input>
+						</td>
+					</tr>
+					<tr>
+						<td >简称:</td>
+							<td><input class="easyui-textbox" type="text" id="sabbreviation" name="abbreviation"  ></input>
+						</td>
+					</tr>
+					<tr>
+						<td >地址:</td>
+							<td><input class="easyui-textbox" type="text" id="saddress" name="address"  ></input>
+						</td>
+					</tr>
+					<tr>
+						<td >联系人:</td>
+							<td><input class="easyui-textbox" type="text" id="scontact" name="contact"  ></input>
+						</td>
+					</tr>
+					<tr>
+						<td >手机号:</td>
+							<td><input class="easyui-textbox" type="text" id="sphone" validType="telNum" name="phone" />
+						</td>
+					</tr>
+					<tr>
+						<td >邮箱:</td>
+							<td><input class="easyui-textbox" type="text" id="semail" 
+							name="email"  validType="email"></input>
+						</td>
+					</tr>
+				</table>
+			</form>
+			<div style="text-align:center;padding:3px">
+				<a href="javascript:void(0)" class="easyui-linkbutton"
+					onclick="saveSupply();">修改</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:void(0)"
+					class="easyui-linkbutton" onclick="clearAdminForm();">清空</a>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(function() {
+			$('#adminListDg').datagrid({
+				singleSelect : false,
+				url : 'getSupplyInfoList.action',
+				queryParams : {},//查询条件
+				pagination : true,//启动分页
+				pageSize : 5,//设置初始每页记录数（页大小）
+				pageList : [5, 10 ,15],//设置可供选择的页大小
+				rownumbers : true, //显示行号
+				fit : true, //设置自适应
+				toolbar : '#adminListTb', //为datagrid添加工具栏
+				header : '#searchOrderTb', //为datagrid标头添加搜索栏
+				columns : [ [ { //编辑datagrid的列
+					title : '序号',
+					field : 'sid',
+					align : 'center',
+					checkbox : true
+				}, {
+					field : 'userName',
+					title : '登录名',
+					width : 100
+				}, {
+					field : 'supplierName',
+					title : '公司名称',
+					width : 150
+				}, {
+					field : 'abbreviation',
+					title : '简称',
+					width : 100
+				}, {
+					field : 'address',
+					title : '公司地址',
+					width : 100
+				}, {
+					field : 'contact',
+					title : '联系人',
+					width : 100
+				}, {
+					field : 'phone',
+					title : '电话号码',
+					width : 100
+				}, {
+					field : 'email',
+					title : '邮箱',
+					width : 100
+				}, {
+					field : 'srriName',
+					title : '供应类别',
+					width : 300,
+					formatter: function(value, row,index){
+				        return row.srriName;
+					}
+				}, {
+					field : 'state',
+					title : '供应状态',
+					width : 100,
+					formatter: function(value, row, index){
+						if(row.state == '1'){
+							return "供   应";
+						}else{
+							return "不供应";
+						}
+					}
+				} ] ]
+			});
+		});
+		// 查询供应商
+		function searchPostInfo() {
+			var supplierName = $('#supplierName').val();
+			var srid = $('#srname').combobox("getValue");
+			var state = $('#state').combobox("getValue");
+			$('#adminListDg').datagrid('load', {
+				supplierName : supplierName,
+				srid : srid,
+				state : state
+			});
+		}
+		var sid=0;
+        function addSupply(){
+			window.open("supplyAdd.html","_self");
+		}
+		
+        //关闭登录窗口
+        function closePwd() {
+            $('#pass').window('close');
+        }
+        
+        //设置供应商信息窗口
+        function editSupply() {
+            var rows = $("#adminListDg").datagrid('getSelections');
+			if (rows.length >0 && rows.length<=1 ) {
+				var row = $("#adminListDg").datagrid("getSelected");
+				// 打开“修改”对话框
+				$("#departDlg").dialog("open").dialog('setTitle', '信息修改');
+				$("#sid").textbox("setValue",row.sid);
+				$("#susername").textbox("setValue",row.userName);
+				$("#ssupplierName").textbox("setValue",row.supplierName);
+				$("#sabbreviation").textbox("setValue",row.abbreviation);
+				$("#scontact").textbox("setValue",row.contact);
+				$("#saddress").textbox("setValue",row.address);
+				$("#sphone").textbox("setValue",row.phone);
+				$("#semail").textbox("setText",row.email);
+			} else if(rows.length>1){
+				$.messager.alert('提示', '只能选择一个员工', 'info');
+			}else {
+				$.messager.alert('提示', '请选择要修改的员工', 'info');
+			}
+        }
+        // 保存供应商信息
+		function saveSupply() {
+			$("#staffForm").form("submit", {
+				onSubmit : function() {
+					return $(this).form('enableValidation').form('validate');
+				},
+				success : function(data) {	
+					var data = eval('(' + data + ')');
+	                if(data.success=="true"){  
+						$("#adminListDg").datagrid("reload");
+		            }
+					$.messager.show({
+						title : "提示信息",
+						msg : data.message
+					});
+				}
+			});
+		}
+		
+		
+		function clearForm() {
+			$('#staffForm').form('clear');
+		}
+        $.extend($.fn.validatebox.defaults.rules, {
+			myvalidate : {
+                validator : function(value, param) {
+                    var username = $("#susername").val();
+                    var row = $("#adminListDg").datagrid("getSelected");
+                    var name = row.userName;
+                    var haha=" " ;
+                    $.ajax({
+                        type : 'post',
+                        async : false,    
+                        url : 'getAllSupplyNameList.action',
+                        data : {
+                            "userName" : username,
+                            "name" : name
+                        },
+						dataType : 'json',
+                        success : function(data) {
+							haha = data.message;
+                        }
+                    });
+                    console.log(haha);
+                    return haha.indexOf("true");
+                },
+                message : '登录名已经被占用'
+            },
+            equals: {
+                validator: function(value,param){
+                    return value == $(param[0]).val();
+                },
+                message: '密码不一致！'
+            },
+        	telNum:{ //既验证手机号，又验证座机号
+		      validator: function(value, param){
+		          return /(^(0[0-9]{2,3}\-)?([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$)|(^((\d3)|(\d{3}\-))?(1[358]\d{9})$)/.test(value);
+		         },   
+		       message: '请输入正确的电话号码。'
+		    } 
+        });
+		function clearAdminForm() {
+			$('#departForm').form('clear');
+		}
+	</script>
+</body>
+</html>

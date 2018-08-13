@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mzrd.pojo.AdminInfo;
 import com.mzrd.pojo.StaffAccountInfo;
-import com.mzrd.pojo.SupplierAccountInfo;
+import com.mzrd.pojo.SupplyAccountInfo;
 import com.mzrd.service.AdminInfoService;
 import com.mzrd.service.StaffAccountInfoService;
-import com.mzrd.service.SupplierAccountInfoService;
+import com.mzrd.service.SupplyAccountInfoService;
 import com.mzrd.util.SHAUtil;
 @RequestMapping("/admin")
 @Controller
@@ -29,7 +29,7 @@ public class StaffAccountInfoController {
 	@Autowired 
 	private AdminInfoService adminInfoService;
 	@Autowired
-	private SupplierAccountInfoService supplierAccountInfoService;
+	private SupplyAccountInfoService supplyAccountInfoService;
 	private SHAUtil shaUitl = new SHAUtil();
 	//获取所有员工
 	@RequestMapping("/getStaffInfoList.action")
@@ -116,9 +116,9 @@ public class StaffAccountInfoController {
 		if(sil.size() != 0){
 			isOk = true;  
 		}
-		SupplierAccountInfo supplierAccountInfo = new SupplierAccountInfo();
-		supplierAccountInfo.setUserName(si.getUserName());
-		List<String> sul = supplierAccountInfoService.getSupplierNameList(supplierAccountInfo);
+		SupplyAccountInfo supplyAccountInfo = new SupplyAccountInfo();
+		supplyAccountInfo.setUserName(si.getUserName());
+		List<String> sul = supplyAccountInfoService.getSupplyNameList(supplyAccountInfo,null);
 		if(sul.size() != 0){
 			isOk = true;  
 		}

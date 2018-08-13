@@ -13,9 +13,12 @@
 		</if>
 	</select>
 	
-	<select id="getRankAllNameList" resultType="java.lang.String"
+	<select id="getRankAllNameList" resultType="com.mzrd.pojo.SupplyRankInfo"
 		parameterType="java.util.Map">
-	  	select * from supply_rank_info where srname = #{srname}
+	  	select * from supply_rank_info where 1=1
+	  	<if test="srname != null and srname != ''">
+	    and	srname = #{srname}
+	  	</if>
 	 	 <if test="name!=null and name!=''">
 			 and srname != #{name}
 		</if>

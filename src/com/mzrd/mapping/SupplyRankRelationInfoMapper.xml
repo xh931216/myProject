@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mzrd.dao.SupplyRankRelationInfoDAO">
+	
+	<resultMap type="com.mzrd.pojo.SupplyRankRelationInfo" id="getMap">
+		<id property="arid" column="arid" />
+		<result property="sid" column="sid" />
+		<result property="srid" column="srid" />
+		<association property="supplyRankInfo" javaType="com.mzrd.pojo.SupplyRankInfo">
+			<id property="srid" column="srid" />
+			<result property="srname" column="srname" />
+		</association>
+	</resultMap>
+	
+	<select id="getSupplyRankRelation" parameterType="com.mzrd.pojo.SupplyRankRelationInfo"
+		resultMap="getMap">
+		select sr.srid srid,sr.srname srname,srr.arid arid,srr.sid sid
+ 		from supply_rank_info sr,supply_rank_relation_info srr where srr.srid=sr.srid
+ 		<if test="sid!=0">
+ 			and srr.sid =#{sid}
+ 		</if>
+	</select>
+	<delete id="DeleteSupplyRankRelation" parameterType="com.mzrd.pojo.SupplyRankRelationInfo">
+		delete from supply_rank_relation_info WHERE 1=1
+		<if test="srid !=0">
+			and srid=#{srid}
+		</if>
+		<if test="sid!=0">
+			and sid=#{sid}
+		</if>
+	</delete>
+	
+	<insert id="AddSupplyRankRelation" parameterType="com.mzrd.pojo.SupplyRankRelationInfo">
+		insert into supply_rank_relation_info(sid,srid) VALUES(#{sid},#{srid});
+	</insert>
+</mapper>

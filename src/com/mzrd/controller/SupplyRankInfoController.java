@@ -19,9 +19,9 @@ public class SupplyRankInfoController {
 	private SupplyRankInfoService supplyRankInfoService;
 	
 	//获取供应类别
-	@RequestMapping("/getSupplyRankInfoList.action")
+	@RequestMapping("/getSupplyRankInfoPageList.action")
 	@ResponseBody
-	public Map<String, Object> getPostInfoList(int page, int rows,SupplyRankInfo pi){
+	public Map<String, Object> getSupplyRankInfoPageList(int page, int rows,SupplyRankInfo pi){
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("srname", pi.getSrname());
 		int totalCount =  supplyRankInfoService.getSupplyRankInfoList(params).size();
@@ -33,12 +33,20 @@ public class SupplyRankInfoController {
 	    result.put("rows", silist);
 		return result;
 	}
+	//获取所有类别
+	@RequestMapping("/getRankAllNameList.action")
+	@ResponseBody
+	public List getRankAllNameList(){
+		SupplyRankInfo pi = new SupplyRankInfo();
+		String lodName = "";
+		return supplyRankInfoService.getRankAllNameList(pi,lodName);
+	}
 	//添加类别
 	@RequestMapping(value="/addSuplyRankInfo.action", produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String addSuplyRankInfo(SupplyRankInfo pi){
 		String lodName = "";
-		List<String> sil = supplyRankInfoService.getRankAllNameList(pi,lodName);
+		List<SupplyRankInfo> sil = supplyRankInfoService.getRankAllNameList(pi,lodName);
 		if(sil.size() != 0){
 			return "{\"success\":\"false\",\"message\":\"类别已存在\"}";
 		}
@@ -52,7 +60,7 @@ public class SupplyRankInfoController {
 	@RequestMapping(value="/updateSupplyRankInfo.action", produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String updateSupplyRankInfo(SupplyRankInfo pi, String lodName){
-		List<String> sil = supplyRankInfoService.getRankAllNameList(pi,lodName);
+		List<SupplyRankInfo> sil = supplyRankInfoService.getRankAllNameList(pi,lodName);
 		if(sil.size() != 0){
 			return "{\"success\":\"false\",\"message\":\"类别已存在\"}";
 		}

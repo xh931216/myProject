@@ -21,26 +21,11 @@
 	<div id="dlg" 
 		style="width:500px;background-color: #FFFFFF">
         <div style="padding:10px 60px 20px 60px">
-			<form id="ff" method="get" class="easyui-form" action="addStaff.action"  >
-				<table cellpadding="5">
-					 <tr>
-						<td>所属部门</td>
-						<td><input  id="dnameupdate" class="easyui-combobox"  name="did" 
-				data-options="required:true,valueField:'did',textField:'dname',url:'getDepartmentInfoList.action',
-				onSelect:function(region){
-					$('#postupdate').combobox('clear');//清除原有项目
-					$('#postupdate').combobox('reload','getPostInfoAndDepartmentInfoList.action?did='+region.did);//重新加载
-				}" /></td>
-					</tr>				
-					<tr>
-						<td>所属职位:</td>
-							<td><input id="postupdate" class="easyui-combobox" name="rid"
-						data-options="required:true,url:'getPostInfoAndDepartmentInfoList.action',valueField:'rid',textField:'rname'" />
-						</td>
-					</tr>
+			<form id="ff" method="get" class="easyui-form" action="addSupply.action"  >
+				<table cellpadding="5">		
 					<tr>
 						<td >登录名:</td>
-							<td><input id="username" class="easyui-textbox" type="text" name="userName" 
+							<td><input id="userName" class="easyui-textbox" type="text" name="userName" 
 							data-options="required:true,validType:'myvalidate'"></input>
 						</td>
 					</tr>
@@ -55,8 +40,23 @@
                          validType="equals['#txtNewPass']" invalidMessage="两次输入密码不匹配"/></td>
 					</tr>
 					<tr>
-						<td >姓名:</td>
-							<td><input class="easyui-textbox" type="text" id="sname" name="sname"  ></input>
+						<td >公司名称:</td>
+							<td><input class="easyui-textbox" type="text" id="supplierName" name="supplierName"  ></input>
+						</td>
+					</tr>
+					<tr>
+						<td >简称:</td>
+							<td><input class="easyui-textbox" type="text" id="abbreviation" name="abbreviation"  ></input>
+						</td>
+					</tr>
+					<tr>
+						<td >地址:</td>
+							<td><input class="easyui-textbox" type="text" id="address" name="address"  ></input>
+						</td>
+					</tr>
+					<tr>
+						<td >联系人:</td>
+							<td><input class="easyui-textbox" type="text" id="contact" name="contact"  ></input>
 						</td>
 					</tr>
 					<tr>
@@ -68,6 +68,20 @@
 						<td >邮箱:</td>
 							<td><input class="easyui-textbox" type="text" id="email" 
 							name="email"  validType="email"></input>
+						</td>
+					</tr>
+					<tr>
+						<td >供应类别:</td>
+							<td>
+							<input class="easyui-combobox" name="rankList" required="true"
+							data-options="
+								url:'getRankAllNameList.action',
+								method:'get',
+								valueField:'srid',
+								textField:'srname',
+								multiple:true,
+								groupField:'group'
+							">
 						</td>
 					</tr>
 				</table>
@@ -88,7 +102,7 @@
 					return $(this).form('enableValidation').form('validate');
 				},
 				success : function(data) {	
-					var data = eval('(' + data + ')');
+				    var data = eval('(' + data + ')'); 
 					if (data.success == 'true') {
 						$('#ff').form('clear');
 					}			
@@ -105,14 +119,14 @@
 		$.extend($.fn.validatebox.defaults.rules, {
         	myvalidate : {
                 validator : function(value, param) {
-                    var username = $("#username").val().trim();
+                    var userName = $("#userName").val().trim();
                     var haha=" " ;
                     $.ajax({
                         type : 'post',
                         async : false,    
-                        url : 'getAllNameList.action',
+                        url : 'getAllSupplyNameList.action',
                         data : {
-                            "userName" : username
+                            "userName" : userName
                         },
 						dataType : 'json',
                         success : function(data) {

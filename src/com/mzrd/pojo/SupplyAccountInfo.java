@@ -1,17 +1,35 @@
 package com.mzrd.pojo;
 
-public class SupplierAccountInfo {
+import java.util.ArrayList;
+import java.util.List;
+
+public class SupplyAccountInfo {
 	private	int sid;
 	private String userName;
 	private String password;
 	private String supplierName;
+	private String abbreviation;
 	private String address;
-	private long phone;
+	private String phone;
 	private String contact;
 	private String email;
 	private int state;
-	private String sridList;
-	public SupplierAccountInfo() {
+	private List<SupplyRankInfo> srriSet = new ArrayList<SupplyRankInfo>();
+	private List<String> srriName = new ArrayList<>();
+	 
+	public List<String> getSrriName() {
+		return srriName;
+	}
+	public void setSrriName(List<String> srriName) {
+		this.srriName = srriName;
+	}
+	public List<SupplyRankInfo> getSrriSet() {
+		return srriSet;
+	}
+	public void setSrriSet(List<SupplyRankInfo> srriSet) {
+		this.srriSet = srriSet;
+	}
+	public SupplyAccountInfo() {
 		super();
 	}
 	public int getSid() {
@@ -19,6 +37,12 @@ public class SupplierAccountInfo {
 	}
 	public void setSid(int sid) {
 		this.sid = sid;
+	}
+	public String getAbbreviation() {
+		return abbreviation;
+	}
+	public void setAbbreviation(String abbreviation) {
+		this.abbreviation = abbreviation;
 	}
 	public String getUserName() {
 		return userName;
@@ -44,10 +68,11 @@ public class SupplierAccountInfo {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	public long getPhone() {
+	
+	public String getPhone() {
 		return phone;
 	}
-	public void setPhone(long phone) {
+	public void setPhone(String phone) {
 		this.phone = phone;
 	}
 	public String getContact() {
@@ -68,18 +93,14 @@ public class SupplierAccountInfo {
 	public void setState(int state) {
 		this.state = state;
 	}
-	public String getSridList() {
-		return sridList;
-	}
-	public void setSridList(String sridList) {
-		this.sridList = sridList;
-	}
 	@Override
 	public String toString() {
-		return "SupplierAccountInfo [sid=" + sid + ", userName=" + userName + ", password=" + password
-				+ ", supplierName=" + supplierName + ", address=" + address + ", phone=" + phone + ", contact="
-				+ contact + ", email=" + email + ", state=" + state + ", sridList=" + sridList + "]";
+		return "SupplyAccountInfo [sid=" + sid + ", userName=" + userName + ", password=" + password + ", supplierName="
+				+ supplierName + ", abbreviation=" + abbreviation + ", address=" + address + ", phone=" + phone
+				+ ", contact=" + contact + ", email=" + email + ", state=" + state + ", srriSet=" + srriSet + "]";
 	}
+	
+	
 	
 	
 	

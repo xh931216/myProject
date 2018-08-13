@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mzrd.dao.SupplyAccountInfoDAO">
+	<!-- 封装账号 -->
+	<resultMap type="com.mzrd.pojo.SupplyAccountInfo" id="getSupplyAccountInfoMap">
+		<id property="sid" column="sid" />
+		<result property="userName" column="userName" />
+		<result property="password" column="password" />
+		<result property="supplierName" column="supplierName" />
+		<result property="abbreviation" column="abbreviation" />
+		<result property="address" column="address" />
+		<result property="phone" column="phone" />
+		<result property="contact" column="contact" />
+		<result property="email" column="email" />
+		<result property="state" column="state" />
+		<association property="srriSet" javaType="com.mzrd.pojo.SupplyRankInfo">
+			<id property="srid" column="srid" />
+			<result property="srname" column="srname" />
+		</association>
+	</resultMap>	
+	
+	<select id="getSupplyNameList" resultType="java.lang.String" 
+		parameterType="java.util.Map">
+		select userName from supply_account_info where userName=#{userName}
+		<if test="name!=null">
+			and userName!=#{name}
+		</if>
+	</select>
+	<select id="getSupplyInfoByUserName" resultType="com.mzrd.pojo.SupplyAccountInfo" 
+		parameterType="com.mzrd.pojo.SupplyAccountInfo">
+		select * from supply_account_info where userName=#{userName}
+	</select>
+	<select id="getSupplyInfoList" resultMap="getSupplyAccountInfoMap"
+		parameterType="java.util.Map">
+		select s.sid sid,s.userName userName,s.`password` password ,s.supplierName supplierName,s.abbreviation abbreviation,
+		s.address address,s.phone phone,s.contact contact,s.email email, s.state state
+		from  supply_account_info s 
+		LEFT JOIN supply_rank_relation_info r
+		on s.sid=r.sid  where 1=1
+		<if test="supplierName != null and supplierName != ''">
+			and (s.supplierName like concat('%',#{supplierName},'%')
+			or s.abbreviation like concat('%',#{supplierName},'%'))
+		</if>
+		<if test="srid != null and srid !=''">
+				and r.srid = #{srid}
+		</if>
+		<if test="state != null and state != ''">
+		 	and s.state=#{state}
+		 </if>
+		 GROUP BY userName
+		<if test="start != null and limit != null">
+		  limit #{start},#{limit}
+		</if>
+	</select>
+	<delete id="deleteSupply" 
+		parameterType="com.mzrd.pojo.SupplyAccountInfo">
+		update supply_account_info set state=0 where sid=#{sid}
+	</delete>
+	<update id="updateSupply" parameterType="com.mzrd.pojo.SupplyAccountInfo">
+		update supply_account_info set 
+		<if test="password!=null">
+			`password`=#{password}
+		</if>
+		<if test="userName!=null and userName!=''">
+			userName=#{userName}
+		</if>
+		<if test="supplierName!=null and supplierName!=''">
+			,supplierName=#{supplierName}
+		</if>
+		<if test="abbreviation!=null and abbreviation!=null">
+			,abbreviation=#{abbreviation}
+		</if>
+		<if test="address!=null and address!=''">
+			,address=#{address}
+		</if>
+		<if test="contact!=null and contact!=''">
+			,contact=#{contact}
+		</if>
+		<if test="phone!=null and phone!=''">
+			,phone=#{phone}
+		</if>
+		<if test="email!=null and email!=''">
+			,email=#{email}
+		</if>
+		 where sid=#{sid}
+	</update>
+	<insert id="addSupply" parameterType="com.mzrd.pojo.SupplyAccountInfo">
+		insert into supply_account_info(userName,password,state
+		<if test="supplierName!=null">
+		,supplierName
+		</if>
+		<if test="abbreviation!=null">
+		,abbreviation
+		</if>
+		<if test="address!=null">
+		,address
+		</if>
+		<if test="phone!=0">
+		,phone
+		</if>
+		<if test="contact!=null">
+		,contact
+		</if>
+		<if test="email!=null">
+		,email
+		</if>
+		) values(#{userName},#{password},1
+		<if test="supplierName!=null">
+		,#{supplierName}
+		</if>
+		<if test="abbreviation!=null">
+		,#{abbreviation}
+		</if>
+		<if test="address!=null">
+		,#{address}
+		</if>
+		<if test="phone!=0">
+		,#{phone}
+		</if>
+		<if test="contact!=null">
+		,#{contact}
+		</if>
+		<if test="email!=null">
+		,#{email}
+		</if>
+		)
+		
+	</insert>
+</mapper>

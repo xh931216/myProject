@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>员工列表</title>
+<title>供应商列表</title>
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="cache-control" content="no-cache">
 <meta http-equiv="expires" content="0">
@@ -22,26 +22,29 @@
 	<!-- 工具栏 -->
 	<div id="adminListTb" style="padding:2px 5px;">
 		<a href="javascript:void(0)" class="easyui-linkbutton"
-			iconCls="icon-add" plain="true" onclick="addStaff()">员工新增</a> 
+			iconCls="icon-add" plain="true" onclick="addSupply()">供应商新增</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton"
 			iconCls="icon-edit" plain="true" onclick="editPassword();">密码重置</a>
 		<a href="javascript:void(0)" class="easyui-linkbutton"
-			iconCls="icon-edit" plain="true" onclick="editStaff();">信息修改</a>
+			iconCls="icon-edit" plain="true" onclick="editSupply();">信息变更</a>
 		<a href="javascript:void(0)" class="easyui-linkbutton"
-			iconCls="icon-edit" plain="true" onclick="editStaffPowers();">职位变更</a>
+			iconCls="icon-edit" plain="true" onclick="editSupplyRank();">类别变更</a>
 		<a href="javascript:void(0)" class="easyui-linkbutton"
-			iconCls="icon-cancel" plain="true" onclick="deleteStaff();">账号注销</a>
+			iconCls="icon-cancel" plain="true" onclick="deleteSupply();">账号注销</a>
 	</div>
 	<!-- 查询窗体 -->
 	<div id="searchOrderTb" style="padding:2px 5px;">
 		<form id="searchPostForm" method="get">
-			&nbsp;&nbsp;&nbsp; 姓名 &nbsp;<input class="easyui-textbox" name="sname"
-			 id="sname" style="width:110px" placeholder="请输入姓名"/>
-			 &nbsp;&nbsp;&nbsp; 员工状态 &nbsp;
+			&nbsp;&nbsp;&nbsp; 公司姓名/简称 &nbsp;<input class="easyui-textbox" name="supplierName"
+			 id="supplierName" style="width:110px" placeholder="请输入公司姓名/简称"/>
+			 &nbsp;&nbsp;&nbsp; 供应类别 &nbsp;
+			<input style="width:115px;" id="srname" class="easyui-combobox" 
+				data-options="valueField:'srid',textField:'srname',url:'getRankAllNameList.action'" />
+			 &nbsp;&nbsp;&nbsp; 供应状态 &nbsp;
 			 <select id="state"  class="easyui-combobox" name="state" style="width:200px;">
 					<option value="">全部</option>
-					<option value="1" selected>在职</option>
-					<option value="0">离职</option>
+					<option value="1" selected>供 应</option>
+					<option value="0">不供应</option>
 				</select>
 			<a href="javascript:void(0)"
 				class="easyui-linkbutton" iconCls="icon-search" plain="true"
@@ -76,28 +79,17 @@
             </div>
         </div>
     </div>
-	<!-- 修改职位的对话框  -->
-	<div id="powerDlg" class="easyui-dialog" title="修改职位"
+	<!-- 修改类别的对话框  -->
+	<div id="powerDlg" class="easyui-dialog" title="修改类别"
 		closed="true" style="width:450px">
 		<div style="padding:10px 60px 20px 60px">
 			<form id="adminForm" method="POST" action="">
 				<table cellpadding="5">	
-				<tr>
-						<td>部门名称</td>
-						<td><input style="width:200px;" id="dnameupdate"
-					class="easyui-combobox"  name="did" 
-				data-options="valueField:'did',textField:'dname',url:'getDepartmentInfoList.action',
-				onSelect:function(region){
-					$('#postupdate').combobox('clear');//清除原有项目
-					$('#postupdate').combobox('reload','getPostInfoAndDepartmentInfoList.action?did='+region.did);//重新加载
-				}" /></td>
-					</tr>				
 					<tr>
-						<td>职位名称:</td>
-							<td><input style="width:200px;" id="postupdate" 
-							class="easyui-combobox" name="rid"
-						data-options="url:'getPostInfoAndDepartmentInfoList.action',valueField:'rid',textField:'rname'" />
-						</td>
+						<td>类别名称:</td>
+							<td>
+							<input class="easyui-combobox" id="questionType"  name="upRankList" style="width: 230px;height:30px">
+							</td>
 					</tr>
 				</table>
 			</form>
@@ -111,19 +103,34 @@
 	<div id="departDlg" class="easyui-dialog" title="修改信息"
 		closed="true" style="width:400px">
 		<div style="padding:10px 60px 20px 60px">
-			<form id="staffForm" method="POST" action="updateStaff.action" class="easyui-form">
+			<form id="staffForm" method="POST" action="updateSupply.action" class="easyui-form">
 				<table cellpadding="7">					
 					<tr>
 						<td >登录名:</td>
 							<td><input id="susername" class="easyui-textbox" type="text" name="userName" 
 							data-options="required:true,validType:'myvalidate'"/>
-							<input id="sid" class="easyui-textbox" type="hidden" name="id"/>
+							<input id="sid" class="easyui-textbox" type="hidden" name="sid"/>
 
 						</td>
 					</tr>
 					<tr>
-						<td >姓名:</td>
-							<td><input class="easyui-textbox" type="text" id="ssname" name="sname"  ></input>
+						<td >公司名称:</td>
+							<td><input class="easyui-textbox" type="text" id="ssupplierName" name="supplierName"  ></input>
+						</td>
+					</tr>
+					<tr>
+						<td >简称:</td>
+							<td><input class="easyui-textbox" type="text" id="sabbreviation" name="abbreviation"  ></input>
+						</td>
+					</tr>
+					<tr>
+						<td >地址:</td>
+							<td><input class="easyui-textbox" type="text" id="saddress" name="address"  ></input>
+						</td>
+					</tr>
+					<tr>
+						<td >联系人:</td>
+							<td><input class="easyui-textbox" type="text" id="scontact" name="contact"  ></input>
 						</td>
 					</tr>
 					<tr>
@@ -141,7 +148,7 @@
 			</form>
 			<div style="text-align:center;padding:3px">
 				<a href="javascript:void(0)" class="easyui-linkbutton"
-					onclick="saveStaff();">修改</a>
+					onclick="saveSupply();">修改</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:void(0)"
 					class="easyui-linkbutton" onclick="clearAdminForm();">清空</a>
 			</div>
@@ -151,7 +158,7 @@
 		$(function() {
 			$('#adminListDg').datagrid({
 				singleSelect : false,
-				url : 'getStaffInfoList.action',
+				url : 'getSupplyInfoList.action',
 				queryParams : {},//查询条件
 				pagination : true,//启动分页
 				pageSize : 5,//设置初始每页记录数（页大小）
@@ -162,77 +169,76 @@
 				header : '#searchOrderTb', //为datagrid标头添加搜索栏
 				columns : [ [ { //编辑datagrid的列
 					title : '序号',
-					field : 'id',
+					field : 'sid',
 					align : 'center',
 					checkbox : true
-				}, {
-					field : 'did',
-					title : '所属部门',
-					width : 100,
-					formatter: function(value, row, index){
-						if(row.departmentInfo){
-							return row.departmentInfo.dname;
-						}else{
-							value;
-						}
-					}
-				},{
-					field : 'rid',
-					title : '所属职位',
-					width : 100,
-					formatter: function(value, row, index){
-						if(row.postInfo){
-							return row.postInfo.rname;
-						}else{
-							value;
-						}
-					}
 				}, {
 					field : 'userName',
 					title : '登录名',
 					width : 100
 				}, {
-					field : 'sname',
-					title : '姓名',
+					field : 'supplierName',
+					title : '公司名称',
+					width : 150
+				}, {
+					field : 'abbreviation',
+					title : '简称',
+					width : 100
+				}, {
+					field : 'address',
+					title : '公司地址',
+					width : 100
+				}, {
+					field : 'contact',
+					title : '联系人',
 					width : 100
 				}, {
 					field : 'phone',
-					title : '手机号',
+					title : '电话号码',
 					width : 100
 				}, {
 					field : 'email',
 					title : '邮箱',
 					width : 100
 				}, {
+					field : 'srriName',
+					title : '供应类别',
+					width : 300,
+					formatter: function(value, row,index){
+				        return row.srriName;
+					}
+				}, {
 					field : 'state',
-					title : '状态',
+					title : '供应状态',
 					width : 100,
 					formatter: function(value, row, index){
 						if(row.state == '1'){
-							return "在职";
+							return "供   应";
 						}else{
-							return "离职";
+							return "不供应";
 						}
 					}
 				} ] ]
 			});
 		});
-		// 查询员工
+		// 查询供应商
 		function searchPostInfo() {
-			var sname = $('#sname').val();
+			var supplierName = $('#supplierName').val();
+			var srid = $('#srname').combobox("getValue");
 			var state = $('#state').combobox("getValue");
 			$('#adminListDg').datagrid('load', {
-				sname : sname,
+				supplierName : supplierName,
+				srid : srid,
 				state : state
 			});
 		}
-		var id=0;
-        function addStaff(){
-			window.open("staffAdd.html","_self");
+		var sid=0;
+        function addSupply(){
+			window.open("supplyAdd.html","_self");
 		}
-		// 删除员工
-		function deleteStaff() {
-			// 获取选中的员工记录行
+		// 删除供应商
+		function deleteSupply() {
+			// 获取选中的供应商记录行
 			var rows = $("#adminListDg").datagrid('getSelections');
 			if (rows.length >0 && rows.length<=1 ) {
 				var row = $("#adminListDg").datagrid("getSelected");
@@ -240,64 +246,87 @@
 				if(state == "1"){
 				$.messager.confirm('Confirm', '确认要删除么?', function(r) {
 					if (r) {
-						id = row.id;
+						sid = row.sid;
 						// 发送请求
-						$.post('deleteStaff.action', {
-							id : id
+						$.post('deleteSupply.action', {
+							sid : sid
 						}, function(result) {
 							if (result.success == 'true') {
-								$("#adminListDg").datagrid('reload'); 
-								$.messager.show({
-									title : '提示信息',
-									msg : result.message
-								});
-							} else {
-								$.messager.show({
-									title : '提示信息',
-									msg : result.message
-								});
-							}
+								$("#adminListDg").datagrid('reload');
+							} 
+							$.messager.show({
+								title : '提示信息',
+								msg : result.message
+							});
 						}, 'json');
 
 					}
 				});
 				}else{
-					$.messager.alert('提示', '员工已经离职', 'info');
+					$.messager.alert('提示', '供应商已是不供应', 'info');
 				}
 			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个员工', 'info');
+				$.messager.alert('提示', '只能选择一个供应商', 'info');
 			}else {
-				$.messager.alert('提示', '请选择要离职的员工', 'info');
+				$.messager.alert('提示', '请选择要在供应的供应商', 'info');
 			}
 		}
 		
-		 // 修改职位
-		function editStaffPowers() {
+		 // 修改供应商类别
+		function editSupplyRank() {
+			var row = $("#adminListDg").datagrid("getSelected");
+			sid = row.sid;
+			var arr = row.srriName;
 			var rows = $("#adminListDg").datagrid('getSelections');
 			if (rows.length >0 && rows.length<=1 ) {
-				var row = $("#adminListDg").datagrid("getSelected");
-				id = row.id;
 				// 打开“修改”对话框
-				$("#powerDlg").dialog("open").dialog('setTitle', '修改职位');
-				$("#dnameupdate").textbox("setValue",row.departmentInfo.did);
-				$("#dnameupdate").textbox("setText",row.departmentInfo.dname);
-				$('#postupdate').combobox('reload','getPostInfoAndDepartmentInfoList.action?did='
-						+row.departmentInfo.did);
-				$("#postupdate").textbox("setValue",row.postInfo.rid);
-				$("#postupdate").textbox("setText",row.postInfo.rname);
-				
+				$("#powerDlg").dialog("open").dialog('setTitle', '修改类别');
+				$('#questionType').combobox({
+					editable: false,// 不能直接输入到列表框
+					missingMesage: '请选择',
+					valueField: 'srid',
+					textField: 'srname',
+					multiple:true,// 设置下拉框的值可以多选
+					url: 'getRankAllNameList.action',
+					type: "post",
+					queryParams: {
+						"codeKind1": "类型"
+					},
+					onShowPanel: function () {
+						var v = $(this).combobox('panel')[0].childElementCount;
+						// 判断下拉框高度（如果下拉框的数值小于10个，那么下拉框高度自动显示，如果大于10个，下拉框高度最高200）
+						if (v <= 10) {
+							$(this).combobox('panel').height("auto");
+						} else {
+							$(this).combobox('panel').height(200);
+						}
+					},
+					onLoadSuccess: function (res) {
+							// 下拉框默认选择第一项
+						if (res) {
+							var val = $(this).combobox('getData');
+								for(var i=0;i<val.length;i++){
+									for(var k=0;k<arr.length;k++){
+										if(arr[k] == val[i]['srname'])
+										$(this).combobox('select', val[i]['srid']); //这个数据根据自己情况来设定
+									}
+								}
+							}
+						}
+					});
 			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个员工', 'info');
+				$.messager.alert('提示', '只能选择一个供应商', 'info');
 			}else {
-				$.messager.alert('提示', '请选择要修改的员工', 'info');
+				$.messager.alert('提示', '请选择要在供应的供应商', 'info');
 			}
 		}
 		
-		// 保存修改职位信息
+		// 保存修改供应商类别信息
 		function savePowers() {
+			var questionType = $("#questionType").combobox("getValues");
 			 $.ajax({  
-	              url:'updateStaff.action?rid='+$('#postupdate').combobox("getValue")
-	            		  +'&id='+id,  
+	              url:'updateSupplyRankRelation.action?upRankList='+questionType
+	            		  +'&sid='+sid,  
 	              cache:false,  
 	              success:function(data){  
 	                  eval('data='+data);  
@@ -317,13 +346,13 @@
             var rows = $("#adminListDg").datagrid('getSelections');
 			if (rows.length >0 && rows.length<=1 ) {
 				var row = $("#adminListDg").datagrid("getSelected");
-				id = row.id;
+				sid = row.sid;
 				// 打开“修改”对话框
 				$("#pass").dialog("open").dialog('setTitle', '重置密码');
 			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个员工', 'info');
+				$.messager.alert('提示', '只能选择一个供应商', 'info');
 			}else {
-				$.messager.alert('提示', '请选择要修改的员工', 'info');
+				$.messager.alert('提示', '请选择重置密码的供应商', 'info');
 			}
         }
         //关闭登录窗口
@@ -334,7 +363,7 @@
         function savePass() {
             var $rePass = $('#txtRePass');
             $.ajax({  
-	              url:'updateStaff.action?id='+id+'&password=' + $rePass.val(),  
+	              url:'updateSupply.action?sid='+sid+'&password=' + $rePass.val(),  
 	              cache:false,  
 	              success:function(data){  
 	                  eval('data='+data);  
@@ -351,16 +380,19 @@
             
         }
         
-        //设置员工信息窗口
-        function editStaff() {
+        //设置供应商信息窗口
+        function editSupply() {
             var rows = $("#adminListDg").datagrid('getSelections');
 			if (rows.length >0 && rows.length<=1 ) {
 				var row = $("#adminListDg").datagrid("getSelected");
 				// 打开“修改”对话框
 				$("#departDlg").dialog("open").dialog('setTitle', '信息修改');
-				$("#sid").textbox("setValue",row.id);
+				$("#sid").textbox("setValue",row.sid);
 				$("#susername").textbox("setValue",row.userName);
-				$("#ssname").textbox("setValue",row.sname);
+				$("#ssupplierName").textbox("setValue",row.supplierName);
+				$("#sabbreviation").textbox("setValue",row.abbreviation);
+				$("#scontact").textbox("setValue",row.contact);
+				$("#saddress").textbox("setValue",row.address);
 				$("#sphone").textbox("setValue",row.phone);
 				$("#semail").textbox("setText",row.email);
 			} else if(rows.length>1){
@@ -369,8 +401,8 @@
 				$.messager.alert('提示', '请选择要修改的员工', 'info');
 			}
         }
-        // 保存员工信息
-		function saveStaff() {
+        // 保存供应商信息
+		function saveSupply() {
 			$("#staffForm").form("submit", {
 				onSubmit : function() {
 					return $(this).form('enableValidation').form('validate');
@@ -402,7 +434,7 @@
                     $.ajax({
                         type : 'post',
                         async : false,    
-                        url : 'getAllNameList.action',
+                        url : 'getAllSupplyNameList.action',
                         data : {
                             "userName" : username,
                             "name" : name
