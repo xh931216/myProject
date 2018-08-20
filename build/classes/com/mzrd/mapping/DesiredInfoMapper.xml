@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mzrd.dao.DesiredInfoDao">
+	
+	<select id="getPostInfoList"  resultType="com.mzrd.pojo.DesiredInfo" parameterType="com.mzrd.pojo.DesiredInfo">
+		select * from desired_info
+	</select>
+	
+	<insert id="addDesiredInfo" parameterType="com.mzrd.pojo.DesiredInfo">
+		insert into desired_info (srid,startDate,overDate,desiredImage,id,state) 
+		values(#{srid},#{startDate},#{overDate},#{desiredImage},#{id},#{state});
+	</insert>
+	
+	<update id="updateDesiredInfo" parameterType="com.mzrd.pojo.DesiredInfo">
+		update desired_info 
+		set deid=#{deid}
+		<if test="srid!=0">,srid=#{srid}</if>
+		<if test="startDate!=null and startDate!=''">,startDate=#{startDate}</if>
+		<if test="overDate!=null and overDate!=''">,overDate=#{overDate}</if>
+		<if test="desiredImage!=null and desiredImage!=''">
+			,desiredImage=#{desiredImage}
+		</if>
+		<if test="id!=0"> ,id=#{id}</if>
+		<if test="state!=0"> ,state=#{state}</if>
+		where deid=#{deid}
+	</update>
+	
+	<delete id="deleteDesiredInfo" parameterType="com.mzrd.pojo.DesiredInfo">
+		delete from desired_info  where deid=#{deid}
+	</delete>
+</mapper>

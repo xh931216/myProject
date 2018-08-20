@@ -29,6 +29,7 @@
 	</resultMap>	
 	<select id="getStaffAccount" parameterType="com.mzrd.pojo.StaffAccountInfo" resultMap="getStaffAccountInfoMap">
 		select id,userName,password,s.rid rid,rname,did,rselect,rinsert,rdelete,rupdate,s.state state,p.state pstate
+			,sname,phone,email
 		 from staff_account_info s, post_info p
 		 where s.userName=#{userName} and s.password=#{password} and s.rid = p.rid and s.state=1
 	</select>
@@ -66,15 +67,15 @@
 		</if>
 	</select>
 	<update id="updateStaffAccount" parameterType="com.mzrd.pojo.StaffAccountInfo" >
-		update staff_account_info set 
+		update staff_account_info set id=#{id}
 		<if test="password!=null">
-		`password`=#{password}
+		,`password`=#{password}
 		</if>
 		<if test="rid!=0">
-		rid=#{rid}
+		,rid=#{rid}
 		</if>
 		<if test="userName!=null">
-		userName=#{userName}
+		,userName=#{userName}
 		</if>
 		<if test="sname!=null">
 		,sname=#{sname}

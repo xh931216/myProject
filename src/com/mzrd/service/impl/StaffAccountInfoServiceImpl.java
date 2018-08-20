@@ -17,12 +17,12 @@ public class StaffAccountInfoServiceImpl implements StaffAccountInfoService{
 	private StaffAccountInfoDAO staffAccountInfoDAO;
 	
 	public StaffAccountInfo getStaffAccount(StaffAccountInfo sa){
+		System.out.println(staffAccountInfoDAO.getStaffAccount(sa).toString());
 		return staffAccountInfoDAO.getStaffAccount(sa);
 	}
 
 	@Override
 	public int updateStaffAccount(StaffAccountInfo sa) {
-		System.out.println(sa.toString());
 		return staffAccountInfoDAO.updateStaffAccount(sa);
 	}
 

@@ -2,43 +2,23 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>管理员页面</title>
+    <title>供应商页面</title>
     <link href="../assets/css/default.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../Easyui/themes/default/easyui.css" />
     <link rel="stylesheet" type="text/css" href="../Easyui/themes/icon.css" />
     <script type="text/javascript" src="../Easyui/jquery.min.js"></script>
     <script type="text/javascript" src="../Easyui/jquery.easyui.min.js"></script>
 	<script type="text/javascript" src='../assets/js/adminIndex.js'> </script>
-	<script type="text/javascript" src="../Easyui/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../Easyui/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript">
 	 var _menus = {"menus":[
-						{"menuid":"1","icon":"icon-sys","menuname":"部门管理",
-							"menus":[{"menuid":"32","menuname":"部门列表","icon":"icon-nav","url":"departmentList.html"}
+						{"menuid":"1","icon":"icon-sys","menuname":"资料管理",
+							"menus":[{"menuid":"32","menuname":"更改资料","icon":"icon-edit","url":"staffMessage.html"}
 										]
-						},{"menuid":"1","icon":"icon-sys","menuname":"职位管理",
-							"menus":[{"menuid":"32","menuname":"职位列表","icon":"icon-nav","url":"postList.html"},
-									{"menuid":"13","menuname":"权限变更","icon":"icon-set","url":"postPowerList.html"}
+						},{"menuid":"1","icon":"icon-sys","menuname":"采购单管理",
+							"menus":[{"menuid":"32","menuname":"添加询价单","icon":"icon-add","url":"postList.html"},
+									{"menuid":"13","menuname":"查询询价单","":"icon-nav","url":"postPowerList.html"}
 										]
-						},{"menuid":"1","icon":"icon-sys","menuname":"员工管理",
-							"menus":[{"menuid":"12","menuname":"新增员工账号","icon":"icon-add","url":"staffAdd.html"},
-									{"menuid":"32","menuname":"员工列表","icon":"icon-nav","url":"staffList.html"},
-									{"menuid":"32","menuname":"员工重置密码","icon":"icon-users","url":"staffPassword.html"},
-									{"menuid":"32","menuname":"员工信息更改","icon":"icon-edit","url":"staffMessage.html"},
-									{"menuid":"13","menuname":"注销员工账号","icon":"icon-cancel","url":"staffDelete.html"},
-									{"menuid":"13","menuname":"员工职位变更","icon":"icon-set","url":"staffPost.html"}
-								]
-						},{"menuid":"56","icon":"icon-sys","menuname":"供应商管理",
-							"menus":[{"menuid":"31","menuname":"新增供应商账号","icon":"icon-add","url":"supplyAdd.html"},
-									{"menuid":"15","menuname":"供应商列表","icon":"icon-nav","url":"supplyList.html"},
-									{"menuid":"32","menuname":"供应商重置密码","icon":"icon-users","url":"supplyPassword.html"},
-									{"menuid":"32","menuname":"供应商信息更改","icon":"icon-edit","url":"supplyMessage.html"},
-									{"menuid":"32","menuname":"供应商类别变更","icon":"icon-set","url":"supplyRank.html"},
-									{"menuid":"32","menuname":"注销供应商账号","icon":"icon-cancel","url":"supplyDelete.html"}
-								]
-						},{"menuid":"1","icon":"icon-sys","menuname":"供应类别管理",
-							"menus":[
-									{"menuid":"13","menuname":"类别管理","icon":"icon-nav","url":"supplyRankList.html"}
-								]
 						}
 				]};
          //设置登录窗口
@@ -78,7 +58,7 @@
                 msgShow('系统提示', '两次密码不一至！请重新输入', 'warning');
                 return false;
             }
-            $.post('updateAdmin.action?newpass=' + $newpass.val(), function(msg) {
+            $.post('updateSupply.action?newpass=' + $newpass.val(), function(msg) {
                 msgShow('系统提示', '<br>' + msg, 'info');
                 $newpass.val('');
                 $rePass.val('');
@@ -122,7 +102,7 @@
     <div region="north" split="true" border="false" style="overflow: hidden; height: 30px;
         background: url(../assets/images/layout-browser-hd-bg.gif) #7f99be repeat-x center 50%;
         line-height: 20px;color: #fff; font-family: Verdana, 微软雅黑,黑体">
-        <span style="float:right; padding-right:20px;" class="head">欢迎 管理员  <a href="#" id="editpass">修改密码</a> <a href="#" id="loginOut">安全退出</a></span>
+        <span style="float:right; padding-right:20px;" class="head">欢迎 您登陆系统  <a href="#" id="editpass">修改密码</a> <a href="#" id="loginOut">安全退出</a></span>
         <span style="padding-left:10px; font-size: 16px; "><img src="../assets/images/blocks.gif" width="20" height="20" align="absmiddle" /> 上海明州热电有限公司</span>
     </div>
     <div region="south" split="true" style="height: 30px; background: #D2E0F2; ">

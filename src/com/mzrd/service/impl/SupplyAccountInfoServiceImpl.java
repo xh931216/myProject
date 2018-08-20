@@ -73,5 +73,10 @@ public class SupplyAccountInfoServiceImpl implements SupplyAccountInfoService{
 		}
 		return addOk;
 	}
+
+	@Override
+	public SupplyAccountInfo getSupplyInfoByUserName(SupplyAccountInfo sa) {
+		return supplyAccountInfoDAO.getSupplyInfoByUserName(sa);
+	}
 	
 }

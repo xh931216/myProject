@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mzrd.pojo.AdminInfo;
 import com.mzrd.pojo.StaffAccountInfo;
+import com.mzrd.pojo.SupplyAccountInfo;
 import com.mzrd.service.AdminInfoService;
 import com.mzrd.service.StaffAccountInfoService;
+import com.mzrd.service.SupplyAccountInfoService;
 import com.mzrd.util.SHAUtil;
 
 @Controller
@@ -21,6 +23,8 @@ public class LoginController {
 	private AdminInfoService adminInfoService;
 	@Autowired
 	private StaffAccountInfoService staffAccountInfoService;
+	@Autowired
+	private SupplyAccountInfoService supplyAccountInfoService;
 	private SHAUtil shaUitl = new SHAUtil();
 	//µÇÂ¼ÕËºÅ
 	@RequestMapping(value = "/login.action", produces = "text/html;charset=UTF-8")
@@ -36,7 +40,6 @@ public class LoginController {
 		AdminInfo ai = new AdminInfo();
 		ai.setName(userName);
 		ai.setPassword(password);
-		System.out.println(ai.toString());
 		AdminInfo adminInfo = adminInfoService.getAdmin(ai);
 		if (adminInfo != null) {
 			session.setAttribute("userInfo", adminInfo);
@@ -50,6 +53,15 @@ public class LoginController {
 		if (staffAccountInfo != null) {
 			session.setAttribute("userInfo", staffAccountInfo);
 			return "{\"success\":\"true\",\"message\":\"staff/staffIndex.html\"}";
+		}
+		
+		SupplyAccountInfo sai = new SupplyAccountInfo();
+		sai.setUserName(userName);
+		sai.setPassword(password);
+		SupplyAccountInfo su = supplyAccountInfoService.getSupplyInfoByUserName(sai);
+		if(su != null){
+			session.setAttribute("userInfo", su);
+			return "{\"success\":\"true\",\"message\":\"supply/supplyIndex.html\"}";
 		}
 			return "{\"success\":\"false\",\"message\":\"µÇÂ¼Ê§°Ü\"}";
 	}

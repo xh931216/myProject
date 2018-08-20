@@ -1,4 +1,4 @@
-package com.mzrd.controller;
+package com.mzrd.controller.admin;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -14,7 +14,7 @@ import com.mzrd.pojo.StaffAccountInfo;
 import com.mzrd.service.AdminInfoService;
 import com.mzrd.service.StaffAccountInfoService;
 import com.mzrd.util.SHAUtil;
-
+@RequestMapping("/admin")
 @Controller
 public class AdminInfoController {
 	@Autowired
@@ -24,7 +24,7 @@ public class AdminInfoController {
 	private SHAUtil shaUitl = new SHAUtil();
 	
 	//管理员修改密码
-	@RequestMapping(value = "/admin/updateAdmin.action" , produces = "text/html;charset=UTF-8")
+	@RequestMapping(value = "/updateAdmin.action" , produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String updateStaffAccount(String newpass,HttpSession session){
 		AdminInfo adminInfo = (AdminInfo) session.getAttribute("userInfo");

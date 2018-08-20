@@ -11,6 +11,10 @@
 	
 	<!-- 配置自动扫描的包 -->
 	<context:component-scan base-package="com.mzrd.controller"></context:component-scan>
+	<!-- 设置上传文件最大值   1M=1*1024*1024(B)=1048576 bytes -->  
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
+   	 <property name="maxUploadSize" value="1048576" />  
+	</bean>
 	
 	<!-- 配置视图解析器 ,将handler方法返回的逻辑视图解析为物理视图 -->
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">

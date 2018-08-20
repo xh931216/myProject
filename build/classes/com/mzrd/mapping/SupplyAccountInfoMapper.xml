@@ -30,6 +30,9 @@
 	<select id="getSupplyInfoByUserName" resultType="com.mzrd.pojo.SupplyAccountInfo" 
 		parameterType="com.mzrd.pojo.SupplyAccountInfo">
 		select * from supply_account_info where userName=#{userName}
+		<if test="password != null and password != ''">
+			and password=#{password}
+		</if>
 	</select>
 	<select id="getSupplyInfoList" resultMap="getSupplyAccountInfoMap"
 		parameterType="java.util.Map">
@@ -58,12 +61,12 @@
 		update supply_account_info set state=0 where sid=#{sid}
 	</delete>
 	<update id="updateSupply" parameterType="com.mzrd.pojo.SupplyAccountInfo">
-		update supply_account_info set 
+		update supply_account_info set sid=#{sid}
 		<if test="password!=null">
-			`password`=#{password}
+			,`password`=#{password}
 		</if>
 		<if test="userName!=null and userName!=''">
-			userName=#{userName}
+			,userName=#{userName}
 		</if>
 		<if test="supplierName!=null and supplierName!=''">
 			,supplierName=#{supplierName}

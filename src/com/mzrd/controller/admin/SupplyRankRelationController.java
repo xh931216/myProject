@@ -1,4 +1,4 @@
-package com.mzrd.controller;
+package com.mzrd.controller.admin;
 
 import java.util.HashMap;
 import java.util.List;
