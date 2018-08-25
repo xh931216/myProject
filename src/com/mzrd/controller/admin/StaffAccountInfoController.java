@@ -65,16 +65,13 @@ public class StaffAccountInfoController {
 	@RequestMapping(value="/addStaff.action", produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String addStaff(StaffAccountInfo si){
-		System.out.println(si.toString());
-		if(si.getPassword() != null){
-			String pass = null;
-			try {
-				pass = shaUitl.getPassword(si.getPassword());
-			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
-			}
+		try {
+			String pass = shaUitl.getPasswordOne();
 			si.setPassword(pass);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
 		}
+			
 		int dOK = staffAccountInfoService.addStaff(si);
 		if(dOK == 1){
 			return "{\"success\":\"true\",\"message\":\"添加成功\"}";
@@ -86,20 +83,30 @@ public class StaffAccountInfoController {
 	@RequestMapping(value="/updateStaff.action", produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String updateStaffPost(StaffAccountInfo si){
-		if(si.getPassword() != null){
-			String pass = null;
-			try {
-				pass = shaUitl.getPassword(si.getPassword());
-			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
-			}
+		
+		int dOK = staffAccountInfoService.updateStaffAccount(si);
+		if(dOK == 1){
+			return "{\"success\":\"true\",\"message\":\"修改成功\"}";
+		}
+		return "{\"success\":\"false\",\"message\":\"修改失败\"}";
+	}
+	//重置密码员工信息
+	@RequestMapping(value="/updateStaffpassword.action", produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String updateStaffpassword(StaffAccountInfo si){
+		try {
+			String pass = shaUitl.getPasswordOne();
 			si.setPassword(pass);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		int dOK = staffAccountInfoService.updateStaffAccount(si);
 		if(dOK == 1){
 			return "{\"success\":\"true\",\"message\":\"修改成功\"}";
 		}
 		return "{\"success\":\"false\",\"message\":\"修改失败\"}";
+		
 	}
 	//获取所有的登录名
 	@RequestMapping(value="/getAllNameList.action",method = RequestMethod.POST, produces = "text/html;charset=UTF-8")

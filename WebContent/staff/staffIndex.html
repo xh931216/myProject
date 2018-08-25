@@ -11,16 +11,42 @@
 	<script type="text/javascript" src='../assets/js/adminIndex.js'> </script>
     <script type="text/javascript">
 	 var _menus = {"menus":[
-						{"menuid":"1","icon":"icon-sys","menuname":"资料管理",
-							"menus":[{"menuid":"32","menuname":"更改资料","icon":"icon-edit","url":"staffMessage.html"}
-										]
-						},{"menuid":"1","icon":"icon-sys","menuname":"询价单管理",
-							"menus":[{"menuid":"32","menuname":"添加询价","icon":"icon-add","url":"staffDesiredAdd.html"},
-									{"menuid":"13","menuname":"查询询价","icon":"icon-nav","url":"postPowerList.html"},
-									{"menuid":"13","menuname":"非法报价","icon":"icon-set","url":"postPowerList.html"}
-										]
-						}
-				]};
+    						{"menuid":"1","icon":"icon-sys","menuname":"资料管理",
+    							"menus":[{"menuid":"32","menuname":"更改资料","icon":"icon-edit","url":"staffMessage.html"}
+    										]
+    						}]};
+	 $.ajax({  
+         url:'getDesiredInfo.action',  
+         cache:false,  
+         success:function(data){
+        	 var insert=data.postInfo.rinsert;
+        	 var select=data.postInfo.rselect;
+        	 if(insert !=0 && select!=0){
+        	 _menus = {"menus":[{"menuid":"1","icon":"icon-sys","menuname":"询价单管理",
+        							"menus":[
+        							        	 {"menuid":"33","menuname":"添加询价","icon":"icon-add","url":"staffDesiredAdd.html"},
+        							         {"menuid":"34","menuname":"查询询价","icon":"icon-nav","url":"staffDesiredList.html"}
+        				 ]}]};
+        	 }
+        	 if(insert ==0 && select!=0){
+            	 _menus = {"menus":[{"menuid":"1","icon":"icon-sys","menuname":"询价单管理",
+            							"menus":[{"menuid":"34","menuname":"查询询价","icon":"icon-nav","url":"staffDesiredList.html"}
+            				 ]}]};
+            	 }
+        	 if(insert !=0 && select==0){
+            	 _menus = {"menus":[{"menuid":"1","icon":"icon-sys","menuname":"询价单管理",
+            							"menus":[
+            							        	 {"menuid":"33","menuname":"添加询价","icon":"icon-add","url":"staffDesiredAdd.html"}]}]};
+            	 }
+        	 if(insert ==0 && select==0){
+            	 _menus = {"menus":[{"menuid":"1","icon":"icon-sys","menuname":"询价单管理",
+            							"menus":[
+            							        	]}]};
+            	 }
+        	 InitLeftMenu();
+         }  
+    })  
+	
          //设置登录窗口
         function openPwd() {
             $('#w').window({
@@ -68,7 +94,7 @@
         }
 
         $(function() {
-
+        	
             openPwd();
 
             $('#editpass').click(function() {

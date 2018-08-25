@@ -21,59 +21,109 @@
 	
 	<!-- 工具栏 -->
 	<div id="adminListTb" style="padding:2px 5px;">
-		<a href="javascript:void(0)" class="easyui-linkbutton"
+		<a id="ainsert" href="javascript:void(0)" class="easyui-linkbutton"
 			iconCls="icon-add" plain="true" onclick="addStaff()">新增</a> 
-		<a href="javascript:void(0)" class="easyui-linkbutton"
+		<a id="aupdate" href="javascript:void(0)" class="easyui-linkbutton"
 			iconCls="icon-edit" plain="true" onclick="editStaff();">修改</a>
-		<a href="javascript:void(0)" class="easyui-linkbutton"
+		<a id="adelete" href="javascript:void(0)" class="easyui-linkbutton"
 			iconCls="icon-cancel" plain="true" onclick="deleteStaff();">删除</a>
 	</div>
 	<!-- 查询窗体 -->
 	<div id="searchOrderTb" style="padding:2px 5px;">
 		<form id="searchPostForm" method="get">
-			&nbsp;&nbsp;&nbsp; 姓名 &nbsp;<input class="easyui-textbox" name="sname"
-			 id="sname" style="width:110px" placeholder="请输入姓名"/>
-			 &nbsp;&nbsp;&nbsp; 员工状态 &nbsp;
-			 <select id="state"  class="easyui-combobox" name="state" style="width:200px;">
-					<option value="">全部</option>
-					<option value="1" selected>在职</option>
-					<option value="0">离职</option>
-				</select>
+		 &nbsp;&nbsp;&nbsp; 供应类别 &nbsp;
+			<input style="width:115px;" id="srname1" class="easyui-combobox" 
+				data-options="valueField:'srid',textField:'srname',url:'getRankAllNameList.action'" />
+			&nbsp;&nbsp;&nbsp; 发布状态 &nbsp;
+			 <select id="state1"  class="easyui-combobox" name="state" style="width:100px;">
+					<option value="">未发布</option>
+					<option value="1" selected>已发布</option>
+			</select>
+			<BR />
+			&nbsp;&nbsp;&nbsp; 报价截止时间&nbsp;<input type="text" id="overDate1" 
+			style="width:130px" name="overDate" class="easyui-datebox" />
+					
+			 &nbsp;&nbsp;&nbsp; 物资到货时间 &nbsp;
+			 <input type="text" id="date1" style="width:130px" name="date" 
+			 class="easyui-datebox" />
+			
+			 
 			<a href="javascript:void(0)"
 				class="easyui-linkbutton" iconCls="icon-search" plain="true"
 				onclick="searchPostInfo();">查找</a>
 		</form>
 	</div>
 	
-	
 	<!-- 修改信息的对话框  -->
-	<div id="departDlg" class="easyui-dialog" title="修改信息"
-		closed="true" style="width:400px">
+	<div id="powerDlg" class="easyui-dialog" title="修改信息"
+		closed="true" style="width:550px">
 		<div style="padding:10px 60px 20px 60px">
-			<form id="staffForm" method="POST" action="updateStaff.action" class="easyui-form">
+			<form id="staffForm" method="POST" action="updateStaffDesired.action" class="easyui-form">
 				<table cellpadding="7">					
 					<tr>
-						<td >登录名:</td>
-							<td><input id="susername" class="easyui-textbox" type="text" name="userName" 
-							data-options="required:true,validType:'myvalidate'"/>
-							<input id="sid" class="easyui-textbox" type="hidden" name="id"/>
-
+						<td >询价单号:</td>
+							<td><input type="text" id="desiredId" style="width:250px" name="desiredId" class="easyui-textbox" required="required"/>
+							<INPUT  type="hidden" id="deid" name="deid" class="easyui-textbox"/>
+						</td>
+						
+					</tr>	
+					<tr>
+						<td style="width:70px">询价发出单位:</td>
+							<td>
+							<select id="supplier" class="easyui-combobox" name="supplier" style="width:250px;" required="required">  
+    							<option ></option>  
+    							<option value="明州热电">明州热电</option>  
+   								<option value="生物质">生物质</option>
+							</select>  
+						</td>
+					</tr>	
+					 <tr>
+						<td style="width:70px">物资名称:</td>
+							<td><input id="srname" class="easyui-combobox" style="width:250px" required="required" name="srid"
+						data-options="valueField:'srid',textField:'srname',url:'getRankAllNameList.action'" />
 						</td>
 					</tr>
 					<tr>
-						<td >姓名:</td>
-							<td><input class="easyui-textbox" type="text" id="ssname" name="sname"  ></input>
+						<td >物资规格:</td>
+							<td><input type="text" id="guige" style="width:250px" name="guige" class="easyui-textbox"  required="required"/>
+						</td>
+					</tr>	
+					<tr>
+						<td >物资数量:</td>
+							<td><input type="text" id="number" style="width:250px" name="number" class="easyui-numberbox" required="required"/>
 						</td>
 					</tr>
 					<tr>
-						<td >手机号:</td>
-							<td><input class="easyui-textbox" type="text" id="sphone" validType="telNum" name="phone" />
+						<td >物资单 位:</td>
+							<td><input type="text" id="unit" style="width:250px" name="unit" class="easyui-textbox" required="required"/>
+						</td>
+					</tr>
+							
+					
+					<tr>
+						<td >物资到货时间:</td>
+							<td><input type="text" id="date" style="width:250px" name="date" class="easyui-datetimebox" required="required"/>
 						</td>
 					</tr>
 					<tr>
-						<td >邮箱:</td>
-							<td><input class="easyui-textbox" type="text" id="semail" 
-							name="email"  validType="email"></input>
+						<td >报价截止时间:</td>
+							<td><input type="text" id="overDate" style="width:250px" name="overDate" class="easyui-datetimebox" required="required"/>
+						</td>
+					</tr>
+					<tr>
+						<td >备        注:</td>
+							<td><input type="text" class="easyui-textbox" id="remark" 
+							data-options="multiline:true" style="height:50px;width:250px"
+							name="remark" required="required"/>
+						</td>
+					</tr>
+					<tr>
+						<td >发布:</td>
+        				<td style="text-align:left">
+           					<span class="radioSpan">
+               					 <input type="radio" name="state" value="0" checked="checked">否</input>
+               					 <input type="radio" name="state" value="1">是</input>
+           					</span>
 						</td>
 					</tr>
 				</table>
@@ -90,7 +140,7 @@
 		$(function() {
 			$('#adminListDg').datagrid({
 				singleSelect : false,
-				url : 'getStaffInfoList.action',
+				url : 'getStaffDesiredList.action',
 				queryParams : {},//查询条件
 				pagination : true,//启动分页
 				pageSize : 5,//设置初始每页记录数（页大小）
@@ -101,88 +151,127 @@
 				header : '#searchOrderTb', //为datagrid标头添加搜索栏
 				columns : [ [ { //编辑datagrid的列
 					title : '序号',
-					field : 'id',
+					field : 'deid',
 					align : 'center',
 					checkbox : true
 				}, {
-					field : 'did',
-					title : '所属部门',
+					field : 'id',
+					title : '询价人',
 					width : 100,
-					formatter: function(value, row, index){
-						if(row.departmentInfo){
-							return row.departmentInfo.dname;
+					formatter: function(value, row,index){
+						if(row.staffAccountInfo){
+					        return row.staffAccountInfo.userName;
 						}else{
 							value;
 						}
 					}
 				},{
-					field : 'rid',
-					title : '所属职位',
+					field : 'desiredId',
+					title : '询价单号',
+					width : 100
+				}, {
+					field : 'supplier',
+					title : '询价单位',
+					width : 100
+				}, {
+					field : 'srid',
+					title : '物资名称',
 					width : 100,
-					formatter: function(value, row, index){
-						if(row.postInfo){
-							return row.postInfo.rname;
+					formatter: function(value, row,index){
+						if(row.supplyRankInfo){
+					        return row.supplyRankInfo.srname;
 						}else{
 							value;
 						}
 					}
 				}, {
-					field : 'userName',
-					title : '登录名',
+					field : 'guige',
+					title : '物资规格',
 					width : 100
 				}, {
-					field : 'sname',
-					title : '姓名',
+					field : 'number',
+					title : '物资数量',
 					width : 100
 				}, {
-					field : 'phone',
-					title : '手机号',
+					field : 'unit',
+					title : '物资单位',
 					width : 100
-				}, {
-					field : 'email',
-					title : '邮箱',
-					width : 100
-				}, {
+				},{
+					field : 'date',
+					title : '物资到货时间',
+					width : 150
+				},{
+					field : 'overDate',
+					title : '报价截止时间',
+					width : 150
+				},{
+					field : 'remark',
+					title : '备注',
+					width : 300
+				},{
 					field : 'state',
 					title : '状态',
 					width : 100,
 					formatter: function(value, row, index){
 						if(row.state == '1'){
-							return "在职";
+							return "已发布";
 						}else{
-							return "离职";
+							return "未发布";
 						}
 					}
 				} ] ]
 			});
 		});
-		// 查询员工
+		
+		$.ajax({  
+	         url:'getDesiredInfo.action',  
+	         cache:false,  
+	         success:function(data){
+	        	 var insert=data.postInfo.rinsert;
+	        	 var rdelete=data.postInfo.rdelete;
+	        	 var rupdate=data.postInfo.rupdate;
+	        	 if(insert==0){
+		        	 $("#ainsert").hide();
+	        	 }
+	        	 if(rdelete==0){
+		        	 $("#adelete").hide();
+	        	 }
+	        	 if(rupdate==0){
+		        	 $("#aupdate").hide();
+	        	 }
+	         }
+		})
+		// 查询询价
 		function searchPostInfo() {
-			var sname = $('#sname').val();
-			var state = $('#state').combobox("getValue");
+			var date =$('#date1').datebox('getValue');
+			var overDate=$('#overDate1').datebox('getValue');
+			var srid = $('#srname1').combobox("getValue");
+			var state = $('#state1').combobox("getValue");
 			$('#adminListDg').datagrid('load', {
-				sname : sname,
+				srid  : srid,
+				date  : date,
+				overDate:overDate,
 				state : state
 			});
 		}
 		var id=0;
         function addStaff(){
-			window.open("staffAdd.html","_self");
+			window.open("staffDesiredAdd.html","_self");
 		}
-		// 删除员工
+		// 删除询价
 		function deleteStaff() {
 			// 获取选中的员工记录行
 			var rows = $("#adminListDg").datagrid('getSelections');
 			if (rows.length >0 && rows.length<=1 ) {
 				var row = $("#adminListDg").datagrid("getSelected");
 				state = row.state;
-				if(state == "1"){
-				$.messager.confirm('Confirm', '确认要删除么?', function(r) {
+				if(state == "0"){
+				$.messager.confirm('Confirm', '确认要删除'+row.desiredId+'?', function(r) {
 					if (r) {
-						id = row.id;
+						deid = row.deid;
 						// 发送请求
-						$.post('deleteStaff.action', {
-							id : id
+						$.post('deleteDesiredInfo.action', {
+							deid : deid
 						}, function(result) {
 							if (result.success == 'true') {
 								$("#adminListDg").datagrid('reload'); 
@@ -201,56 +290,15 @@
 					}
 				});
 				}else{
-					$.messager.alert('提示', '员工已经离职', 'info');
+					$.messager.alert('提示', '询价单已发布，不能删除', 'info');
 				}
 			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个员工', 'info');
+				$.messager.alert('提示', '只能选择一个询价单', 'info');
 			}else {
-				$.messager.alert('提示', '请选择要离职的员工', 'info');
+				$.messager.alert('提示', '请选择未发布的询价单', 'info');
 			}
 		}
 		
-		 // 修改职位
-		function editStaffPowers() {
-			var rows = $("#adminListDg").datagrid('getSelections');
-			if (rows.length >0 && rows.length<=1 ) {
-				var row = $("#adminListDg").datagrid("getSelected");
-				id = row.id;
-				// 打开“修改”对话框
-				$("#powerDlg").dialog("open").dialog('setTitle', '修改职位');
-				$("#dnameupdate").textbox("setValue",row.departmentInfo.did);
-				$("#dnameupdate").textbox("setText",row.departmentInfo.dname);
-				$('#postupdate').combobox('reload','getPostInfoAndDepartmentInfoList.action?did='
-						+row.departmentInfo.did);
-				$("#postupdate").textbox("setValue",row.postInfo.rid);
-				$("#postupdate").textbox("setText",row.postInfo.rname);
-				
-			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个员工', 'info');
-			}else {
-				$.messager.alert('提示', '请选择要修改的员工', 'info');
-			}
-		}
-		
-		// 保存修改职位信息
-		function savePowers() {
-			 $.ajax({  
-	              url:'updateStaff.action?rid='+$('#postupdate').combobox("getValue")
-	            		  +'&id='+id,  
-	              cache:false,  
-	              success:function(data){  
-	                  eval('data='+data);  
-	                  if(data.success=="true"){  
-						 $("#adminListDg").datagrid("reload");
-	                  	  $("#powerDlg").dialog("close");
-	                  }
-					  $.messager.show({
-						title : "提示信息",
-						msg : data.message
-					});
-	              }  
-             })  
-		}
 		 //设置密码窗口
         function editPassword() {
             var rows = $("#adminListDg").datagrid('getSelections');
@@ -290,32 +338,43 @@
             
         }
         
-        //设置员工信息窗口
+        //设置询价信息窗口
         function editStaff() {
             var rows = $("#adminListDg").datagrid('getSelections');
 			if (rows.length >0 && rows.length<=1 ) {
 				var row = $("#adminListDg").datagrid("getSelected");
+				state =row.state;
+				if(state == "0"){
 				// 打开“修改”对话框
-				$("#departDlg").dialog("open").dialog('setTitle', '信息修改');
-				$("#sid").textbox("setValue",row.id);
-				$("#susername").textbox("setValue",row.userName);
-				$("#ssname").textbox("setValue",row.sname);
-				$("#sphone").textbox("setValue",row.phone);
-				$("#semail").textbox("setText",row.email);
+				$("#powerDlg").dialog("open").dialog('setTitle', '修改询价');
+				$("#deid").textbox("setValue",row.deid);
+				$("#state").textbox("setValue",row.state);
+				$("#overDate").datetimebox("setValue",row.overDate);
+				$("#date").datetimebox("setValue",row.date);
+				$("#supplier").textbox("setValue",row.supplier);
+				$("#number").textbox("setValue",row.number);
+				$("#remark").textbox("setValue",row.remark);
+				$("#unit").textbox("setValue",row.unit);
+				$("#guige").textbox("setValue",row.guige);
+				$("#srname").combobox("select",row.srid);
+				$("#desiredId").textbox("setValue",row.desiredId);
+				}else{
+					$.messager.alert('提示', '询价单已发布，不能修改', 'info');
+				}
 			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个员工', 'info');
+				$.messager.alert('提示', '只能选择一个询价单', 'info');
 			}else {
-				$.messager.alert('提示', '请选择要修改的员工', 'info');
+				$.messager.alert('提示', '请选择未发布的询价单', 'info');
 			}
         }
-        // 保存员工信息
+        // 保存询价信息
 		function saveStaff() {
 			$("#staffForm").form("submit", {
 				onSubmit : function() {
 					return $(this).form('enableValidation').form('validate');
 				},
 				success : function(data) {	
-					var data = eval('(' + data + ')');
+					eval('data='+data);  
 	                if(data.success=="true"){  
 						$("#adminListDg").datagrid("reload");
 		            }

@@ -3,6 +3,7 @@ package com.mzrd.dao;
 import java.util.List;
 
 import com.mzrd.pojo.DepartmentInfo;
+import com.mzrd.pojo.PostInfo;
 
 public interface DepartmentInfoDAO {
 	public List<DepartmentInfo> getDepartmentList();

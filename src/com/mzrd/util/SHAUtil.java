@@ -33,4 +33,7 @@ public class SHAUtil {
 		} 
          System.out.println(new String(resultBytes)); 
 	}
+    public String getPasswordOne() throws NoSuchAlgorithmException{
+    	return getPassword("123456");
+    }
 }  

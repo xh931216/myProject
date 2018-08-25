@@ -52,7 +52,7 @@
 		</form>
 	</div>
 	<!--修改密码窗口-->
-    <div id="pass" class="easyui-dialog" title="重置密码"  closed="true"
+   <!--  <div id="pass" class="easyui-dialog" title="重置密码"  closed="true"
     	 style="width: 300px; height: 200px; padding: 5px;
         background: #fafafa;">
         <div class="easyui-layout" fit="true">
@@ -78,7 +78,7 @@
                     确定</a> <a id="btnCancel" class="easyui-linkbutton" icon="icon-cancel" href="javascript:void(0)" onclick="closePwd();">取消</a>
             </div>
         </div>
-    </div>
+    </div> -->
 	<!-- 修改类别的对话框  -->
 	<div id="powerDlg" class="easyui-dialog" title="修改类别"
 		closed="true" style="width:450px">
@@ -244,7 +244,7 @@
 				var row = $("#adminListDg").datagrid("getSelected");
 				state = row.state;
 				if(state == "1"){
-				$.messager.confirm('Confirm', '确认要删除么?', function(r) {
+				$.messager.confirm('Confirm', '确认要删除<'+row.userName+'>?', function(r) {
 					if (r) {
 						sid = row.sid;
 						// 发送请求
@@ -343,23 +343,44 @@
 		}
 		 //设置密码窗口
         function editPassword() {
-            var rows = $("#adminListDg").datagrid('getSelections');
+        	// 获取选中的供应商记录行
+			var rows = $("#adminListDg").datagrid('getSelections');
 			if (rows.length >0 && rows.length<=1 ) {
 				var row = $("#adminListDg").datagrid("getSelected");
-				sid = row.sid;
-				// 打开“修改”对话框
-				$("#pass").dialog("open").dialog('setTitle', '重置密码');
+				state = row.state;
+				if(state == "1"){
+				$.messager.confirm('Confirm', '确认要修改<'+row.userName+'>密码?', function(r) {
+					if (r) {
+						sid = row.sid;
+						// 发送请求
+						$.post('updateSupplyPassword.action', {
+							sid : sid
+						}, function(result) {
+							if (result.success == 'true') {
+								$("#adminListDg").datagrid('reload');
+							} 
+							$.messager.show({
+								title : '提示信息',
+								msg : result.message
+							});
+						}, 'json');
+
+					}
+				});
+				}else{
+					$.messager.alert('提示', '供应商已是不供应', 'info');
+				}
 			} else if(rows.length>1){
 				$.messager.alert('提示', '只能选择一个供应商', 'info');
 			}else {
-				$.messager.alert('提示', '请选择重置密码的供应商', 'info');
+				$.messager.alert('提示', '请选择要在供应的供应商', 'info');
 			}
-        }
-        //关闭登录窗口
+		}
+       /*  //关闭登录窗口
         function closePwd() {
             $('#pass').window('close');
-        }
-        //修改密码
+        } */
+      /*   //修改密码
         function savePass() {
             var $rePass = $('#txtRePass');
             $.ajax({  
@@ -378,7 +399,7 @@
 	              }  
              })  
             
-        }
+        } */
         
         //设置供应商信息窗口
         function editSupply() {

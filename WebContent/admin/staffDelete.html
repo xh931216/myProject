@@ -130,7 +130,7 @@
 				var row = $("#adminListDg").datagrid("getSelected");
 				state = row.state;
 				if(state == "1"){
-				$.messager.confirm('Confirm', '确认要删除么?', function(r) {
+				$.messager.confirm('Confirm', '确认要删除<'+row.userName+'>么?', function(r) {
 					if (r) {
 						id = row.id;
 						// 发送请求

@@ -26,24 +26,63 @@
 		closed="true" style="width:500px">
 		<div style="padding:10px 60px 20px 60px">
 			<form id="staffForm" method="POST" action="addStaffDesired.action" class="easyui-form" enctype="multipart/form-data">
-				<table cellpadding="7">			
+				<table cellpadding="7">	
+					<tr>
+						<td >询价单号:</td>
+							<td><input type="text" id="desiredId" style="width:250px" name="desiredId" class="easyui-textbox" required="required"/>
+						</td>
+					</tr>	
+					<tr>
+						<td style="width:70px">询价发出单位:</td>
+							<td>
+							<select id="supplier" class="easyui-combobox" name="supplier" style="width:250px;" required="required">  
+    							<option ></option>  
+    							<option value="明州热电">明州热电</option>  
+   								<option value="生物质">生物质</option>
+							</select>  
+						</td>
+					</tr>	
 					 <tr>
-						<td style="width:70px">物资类别:</td>
+						<td style="width:70px">物资名称:</td>
 							<td><input id="srname" class="easyui-combobox" style="width:250px" required="required" name="srid"
 						data-options="valueField:'srid',textField:'srname',url:'getRankAllNameList.action'" />
 						</td>
 					</tr>
 					<tr>
-						<td >开始时间:</td>
-							<td><input type="text" id="startDate" style="width:250px" name="startDate" class="easyui-datetimebox" required="required"/>
+						<td >物资规格:</td>
+							<td><input type="text" id="guige" style="width:250px" name="guige" class="easyui-textbox"  required="required"/>
+						</td>
+					</tr>	
+					<tr>
+						<td >物资数量:</td>
+							<td><input type="text" id="number" style="width:250px" name="number" class="easyui-numberbox" required="required"/>
 						</td>
 					</tr>
 					<tr>
-						<td >结束时间:</td>
+						<td >物资单 位:</td>
+							<td><input type="text" id="unit" style="width:250px" name="unit" class="easyui-textbox" required="required"/>
+						</td>
+					</tr>
+							
+					
+					<tr>
+						<td >物资到货时间:</td>
+							<td><input type="text" id="date" style="width:250px" name="date" class="easyui-datetimebox" required="required"/>
+						</td>
+					</tr>
+					<tr>
+						<td >报价截止时间:</td>
 							<td><input type="text" id="overDate" style="width:250px" name="overDate" class="easyui-datetimebox" required="required"/>
 						</td>
 					</tr>
 					<tr>
+						<td >备        注:</td>
+							<td><input type="text" class="easyui-textbox" id="remark" 
+							data-options="multiline:true" style="height:50px;width:250px"
+							name="remark" required="required"/>
+						</td>
+					</tr>
+					<!-- <tr>
 						<td >询价单:</td>
 							<td>
 							  <input class="easyui-filebox" style="width:250px" data-options='prompt:"选择询价单照片",buttonText:"选择",onChange:change_photo' 
@@ -52,13 +91,13 @@
 								onclick="imageShow();">浏览询价单</a>
 						</td>
 						
-					</tr>
+					</tr> -->
 					<tr>
 						<td >发布:</td>
         				<td style="text-align:left">
            					<span class="radioSpan">
-               					 <input type="radio" name="state" value="0">否</input>
-               					 <input type="radio" name="state" value="1" checked="checked">是</input>
+               					 <input type="radio" name="state" value="0" checked="checked">否</input>
+               					 <input type="radio" name="state" value="1">是</input>
            					</span>
 						</td>
 					</tr>
@@ -76,13 +115,13 @@
 	</div>
 	</div>
 	<!-- 图片预览功能 -->
-	<div style="display: none">
+	<!-- <div style="display: none">
     	<div id="dlg" class="datagrid-toolbar" style="padding:5px;">
       	  <img id="Img" src="" onload="DrawImage(this)"/>
     	</div>
-	</div>
+	</div> -->
 	<script type="text/javascript">
-	var url = null;
+	/* var url = null;
 	function imageShow(){
 		if(url == null){
 			$.messager.alert('提示', '先选择文件', 'info');
@@ -97,13 +136,13 @@
 	            cache: false,
 	            modal: true
 	     });
-	};
+	}; */
 	
-	function change_photo(){
+	/* function change_photo(){
 		url = $(this).filebox('getValue');
         PreviewImage($("input[name='file']")[0], 'Img', 'dlg'); 
     };
-	
+	 */
     // 保存信息
 	function saveDesired() {
 		$("#staffForm").form("submit", {

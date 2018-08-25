@@ -64,16 +64,23 @@ public class SupplyAccountInfoController {
 	@RequestMapping(value="/updateSupply.action", produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String updateSupply(SupplyAccountInfo si){
-		if(si.getPassword() != null){
-			String pass = null;
-			try {
-				pass = shaUitl.getPassword(si.getPassword());
-			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
-			}
-			si.setPassword(pass);
+		int dOK = supplyAccountInfoService.updateSupply(si);
+		if(dOK == 1){
+			return "{\"success\":\"true\",\"message\":\"更改成功\"}";
 		}
-		System.out.println(si.toString());
+		return "{\"success\":\"false\",\"message\":\"更改失败\"}";
+	}
+	//修改供应商密码
+	@RequestMapping(value="/updateSupplyPassword.action", produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String updateSupplyPassword(SupplyAccountInfo si){
+		String pass = null;
+		try {
+			pass = shaUitl.getPasswordOne();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		si.setPassword(pass);
 		int dOK = supplyAccountInfoService.updateSupply(si);
 		if(dOK == 1){
 			return "{\"success\":\"true\",\"message\":\"更改成功\"}";
@@ -107,15 +114,14 @@ public class SupplyAccountInfoController {
 	@RequestMapping(value="/addSupply.action", produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String addSupply(SupplyAccountInfo si,String[] rankList){
-		if(si.getPassword() != null){
 		String pass = null;
 		try {
-			pass = shaUitl.getPassword(si.getPassword());
+			pass = shaUitl.getPasswordOne();
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-			si.setPassword(pass);
-		}
+		si.setPassword(pass);
+		
 		int dOK = supplyAccountInfoService.addSupply(si,rankList);
 		if(dOK == 1){
 			return "{\"success\":\"true\",\"message\":\"添加成功\"}";

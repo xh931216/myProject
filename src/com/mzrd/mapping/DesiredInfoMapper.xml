@@ -2,27 +2,77 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mzrd.dao.DesiredInfoDao">
-	
-	<select id="getPostInfoList"  resultType="com.mzrd.pojo.DesiredInfo" parameterType="com.mzrd.pojo.DesiredInfo">
-		select * from desired_info
+	<!-- 封装账号 -->
+	<resultMap type="com.mzrd.pojo.DesiredInfo" id="getMap">
+		<id property="deid" column="deid" />
+		<result property="srid" column="srid" />
+		<result property="id" column="id" />
+		<result property="state" column="st" />
+		<result property="overDate" column="overDate" />
+		<result property="supplier" column="supplier" />
+		<result property="guige" column="guige" />
+		<result property="date" column="date" />
+		<result property="unit" column="unit"/>
+		<result property="number" column="number"/>
+		<result property="remark" column="remark"/>
+		<result property="desiredId" column="desiredId"/>
+		<association property="supplyRankInfo" javaType="com.mzrd.pojo.SupplyRankInfo">
+			<id property="srid" column="srid" />
+			<result property="srname" column="srname" />
+		</association>
+		<association property="staffAccountInfo" javaType="com.mzrd.pojo.StaffAccountInfo">
+			<id property="id" column="id" />
+			<result property="userName" column="userName" />
+			<result property="password" column="password" />
+			<result property="rid" column="rid" />
+			<result property="sname" column="sname" />
+			<result property="phone" column="phone" />
+			<result property="email" column="email" />
+			<result property="state" column="sta" />
+		</association>
+	</resultMap>	
+	<select id="getStaffDesiredPage"  resultMap="getMap"
+	 parameterType="java.util.Map">
+		select di.state st,sa.state sta,sr.*,sa.*,di.*
+ 		from supply_rank_info sr,staff_account_info sa,desired_info di ,post_info pi
+		where sr.srid=di.srid and di.id=sa.id and sa.rid=pi.rid
+		<if test="select==1">
+			and di.id=#{id}
+		</if>
+		<if test="select==2">
+			and pi.did=#{did}
+		</if>
+		<if test="srid!=null and srid!=''">
+			and di.srid=#{srid}
+		</if>
+		<if test="date!=null and date!=''">
+			and di.date like concat('%',#{date},'%')
+		</if>
+		<if test="overDate!=null and overDate!=''">
+			and di.overDate like concat('%',#{overDate},'%')
+		</if>
+		 <if test="state != null and state != ''">
+		 and di.state=#{state}
+		 </if>
+		<if test="start != null and limit != null">
+		  limit #{start},#{limit}
+		</if>
 	</select>
-	
+	<select id="getPostInfo" parameterType="com.mzrd.pojo.DesiredInfo" 
+		resultType="com.mzrd.pojo.PostInfo">
+		select p.* from desired_info di,staff_account_info si,post_info p
+ 		where di.id=si.id and si.rid=p.rid and di.deid=#{deid}
+	</select>
 	<insert id="addDesiredInfo" parameterType="com.mzrd.pojo.DesiredInfo">
-		insert into desired_info (srid,startDate,overDate,desiredImage,id,state) 
-		values(#{srid},#{startDate},#{overDate},#{desiredImage},#{id},#{state});
+		insert into desired_info (srid,supplier,guige,date,unit,number,overDate,remark,desiredId,id,state) 
+		values(#{srid},#{supplier},#{guige},#{date},#{unit},#{number},#{overDate},#{remark},#{desiredId},#{id},#{state});
 	</insert>
 	
 	<update id="updateDesiredInfo" parameterType="com.mzrd.pojo.DesiredInfo">
 		update desired_info 
-		set deid=#{deid}
-		<if test="srid!=0">,srid=#{srid}</if>
-		<if test="startDate!=null and startDate!=''">,startDate=#{startDate}</if>
-		<if test="overDate!=null and overDate!=''">,overDate=#{overDate}</if>
-		<if test="desiredImage!=null and desiredImage!=''">
-			,desiredImage=#{desiredImage}
-		</if>
-		<if test="id!=0"> ,id=#{id}</if>
-		<if test="state!=0"> ,state=#{state}</if>
+		set srid=#{srid},date=#{date},overDate=#{overDate},supplier=#{supplier}
+		,guige=#{guige},unit=#{unit},number=#{number},remark=#{remark},desiredId=#{desiredId}
+		 ,state=#{state}
 		where deid=#{deid}
 	</update>
 	

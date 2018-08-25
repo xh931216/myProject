@@ -73,9 +73,7 @@
 						<td>添加权限</td>
 						<td><select id="rinsertadd" class="easyui-combobox" name="rinsert" style="width:200px;">
 					<option value="0">不能</option>
-					<option value="1">自己</option>
-					<option value="2">部门</option>
-					<option value="3">公司</option>
+					<option value="1">能</option>
 				</select></td>
 					</tr>
 					<tr>
@@ -133,7 +131,11 @@
 					title : '增加权限',
 					width : 100,
 					formatter: function(value, row, index){
-						return show(row.rinsert);
+						if(row.rinsert==1){
+							return '能';
+						}else{
+							return '不能';
+						}
 					}
 				}, {
 					field : 'rdelete',
@@ -173,6 +175,14 @@
 				return "公司";
 			}
 		}
+		function show1(data){
+			if(data == 0){
+				return "不能";
+			}
+			if(data == 1){
+				return "能";
+			}
+		}
 		// 查询职位
 		function searchPostInfo() {
 			var rname = $('#rname').val();
@@ -201,7 +211,7 @@
 				$("#rdeleteadd").textbox("setValue",row.rdelete);
 				$("#rdeleteadd").textbox("setText",show(row.rdelete));
 				$("#rinsertadd").textbox("setValue",row.rinsert);
-				$("#rinsertadd").textbox("setText",show(row.rinsert));
+				$("#rinsertadd").textbox("setText",show1(row.rinsert));
 				$("#rselectadd").textbox("setValue",row.rselect);
 				$("#rselectadd").textbox("setText",show(row.rselect));
 				

@@ -8,7 +8,8 @@ import com.mzrd.pojo.DesiredInfo;
 import com.mzrd.pojo.PostInfo;
 
 public interface DesiredInfoService {
-	public List<DesiredInfo> getPostInfoList(DesiredInfo di);
+	public List<DesiredInfo> getStaffDesiredPage(Map map);
+	public PostInfo getPostInfo(DesiredInfo di);
 	public int addDesiredInfo(DesiredInfo di);
 	public int updateDesiredInfo(DesiredInfo di);
 	public int deleteDesiredInfo(DesiredInfo di);

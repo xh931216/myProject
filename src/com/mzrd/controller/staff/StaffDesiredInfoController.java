@@ -23,10 +23,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mzrd.controller.admin.PostInfoController;
+import com.mzrd.pojo.DepartmentInfo;
 import com.mzrd.pojo.DesiredInfo;
+import com.mzrd.pojo.PostInfo;
 import com.mzrd.pojo.StaffAccountInfo;
 import com.mzrd.service.AdminInfoService;
 import com.mzrd.service.DesiredInfoService;
+import com.mzrd.service.PostInfoService;
 import com.mzrd.service.SupplyAccountInfoService;
 import com.mzrd.util.Image;
 @RequestMapping("/staff")
@@ -38,82 +42,130 @@ public class StaffDesiredInfoController {
 	private AdminInfoService adminInfoService;
 	@Autowired
 	private SupplyAccountInfoService supplyAccountInfoService;
-	Image image = new Image();
+	@Autowired
+	private PostInfoService postInfoService;
 	
-	/*//删除询价
-	@RequestMapping(value="/deleteStaff.action", produces = "text/html;charset=UTF-8")
+	//获取所有询价
+	@RequestMapping("/getStaffDesiredList.action")
 	@ResponseBody
-	public String deleteStaff(StaffAccountInfo si){
-		int dOK = staffAccountInfoService.deleteStaff(si);
+	public Map<String, Object> getStaffDesiredList(int page, int rows,String state,
+			String date,String overDate,String srid,HttpSession session){
+		StaffAccountInfo staffInfo = (StaffAccountInfo) session.getAttribute("userInfo");
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("srid", srid);
+		params.put("date", date);
+		params.put("overDate", overDate);
+		params.put("state", state);
+		params.put("select", staffInfo.getPostInfo().getRselect());
+		params.put("id", staffInfo.getId());
+		params.put("did", staffInfo.getPostInfo().getDid());
+		int totalCount =  desiredInfoService.getStaffDesiredPage(params).size();
+			
+		params.put("start",(page - 1) * rows);
+		params.put("limit",rows);
+		List<DesiredInfo> dilist = desiredInfoService.getStaffDesiredPage(params);
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("total", totalCount);
+		result.put("rows", dilist);
+		return result;
+	}
+	@RequestMapping(value="/getDesiredInfo.action")
+	@ResponseBody
+	public StaffAccountInfo getDesiredInfo(HttpSession session){
+		StaffAccountInfo staffInfo = (StaffAccountInfo) session.getAttribute("userInfo");
+		return staffInfo;
+	}
+	//删除询价
+	@RequestMapping(value="/deleteDesiredInfo.action", produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String deleteDesiredInfo(DesiredInfo si,HttpSession session){
+		StaffAccountInfo staffInfo = (StaffAccountInfo) session.getAttribute("userInfo");
+		int del = staffInfo.getPostInfo().getRdelete();
+		//判断权限
+		if(del==0){
+			return "{\"success\":\"false\",\"message\":\"没有操作权限\"}";
+		}
+		if(del==1){
+			if(si.getId()==staffInfo.getId()){
+				int dOK = desiredInfoService.deleteDesiredInfo(si);
+				if(dOK == 1){
+					return "{\"success\":\"true\",\"message\":\"删除成功\"}";
+				}
+				return "{\"success\":\"false\",\"message\":\"删除失败\"}";
+			}
+			return "{\"success\":\"false\",\"message\":\"没有操作权限\"}";
+		}
+		if(del==2){
+			int did = staffInfo.getPostInfo().getDid();
+			PostInfo postinfo = desiredInfoService.getPostInfo(si);
+			if(did==postinfo.getDid()){
+				int dOK = desiredInfoService.deleteDesiredInfo(si);
+				if(dOK == 1){
+					return "{\"success\":\"true\",\"message\":\"删除成功\"}";
+				}
+				return "{\"success\":\"false\",\"message\":\"删除失败\"}";
+			}
+			return "{\"success\":\"false\",\"message\":\"没有操作权限\"}";
+		}
+		int dOK = desiredInfoService.deleteDesiredInfo(si);
 		if(dOK == 1){
 			return "{\"success\":\"true\",\"message\":\"删除成功\"}";
 		}
 		return "{\"success\":\"false\",\"message\":\"删除失败\"}";
-	}*/
+	}
 	
 	//添加询价
 	@RequestMapping(value="/addStaffDesired.action",method=RequestMethod.POST,produces = "text/html;charset=UTF-8")
 	@ResponseBody
-	public String addStaffDesired( @RequestParam(value = "file_upload", required = false) MultipartFile file,
-			HttpSession session,DesiredInfo si,HttpServletRequest request) throws Exception{
+	public String addStaffDesired( HttpSession session,DesiredInfo si) {
 		StaffAccountInfo staffInfo = (StaffAccountInfo) session.getAttribute("userInfo");
 		si.setId(staffInfo.getId());
-		String imagePath = null;
-		 
-		if (file != null && file.getSize() > 0) {  
-        	imagePath = image.saveFile(file); 
-        	si.setDesiredImage(imagePath);
-        }  
-		System.out.println(file + si.toString());
 		int dOK = desiredInfoService.addDesiredInfo(si);
 		if(dOK == 1){
 			return "{\"success\":\"true\",\"message\":\"添加成功\"}";
 		}
 		return "{\"success\":\"false\",\"message\":\"添加失败\"}";
 	}
-	/*
-	//更改员工信息
-	@RequestMapping(value="/updateStaff.action", produces = "text/html;charset=UTF-8")
+	//修改询价
+	@RequestMapping(value="/updateStaffDesired.action",method=RequestMethod.POST,produces = "text/html;charset=UTF-8")
 	@ResponseBody
-	public String updateStaffPost(StaffAccountInfo si){
-		if(si.getPassword() != null){
-			String pass = null;
-			try {
-				pass = shaUitl.getPassword(si.getPassword());
-			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
-			}
-			si.setPassword(pass);
+	public String updateStaffDesired(DesiredInfo si,HttpSession session) {
+		StaffAccountInfo staffInfo = (StaffAccountInfo) session.getAttribute("userInfo");
+		int del = staffInfo.getPostInfo().getRupdate();
+		System.out.println(del);
+		//判断权限
+		if(del==0){
+			return "{\"success\":\"false\",\"message\":\"没有操作权限\"}";
 		}
-		int dOK = staffAccountInfoService.updateStaffAccount(si);
+		if(del==1){
+			if(si.getId()==staffInfo.getId()){
+				int dOK = desiredInfoService.updateDesiredInfo(si);
+				if(dOK == 1){
+					return "{\"success\":\"true\",\"message\":\"修改成功\"}";
+				}
+				return "{\"success\":\"false\",\"message\":\"修改失败\"}";
+			}
+			return "{\"success\":\"false\",\"message\":\"没有操作权限\"}";
+		}
+		if(del==2){
+			int did = staffInfo.getPostInfo().getDid();
+			PostInfo postinfo = desiredInfoService.getPostInfo(si);
+			if(did==postinfo.getDid()){
+				int dOK = desiredInfoService.updateDesiredInfo(si);
+				if(dOK == 1){
+					return "{\"success\":\"true\",\"message\":\"修改成功\"}";
+				}
+				return "{\"success\":\"false\",\"message\":\"修改失败\"}";
+			}
+			return "{\"success\":\"false\",\"message\":\"没有操作权限\"}";
+		}
+		int dOK = desiredInfoService.updateDesiredInfo(si);
 		if(dOK == 1){
 			return "{\"success\":\"true\",\"message\":\"修改成功\"}";
 		}
 		return "{\"success\":\"false\",\"message\":\"修改失败\"}";
 	}
-	//获取所有的登录名
-	@RequestMapping(value="/getAllNameList.action",method = RequestMethod.POST, produces = "text/html;charset=UTF-8")
-	@ResponseBody
-	public String getAllNameList(StaffAccountInfo si,String name){
-		 boolean isOk = false;
-		AdminInfo sa = new AdminInfo();
-		sa.setName(si.getUserName());
-		List<String> ai = adminInfoService.getAdminNameList(sa);
-		if(ai.size() != 0){
-			isOk = true;  
-		}
-		List<String> sil = staffAccountInfoService.getStaffNameList(si,name);
-		if(sil.size() != 0){
-			isOk = true;  
-		}
-		SupplyAccountInfo supplyAccountInfo = new SupplyAccountInfo();
-		supplyAccountInfo.setUserName(si.getUserName());
-		List<String> sul = supplyAccountInfoService.getSupplyNameList(supplyAccountInfo,null);
-		if(sul.size() != 0){
-			isOk = true;  
-		}
-		return "{\"message\":\""+isOk+"\"}";
-	}*/
+	
 	 @org.springframework.web.bind.annotation.InitBinder
 	 public void InitBinder(ServletRequestDataBinder bin) {
 	        bin.registerCustomEditor(Date.class, new CustomDateEditor(
