@@ -1,8 +1,25 @@
+//处理url
+function getFilePath(input){
+	if(input){//input是<input type="file">Dom对象
+		if(window.navigator.userAgent.indexOf("MSIE")>=1){  //如果是IE  
+	        input.select();    
+	      return document.selection.createRange().text;    
+	    }    
+	    else if(window.navigator.userAgent.indexOf("Firefox")>=1){  //如果是火狐  {    
+	        if(input.files){    
+	        	return input.files.item(0).getAsDataURL();    
+	        }    
+	      	return input.value;    
+	    }    
+	    return input.value; 
+	}
+}
+
 /*缩放图片*/
 function DrawImage(ImgD) {
         //缩放成照片宽800.高400
-        var nWidth = 1100;
-        var nHeight=400;
+        var nWidth = ImgD.width;
+        var nHeight=ImgD.height;
         var image = new Image();
         image.src = ImgD.src;
         image.width = ImgD.width;
@@ -32,7 +49,6 @@ function DrawImage(ImgD) {
         }
     }
 /*加载图片*/
-
 function PreviewImage(fileObj,imgPreviewId,divPreviewId){  
     var allowExtention=".jpg,.bmp,.gif,.png";//允许上传文件的后缀名document.getElementById("hfAllowPicSuffix").value;  
     var extention=fileObj.value.substring(fileObj.value.lastIndexOf(".")+1).toLowerCase();              

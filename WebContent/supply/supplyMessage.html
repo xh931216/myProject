@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>更改资料</title>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="expires" content="0">
+<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+<meta http-equiv="description" content="This is my page">
+<link href="../assets/css/default.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="../Easyui/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="../Easyui/themes/icon.css" />
+<script type="text/javascript" src="../Easyui/jquery.min.js"></script>
+<script type="text/javascript" src="../Easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../Easyui/easyui-lang-zh_CN.js"></script>
+</head>
+<body >
+	 <!-- 创建一个更改对话框 -->
+	 
+   <div id="mainPanle" region="center" style="background: #eee; overflow-y:hidden">
+	 <div style="width: 100%;height: 100%;background-color: #FFFFFF">
+	 <div id="departDlg" title="修改信息"
+		closed="true" style="width:400px">
+		<div style="padding:10px 60px 20px 60px">
+			<form id="staffForm" method="POST" action="updateSupplyMessage.action" class="easyui-form">
+				<table cellpadding="7">			
+					<tr>
+						<td >公司名称:</td>
+							<td><input class="easyui-textbox" type="text" id="supplierName" name="supplierName"  
+							required="required"></input>
+						</td>
+					</tr>
+					<tr>
+						<td >公司简称:</td>
+							<td><input class="easyui-textbox" type="text" id="abbreviation" required="required"
+							 name="abbreviation" />
+						</td>
+					</tr>
+					<tr>
+						<td >公司地址:</td>
+							<td><input class="easyui-textbox" type="text" id="address" required="required"
+							 name="address" />
+						</td>
+					</tr>
+					<tr>
+						<td >联系人:</td>
+							<td><input class="easyui-textbox" type="text" id="contact" required="required"
+							 name="contact" />
+						</td>
+					</tr>
+					<tr>
+						<td >联系电话/手机号:</td>
+							<td><input class="easyui-textbox" type="text" id="sphone" required="required"
+							validType="telNum" name="phone" />
+						</td>
+					</tr>
+					<tr>
+						<td >邮箱:</td>
+							<td><input class="easyui-textbox" type="text" id="semail" required="required"
+							name="email"  validType="email"></input>
+						</td>
+					</tr>
+				</table>
+			</form>
+			<div style="text-align:center;padding:3px">
+				<a href="javascript:void(0)" class="easyui-linkbutton"
+					onclick="saveStaff();">修改</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:void(0)"
+					class="easyui-linkbutton" onclick="clearForm();">清空</a>
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+	<script type="text/javascript">
+	$.ajax({
+        type : 'post',
+        async : false,    
+        url : 'getSupplyMessage.action',
+		dataType : 'json',
+        success : function(data) {
+        	$("#supplierName").val(data.supplierName);
+        	$("#abbreviation").val(data.abbreviation);
+        	$("#address").val(data.address);
+        	$("#contact").val(data.contact);
+			$("#sphone").val(data.phone);
+			$("#semail").val(data.email);
+        }
+    });
+	$.messager.alert('温馨提示', '修改以下信息,其他信息请联系管理员!', 'info');
+    // 保存员工信息
+	function saveStaff() {
+		$("#staffForm").form("submit", {
+			onSubmit : function() {
+				return $(this).form('enableValidation').form('validate');
+			},
+			success : function(data) {	
+				var data = eval('(' + data + ')');
+                if(data.success=="true"){  
+					$("#adminListDg").datagrid("reload");
+	            }
+				$.messager.show({
+					title : "提示信息",
+					msg : data.message
+				});
+			}
+		});
+	}
+	
+	
+	function clearForm() {
+		$('#staffForm').form('clear');
+	}
+    $.extend($.fn.validatebox.defaults.rules, {
+		
+    	telNum:{ //既验证手机号，又验证座机号
+	      validator: function(value, param){
+	          return /(^(0[0-9]{2,3}\-)?([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$)|(^((\d3)|(\d{3}\-))?(1[358]\d{9})$)/.test(value);
+	         },   
+	       message: '请输入正确的电话号码。'
+	    } 
+    });
+	</script>
+</body>
+</html>

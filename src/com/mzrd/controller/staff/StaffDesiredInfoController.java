@@ -28,11 +28,14 @@ import com.mzrd.pojo.DepartmentInfo;
 import com.mzrd.pojo.DesiredInfo;
 import com.mzrd.pojo.PostInfo;
 import com.mzrd.pojo.StaffAccountInfo;
+import com.mzrd.pojo.SupplyRankInfo;
 import com.mzrd.service.AdminInfoService;
 import com.mzrd.service.DesiredInfoService;
 import com.mzrd.service.PostInfoService;
 import com.mzrd.service.SupplyAccountInfoService;
+import com.mzrd.service.SupplyRankInfoService;
 import com.mzrd.util.Image;
+import com.mzrd.util.PdfUtils;
 @RequestMapping("/staff")
 @Controller
 public class StaffDesiredInfoController {
@@ -41,10 +44,12 @@ public class StaffDesiredInfoController {
 	@Autowired 
 	private AdminInfoService adminInfoService;
 	@Autowired
+	private SupplyRankInfoService supplyRankInfoService;
+	@Autowired
 	private SupplyAccountInfoService supplyAccountInfoService;
 	@Autowired
 	private PostInfoService postInfoService;
-	
+	PdfUtils pdfUtils = new PdfUtils();
 	//获取所有询价
 	@RequestMapping("/getStaffDesiredList.action")
 	@ResponseBody
@@ -120,6 +125,12 @@ public class StaffDesiredInfoController {
 	public String addStaffDesired( HttpSession session,DesiredInfo si) {
 		StaffAccountInfo staffInfo = (StaffAccountInfo) session.getAttribute("userInfo");
 		si.setId(staffInfo.getId());
+		System.out.println("aaaaa:"+si.toString());
+	    DesiredInfo gOk = desiredInfoService.getDesiredInfo(si);
+	    System.out.println(gOk.getId());
+	    if(gOk!=null){
+			return "{\"success\":\"true\",\"message\":\"询价单已存在\"}";
+	    }
 		int dOK = desiredInfoService.addDesiredInfo(si);
 		if(dOK == 1){
 			return "{\"success\":\"true\",\"message\":\"添加成功\"}";

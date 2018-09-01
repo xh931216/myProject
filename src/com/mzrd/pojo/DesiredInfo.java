@@ -8,9 +8,9 @@ import com.sun.jmx.snmp.Timestamp;
 public class DesiredInfo {
 	private int deid;
 	private int srid;
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	private Date date;
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	private Date overDate;
 	private String supplier;
 	private String guige;

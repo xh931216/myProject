@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>报价单列表</title>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="expires" content="0">
+<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+<meta http-equiv="description" content="This is my page">
+<link href="../assets/css/default.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="../Easyui/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="../Easyui/themes/icon.css" />
+<script type="text/javascript" src="../Easyui/jquery.min.js"></script>
+<script type="text/javascript" src="../Easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../Easyui/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../Easyui/datagrid-detailview.js"></script>
+<script type="text/javascript" src="../assets/js/image.js"></script>
+</head>
+<body>
+	 <!-- 创建一个table -->
+	<table id="adminListDg" class="easyui-datagrid"></table>
+	
+	<!-- 工具栏 -->
+	<div id="adminListTb" style="padding:2px 5px;">
+		<a id="ainsert" href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-edit" plain="true" onclick="editAddQuote()">修改报价</a> 
+			&nbsp;&nbsp;&nbsp;
+		<a id="ainsert" href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-cancel" plain="true" onclick="showDesired()">删除报价</a> 
+	</div>
+	<!-- 查询窗体 -->
+	<div id="searchOrderTb" style="padding:2px 5px;">
+		<form id="searchPostForm" method="get">
+		 &nbsp;&nbsp;&nbsp; 物资名称 &nbsp;
+			<input style="width:115px;" id="srname1" class="easyui-combobox" 
+				data-options="valueField:'srid',textField:'srname',url:'getRankAllNameList.action'" />
+			 &nbsp;&nbsp;&nbsp; 员工状态 &nbsp;
+			 <select id="state1"  class="easyui-combobox" name="state" style="width:200px;">
+					<option value="">全部</option>
+					<option value="1" >已提交</option>
+					<option value="0" selected>未提交</option>
+				</select>
+			<a href="javascript:void(0)"
+				class="easyui-linkbutton" iconCls="icon-search" plain="true"
+				onclick="searchPostInfo();">查找</a>
+		</form>
+	</div>
+	<!-- 修改报价的对话框  -->
+	<div id="departDlg" class="easyui-dialog" title="修改报价"
+		closed="true" style="width:520px">
+		<div style="padding:10px 60px 20px 60px">
+			<form id="staffForm" method="POST" action="updateQuote.action" class="easyui-form" enctype="multipart/form-data">
+				<table cellpadding="7">		
+					<tr>
+						<td >物资数量:</td>
+							<td>
+							<input type="text" id="number" style="width:250px" name="number" class="easyui-numberbox" required="required"/>
+							<input id="qid" class="easyui-validatebox" type="text" name="qid" style="width:152px;display:none;"/>
+						</td>
+					</tr>
+					<tr>
+						<td >物资单价:</td>
+							<td><input type="text" id="price" style="width:250px" name="price" class="easyui-numberbox" required="required"/>
+						</td>
+					</tr>
+					<tr>
+						<td >物资单位:</td>
+							<td><input type="text" id="unit" style="width:250px" name="unit" class="easyui-textbox" required="required"/>
+						</td>
+					</tr>
+					<tr>
+						<td >物资到货时间:</td>
+							<td><input type="text" id="quoteDate" style="width:250px" name="quoteDate" class="easyui-datetimebox" required="required"/>
+						</td>
+					</tr>
+					<tr>
+						<td >备        注:</td>
+							<td><input type="text" class="easyui-textbox" id="remark" 
+							data-options="multiline:true" style="height:50px;width:250px"
+							name="remark" />
+						</td>
+					</tr>
+					<tr>
+						<td >发布:</td>
+        				<td style="text-align:left">
+           					<span class="radioSpan">
+               					 <input type="radio" name="state" value="0" checked="checked">否</input>
+               					 <input type="radio" name="state" value="1">是</input>
+           					</span>
+						</td>
+					</tr>
+					<tr>
+						<td >附件:</td>
+							<td>
+							   <input class="easyui-filebox" style="width:250px" data-options='prompt:"选择更改报价单",buttonText:"选择",onChange:change_photo' 
+							  id="file_upload" name="file_upload" /></br>
+							  <a href="javascript:void(0)" class="easyui-linkbutton"
+								onclick="imageShow();">浏览报价单</a> 
+							</td>
+					</tr>
+					
+				</table>
+			</form>
+			<div style="text-align:center;padding:3px">
+				<a href="javascript:void(0)" class="easyui-linkbutton" icon="icon-ok"
+					onclick="addQuote();">修改</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:void(0)"  icon="icon-cancel"
+					class="easyui-linkbutton" onclick="clearForm();">清空</a>
+			</div>
+			</div>
+	</div>	
+	<!-- 图片预览功能 -->
+	 <div style="display: none">
+    	<div id="dlg" class="datagrid-toolbar" style="padding:5px;">
+      	  <img id="Img" src="" onload="DrawImage(this)"/>
+    	</div>
+	</div>
+	<!-- 提示信息的对话框  -->
+	<div id="powerDlg" class="easyui-dialog" title="修改信息"
+		closed="true" style="width:550px">
+		<div style="padding:10px 60px 20px 60px">
+			<DIV id="showMess"></DIV>
+		</div>
+	</div>
+	<script type="text/javascript">
+	var url = null;
+	function imageShow(){
+		if(url == null){
+			$.messager.alert('提示', '先选择文件', 'info');
+			return;
+		}
+		  $('#dlg').dialog({
+	            title: '预览',
+	            width: 700,
+	            height: 400,
+	            resizable: true,
+	            closed: false,
+	            cache: false,
+	            modal: true
+	     }); 
+	};
+	function change_photo(){
+		url = $(this).filebox('getValue');
+        PreviewImage($("input[name='file_upload']")[0], 'Img', 'dlg'); 
+    };
+   function compareValue(row){
+    	$.messager.alert('提示', '我是', 'info');
+		$("#Img").attr("src",row);
+    	 $('#dlg').dialog({
+	            title: '预览',
+	            width: 700,
+	            height: 400,
+	            resizable: true,
+	            closed: false,
+	            cache: false,
+	            modal: true
+	     }); 
+    } 
+ 	// 删除报价单
+	function showDesired() {
+		var rows = $("#adminListDg").datagrid('getSelections');
+			if (rows.length >0 && rows.length<=1 ) {
+				var row = $("#adminListDg").datagrid("getSelected");
+				state = row.state;
+				if(state == "0"){
+				$.messager.confirm('Confirm', '确认要删除'+row.qid+'?', function(r) {
+					if (r) {
+						
+						// 发送请求
+						$.post('deleteQuoteInfo.action', {
+							qid : row.qid
+						}, function(result) {
+							if (result.success == 'true') {
+								$("#adminListDg").datagrid('reload'); 
+								$.messager.show({
+									title : '提示信息',
+									msg : result.message
+								});
+							} else {
+								$.messager.show({
+									title : '提示信息',
+									msg : result.message
+								});
+							}
+						}, 'json');
+
+					}
+				});
+				}else{
+					$.messager.alert('提示', '报价单已发布，不能删除', 'info');
+				}
+			} else if(rows.length>1){
+				$.messager.alert('提示', '只能选择一个报价单', 'info');
+			}else {
+				$.messager.alert('提示', '请选择未发布的报价单', 'info');
+			}
+	}
+    // 修改报价
+	function editAddQuote() {
+		 var rows = $("#adminListDg").datagrid('getSelections');
+			if (rows.length >0 && rows.length<=1 ) {
+				var row = $("#adminListDg").datagrid("getSelected");
+				state =row.state;
+				if(state == "0"){
+					// 打开“修改”对话框
+					$("#departDlg").dialog("open").dialog('setTitle', '修改询价');
+					$("#number").textbox("setValue",row.number);
+					$("#state").textbox("setValue",row.state);
+					$("#remark").textbox("setValue",row.remark);
+					$("#unit").textbox("setValue",row.unit);
+					$("#qid").val(row.qid);
+					$("#quoteDate").datetimebox("setValue",row.quoteDate);
+					$("#price").textbox("setValue",row.price);
+					url = row.quoteImage;
+					$("#Img").attr('src',row.quoteImage);
+					//$("#file_upload").textbox("setValue",row.quoteImage);
+					$.messager.alert('提示', '报价单已经上传过，不用重新上传，可以直接查看，没有则上传！', 'info');
+				
+				
+				}else{
+					$.messager.alert('提示', '报价单已发布，不能修改', 'info');
+				}
+			} else if(rows.length>1){
+				$.messager.alert('提示', '只能选择一个报价单', 'info');
+			}else {
+				$.messager.alert('提示', '请选择未发布的报价单', 'info');
+			}
+	}
+	
+    // 保存添加信息
+	function addQuote() {
+		$("#staffForm").form("submit", {
+			onSubmit : function() {
+				return $(this).form('enableValidation').form('validate');
+			},
+			success : function(data) {	
+				var data = eval('(' + data + ')');
+                if(data.success=="true"){  
+					$("#adminListDg").datagrid("reload");
+	            }
+				$.messager.show({
+					title : "提示信息",
+					msg : data.message
+				});
+			}
+		});
+	}
+	$(function() {
+			$('#adminListDg').datagrid({
+				url : 'getQuoteList.action',
+				queryParams : {},//查询条件
+				pagination : true,//启动分页
+				pageSize : 5,//设置初始每页记录数（页大小）
+				pageList : [5, 10 ,15],//设置可供选择的页大小
+				rownumbers : true, //显示行号
+				fit : true, //设置自适应
+				toolbar : '#adminListTb', //为datagrid添加工具栏
+				header : '#searchOrderTb', //为datagrid标头添加搜索栏
+				columns : [ [ { //编辑datagrid的列
+					title : '序号',
+					field : 'qid',
+					align : 'center',
+					checkbox : true
+				}, {
+					field : 'srid',
+					title : '询价物资名称',
+					width : 100,
+					formatter: function(value, row,index){
+						if(row.supplyRankInfo){
+					        return row.supplyRankInfo.srname;
+						}else{
+							value;
+						}
+					}
+				}, {
+					field : 'number',
+					title : '物资数量',
+					width : 100
+				}, {
+					field : 'unit',
+					title : '物资单位',
+					width : 100
+				},{
+					field : 'price',
+					title : '物资单价',
+					width : 100
+				},{
+					field : 'quoteDate',
+					title : '报价时间',
+					width : 150
+				},{
+					field : 'remark',
+					title : '备注',
+					width : 300
+				}/* ,{
+					field : 'quoteImage',
+					title : '照片',
+					width : 300
+				} */,{
+					field : 'state',
+					title : '报价状态',
+					width : 100,
+					formatter: function(value, row, index){
+						if(row.state == '1'){
+							return "已提交";
+						}else{
+							return "未提交";
+						}
+					}
+				}] ], 
+				view:detailview,//注意1
+				detailFormatter:function(index,row){
+					return "<div><img id='ddv-"+index+"'></img></div>";//注意2
+				},
+				onExpandRow:function(index,row){//注意3
+					//var url = "https://gss3.bdstatic.com/-Po3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=ed20149d0b7b020818c437b303b099b6/91ef76c6a7efce1b1e30f4f2ae51f3deb48f65ea.jpg";
+					$("#ddv-"+index).attr('src',row.quoteImage);
+					//$("#ddv-"+index).attr('src',url);
+					$('#adminListDg').datagrid('fixDetailRowHeight',index);//注意5
+				},
+				pagination : true
+			});
+		});
+		
+		// 查询询价
+		function searchPostInfo() {
+			var srid = $('#srname1').combobox("getValue");
+			var state = $('#state1').combobox("getValue");
+			$('#adminListDg').datagrid('load', {
+				srid  : srid,
+				state : state
+			});
+		}
+		 var id=0;
+        //关闭登录窗口
+        function closePwd() {
+            $('#pass').window('close');
+        }
+       
+		function clearForm() {
+			$('#staffForm').form('clear');
+		}
+        $.extend($.fn.validatebox.defaults.rules, {
+			myvalidate : {
+                validator : function(value, param) {
+                    var username = $("#susername").val();
+                    var row = $("#adminListDg").datagrid("getSelected");
+                    var name = row.userName;
+                    var haha=" " ;
+                    $.ajax({
+                        type : 'post',
+                        async : false,    
+                        url : 'getAllNameList.action',
+                        data : {
+                            "userName" : username,
+                            "name" : name
+                        },
+						dataType : 'json',
+                        success : function(data) {
+							haha = data.message;
+                        }
+                    });
+                    console.log(haha);
+                    return haha.indexOf("true");
+                },
+                message : '登录名已经被占用'
+            },
+            equals: {
+                validator: function(value,param){
+                    return value == $(param[0]).val();
+                },
+                message: '密码不一致！'
+            },
+        	telNum:{ //既验证手机号，又验证座机号
+		      validator: function(value, param){
+		          return /(^(0[0-9]{2,3}\-)?([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$)|(^((\d3)|(\d{3}\-))?(1[358]\d{9})$)/.test(value);
+		         },   
+		       message: '请输入正确的电话号码。'
+		    } 
+        });
+		function clearAdminForm() {
+			$('#departForm').form('clear');
+		} 
+	</script>
+</body>
+</html>

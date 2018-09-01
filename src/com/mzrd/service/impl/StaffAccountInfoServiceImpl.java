@@ -50,4 +50,9 @@ public class StaffAccountInfoServiceImpl implements StaffAccountInfoService{
 		map.put("userName", sa.getUserName());
 		return staffAccountInfoDAO.getStaffNameList(map);
 	}
+
+	@Override
+	public List<String> getStaffNameList(Map map) {
+		return staffAccountInfoDAO.getStaffNameList(map);
+	}
 }

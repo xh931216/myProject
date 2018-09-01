@@ -19,7 +19,7 @@ public class Image {
 		 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSS");
 	        String res = sdf.format(new Date());
 	        //uploads文件夹位置
-	        String rootPath ="D:/jtphoto/images/";
+	        String rootPath ="E:/eclipseWeb/mzrdProject/WebContent/assets/";
 	        //原始名称
 	        String originalFilename = uploadFile.getOriginalFilename();
 	        //新的文件名称

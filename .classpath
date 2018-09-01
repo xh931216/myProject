@@ -47,5 +47,8 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-io-2.6-test-sources.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-io-2.6-tests.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-io-2.6.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/itextpdf-5.5.1.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/iText-2.1.7.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/iTextAsian.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

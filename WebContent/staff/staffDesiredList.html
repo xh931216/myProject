@@ -13,6 +13,7 @@
 <link rel="stylesheet" type="text/css" href="../Easyui/themes/icon.css" />
 <script type="text/javascript" src="../Easyui/jquery.min.js"></script>
 <script type="text/javascript" src="../Easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../Easyui/datagrid-detailview.js"></script>
 <script type="text/javascript" src="../Easyui/easyui-lang-zh_CN.js"></script>
 </head>
 <body>
@@ -137,16 +138,20 @@
 		</div>
 	</div>
 	<script type="text/javascript">
+	var imageurl = null;
 		$(function() {
 			$('#adminListDg').datagrid({
-				singleSelect : false,
 				url : 'getStaffDesiredList.action',
+				 singleSelect:true,
 				queryParams : {},//查询条件
 				pagination : true,//启动分页
 				pageSize : 5,//设置初始每页记录数（页大小）
 				pageList : [5, 10 ,15],//设置可供选择的页大小
 				rownumbers : true, //显示行号
 				fit : true, //设置自适应
+				multiSort: true, //启用排序
+				sortable: true, //启用排序列
+				autoRowHeight: true, //自动行高
 				toolbar : '#adminListTb', //为datagrid添加工具栏
 				header : '#searchOrderTb', //为datagrid标头添加搜索栏
 				columns : [ [ { //编辑datagrid的列
@@ -219,7 +224,126 @@
 							return "未发布";
 						}
 					}
-				} ] ]
+				} ] ],
+	            view: detailview,
+				pagination : true,
+	            detailFormatter: function (index, row) {
+	                return '<div style="padding:2px"><table class="ddv"></table></div>'; 
+				},
+	            onExpandRow: function (index, row) {
+					imageurl = row.quoteImage;
+	            	var ddv = $(this).datagrid('getRowDetail',index).find('table.ddv');
+					ddv.datagrid({
+	                    url: 'getAllQuoteList.action?deid=' + row.deid,
+	                    fitColumns: true,
+	                    singleSelect: true,
+	                    rownumbers: true,
+						autoRowHeight: true, //自动行高
+						multiSort: true, //启用排序
+						sortable: true, //启用排序列s
+	                    loadMsg: '',
+	                    columns: [[
+							{field : 'supplierName',title : '报价公司简称',width : 60,
+								formatter: function(value, row,index){
+									if(row.supplyAccountInfo){
+										return row.supplyAccountInfo.supplierName;
+									}else{
+										value;
+									}
+								}
+							},
+							{field : 'contact',title : '报价公司联系人',width : 60,
+								formatter: function(value, row,index){
+									if(row.supplyAccountInfo){
+										return row.supplyAccountInfo.contact;
+									}else{
+										value;
+									}
+								}
+							},
+							{field : 'phone',title : '报价公司电话',width : 60,
+								formatter: function(value, row,index){
+									if(row.supplyAccountInfo){
+										return row.supplyAccountInfo.phone;
+									}else{
+										value;
+									}
+								}
+							},
+							{field : 'email',title : '报价公司邮箱',width : 100,
+								formatter: function(value, row,index){
+									if(row.supplyAccountInfo){
+										return row.supplyAccountInfo.email;
+									}else{
+										value;
+									}
+								}
+							},
+							{field : 'address',title : '报价公司地址',width : 100,
+								formatter: function(value, row,index){
+									if(row.supplyAccountInfo){
+										return row.supplyAccountInfo.address;
+									}else{
+										value;
+									}
+								}
+							},
+	                        { field: 'price', title: '报价单价', width: 40 },
+	                        { field: 'number', title: '报价数量', width: 40 },
+	                        { field: 'unit', title: '报价单位', width: 40 },
+	                        { field: 'quoteDate', title: '到货时间', width: 80 },
+	                        { field: 'remark', title: '备注', width: 150 }
+	                    ]],
+						view: detailview,  
+						detailFormatter:function(index,row){
+							return "<div><img id='ddv-"+index+"'></img></div>";//注意2
+						},
+						onExpandRow:function(index,row){//注意3
+							//var url = "https://gss3.bdstatic.com/-Po3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=ed20149d0b7b020818c437b303b099b6/91ef76c6a7efce1b1e30f4f2ae51f3deb48f65ea.jpg";
+							$("#ddv-"+index).attr('src',row.quoteImage);
+							ddv.datagrid('fixDetailRowHeight', index);
+							//$("#ddv-"+index).attr('src',url);
+							$('#adminListDg').datagrid('fixDetailRowHeight',index);//注意5
+						},
+						onCollapseRow:function(index,row2){//注意3
+							$('#adminListDg').datagrid({
+								fitColumns:true,
+								nowrap:false,
+								singleSelect:true,
+								loadMsg:'',
+								height:'auto',
+								autoRowHeight:true,
+								onResize:function(){                        
+									ddv.datagrid('fixDetailRowHeight',index1);
+									$('#adminListDg').datagrid('fixDetailRowHeight',index);
+								},
+								onLoadSuccess:function(){
+									setTimeout(function(){                                  
+										ddv.datagrid('fixDetailRowHeight',index1);//在加载成功时，获取父列表的明细高度，使其适应明显点开后的高度，注意此时的行索引为index1
+										ddv.datagrid('fixRowHeight',index1);//在加载成功时，获取子明细点开后父列表的列高，防止在超过加载成功前的高度时，出现垂直方向的滑动条
+										$('#adminListDg').datagrid('fixDetailRowHeight',index);//在加载成功时，获取爷爷列表的明细高度，使其适应前面父列表和子列表的高度变化，注意此时的行索引为index
+										$('#adminListDg').datagrid('fixRowHeight',index);//在加载成功时，获取父列表的明细点开后爷爷列表的高度，防止在超过加载成功前的高度时，出现垂直方向的滑动条
+									},0);
+								}
+							}); //严重注意喔 
+							ddv.datagrid('fixDetailRowHeight',index1);
+							ddv.datagrid('fixRowHeight',index1);
+							$('#adminListDg').datagrid('fixDetailRowHeight',index);
+							$('#adminListDg').datagrid('fixRowHeight',index);
+						},
+	                    onResize: function () {
+	                        $('#adminListDg').datagrid('fixDetailRowHeight', index);
+	                    },
+	                    onLoadSuccess: function () {
+	                        setTimeout(function(){
+								//在加载爷爷列表明细（即：父列表）成功时，获取此时整个列表的高度，使其适应变化后的高度，此时的索引
+								$('#adminListDg').datagrid('fixDetailRowHeight',index);
+								$('#adminListDg').datagrid('fixRowHeight',index);//防止出现滑动条
+							},0);
+	                    }  
+	                });
+	                $('#adminListDg').datagrid('fixDetailRowHeight', index);
+	            }
 			});
 		});
 		

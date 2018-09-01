@@ -57,4 +57,15 @@
         <property name="dataSource" ref="dataSource" />  
     </bean>   
 
+	<!-- 解析器注册 -->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <ref bean="stringHttpMessageConverter"/>
+            </list>
+        </property>
+    </bean>
+    <!-- String类型解析器，允许直接返回String类型的消息 -->
+    <bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter"/>
+
 </beans>

@@ -8,6 +8,9 @@
 	 	 <if test="srname!=null and srname!=''">
 			 and srname like concat('%',#{srname},'%')
 		</if>
+		<if test="srid!=nul and srid!=''">
+			and srid=#{srid}
+		</if>
 		<if test="start != null and limit != null">
 		  limit #{start},#{limit}
 		</if>

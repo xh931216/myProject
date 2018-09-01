@@ -1,0 +1,113 @@
+package com.mzrd.controller.supply;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.mzrd.pojo.DesiredInfo;
+import com.mzrd.pojo.QuoteInfo;
+import com.mzrd.pojo.StaffAccountInfo;
+import com.mzrd.pojo.SupplyAccountInfo;
+import com.mzrd.pojo.SupplyRankInfo;
+import com.mzrd.service.QuoteInfoService;
+import com.mzrd.util.Image;
+import com.sun.org.apache.bcel.internal.generic.FMUL;
+@RequestMapping("/supply")
+@Controller
+public class SupplyQuoteInfoController {
+	@Autowired
+	private QuoteInfoService quoteInfoService;
+	Image image = new Image();
+	//获取所有类别
+	@RequestMapping("/getQuoteList.action")
+	@ResponseBody
+	public Map<String, Object> getQuoteList(int page, int rows,String state,String srid,HttpSession session){
+		SupplyAccountInfo supplyAccountInfo = (SupplyAccountInfo) session.getAttribute("userInfo");
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("sid", supplyAccountInfo.getSid());
+		params.put("srid", srid);
+		params.put("state", state);
+		int totalCount =  quoteInfoService.getQuoteList(params).size();
+		params.put("start",(page - 1) * rows);
+		params.put("limit",rows);
+		List<QuoteInfo> dilist = quoteInfoService.getQuoteList(params);
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("total", totalCount);
+		result.put("rows", dilist);
+		return result;
+	}
+	//添加报价单
+	@RequestMapping(value="/addQuote.action",method=RequestMethod.POST,produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String addQuote( @RequestParam(value = "file_upload", required = false) MultipartFile file,
+			HttpSession session,QuoteInfo qi,HttpServletRequest request)throws Exception{
+		SupplyAccountInfo staffInfo = (SupplyAccountInfo) session.getAttribute("userInfo");
+		qi.setSid(staffInfo.getSid()); 
+		QuoteInfo gOk = quoteInfoService.getQuoteInfo(qi);
+		if(gOk != null){
+			return "{\"success\":\"false\",\"message\":\"您已经报价,不能重复报价\"}";
+		}
+		String imagePath = null;
+		if (file != null && file.getSize() > 0) {  
+        	imagePath = image.saveFile(file); 
+        	qi.setQuoteImage(imagePath);
+        } 
+		int dOK = quoteInfoService.addQuoteInfo(qi);
+		if(dOK == 1){
+			return "{\"success\":\"true\",\"message\":\"添加成功\"}";
+		}
+		return "{\"success\":\"false\",\"message\":\"添加失败\"}";
+	}
+	
+	//删除报价
+	@RequestMapping(value="/deleteQuoteInfo.action", produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String deleteQuoteInfo(QuoteInfo si){
+		int dOK = quoteInfoService.deleteQuoteInfo(si);
+		if(dOK == 1){
+			return "{\"success\":\"true\",\"message\":\"删除成功\"}";
+		}
+		return "{\"success\":\"false\",\"message\":\"删除失败\"}";
+	}
+	
+	//修改报价
+	@RequestMapping(value="/updateQuote.action",method=RequestMethod.POST,produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String updateQuote(@RequestParam(value = "file_upload", required = false) MultipartFile file,
+			HttpSession session,QuoteInfo qi,HttpServletRequest request)throws Exception{
+		System.out.println(file.getSize()+";;"+qi.toString());
+		if(file.getSize()!=0){
+		String imagePath = null;
+		if (file != null && file.getSize() > 0) {  
+        	imagePath = image.saveFile(file); 
+        	qi.setQuoteImage(imagePath);
+        }  
+		}
+		int updateOk = quoteInfoService.updateQuoteInfo(qi);
+		if(updateOk == 1){
+			return "{\"success\":\"true\",\"message\":\"报价修改成功\"}";
+		}
+		return "{\"success\":\"true\",\"message\":\"报价修改失败\"}";
+	}
+	
+	 @org.springframework.web.bind.annotation.InitBinder
+	 public void InitBinder(ServletRequestDataBinder bin) {
+	        bin.registerCustomEditor(Date.class, new CustomDateEditor(
+	                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"), true));
+	}
+}

@@ -31,6 +31,35 @@
 			<result property="state" column="sta" />
 		</association>
 	</resultMap>	
+	
+	<select id="getDesiredInfo" parameterType="com.mzrd.pojo.DesiredInfo" 
+		resultType="com.mzrd.pojo.DesiredInfo">
+			select * from desired_info where id=#{id} and srid=#{srid}
+	</select>
+	<select id="getSupllyDesiredList" parameterType="java.util.Map" resultMap="getMap">
+		select d.state st,s.state sta,s.*,d.*,sr.* from desired_info d,staff_account_info s  ,supply_rank_info sr
+		where s.id=d.id and d.state=1 and d.overDate>NOW() and sr.srid=d.srid
+		<if test="srid!=null and srid!=''">
+			and d.srid=#{srid}
+		</if>
+		<if test="date!=null and date!=''">
+			and d.date like concat('%',#{date},'%')
+		</if>
+		<if test="overDate!=null and overDate!=''">
+			and d.overDate like concat('%',#{overDate},'%')
+		</if>
+		<if test="deid!=null and deid!=''">
+			and d.deid=#{deid}
+		</if>
+		and d.srid in 
+		(select sri.srid from supply_account_info sai,supply_rank_relation_info srri,supply_rank_info sri
+		where sri.srid=srri.srid and sai.sid=srri.sid and sai.sid=#{sid})
+		ORDER BY d.deid DESC  
+		
+		<if test="start != null and limit != null">
+		  limit #{start},#{limit}
+		</if>
+	</select>
 	<select id="getStaffDesiredPage"  resultMap="getMap"
 	 parameterType="java.util.Map">
 		select di.state st,sa.state sta,sr.*,sa.*,di.*

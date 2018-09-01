@@ -29,7 +29,7 @@
 	</select>
 	<select id="getSupplyInfoByUserName" resultType="com.mzrd.pojo.SupplyAccountInfo" 
 		parameterType="com.mzrd.pojo.SupplyAccountInfo">
-		select * from supply_account_info where userName=#{userName}
+		select * from supply_account_info where userName=#{userName} and state=1
 		<if test="password != null and password != ''">
 			and password=#{password}
 		</if>
