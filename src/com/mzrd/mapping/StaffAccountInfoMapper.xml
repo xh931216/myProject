@@ -33,7 +33,10 @@
 		 from staff_account_info s, post_info p
 		 where s.userName=#{userName} and s.password=#{password} and s.rid = p.rid and s.state=1
 	</select>
-	
+	<select id="getStaffAccountById" parameterType="com.mzrd.pojo.StaffAccountInfo" resultType="com.mzrd.pojo.StaffAccountInfo">
+		select *
+		 from staff_account_info where id=#{id}
+	</select>
 	<select id="getStaffAccountByState" parameterType="com.mzrd.pojo.StaffAccountInfo" resultType="com.mzrd.pojo.StaffAccountInfo">
 		select id,userName,password,s.rid rid,rname,p.did did,rselect,rinsert,rdelete,
 		rupdate,sname,phone,email,s.state state,p.state pstate,dname

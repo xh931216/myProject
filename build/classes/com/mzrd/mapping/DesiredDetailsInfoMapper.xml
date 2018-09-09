@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mzrd.dao.DesiredDetailsInfoDao">
+	<!-- 封装账号 -->
+	<resultMap type="com.mzrd.pojo.DesiredDetailsInfo" id="getMap">
+		<id property="dedid" column="dedid2" />
+		<result property="deid" column="deid" />
+		<result property="guige" column="guige" />
+		<result property="unit" column="unit" />
+		<result property="number" column="number" />
+		<result property="qid" column="qid"/>
+		<result property="price" column="price"/>
+		<result property="quoteDate" column="quoteDate"/>
+		<result property="remark" column="remark"/>
+		
+	</resultMap>
+	<select id="getStaffDesiredDetailsList" parameterType="java.lang.Integer" 
+		resultMap="getMap">
+			select si.*,si.dedid dedid2,qi.*  from desired_details_info si LEFT JOIN quote_info qi
+			on qi.dedid=si.dedid   where si.deid=#{deid} 
+	</select>
+	
+	<insert id="addDesiredDetailsInfo" parameterType="com.mzrd.pojo.DesiredDetailsInfo">
+		insert into desired_details_info (deid,guige,unit,number) 
+		values(#{deid},#{guige},#{unit},#{number});
+	</insert>
+	
+	<delete id="deleteDesiredDetails" parameterType="java.lang.Integer">
+		delete from desired_details_info  where deid=#{deid}
+	</delete> 
+</mapper>

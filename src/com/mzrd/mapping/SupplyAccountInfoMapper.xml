@@ -34,6 +34,9 @@
 			and password=#{password}
 		</if>
 	</select>
+	<select id="getSupplyInfo" resultType="com.mzrd.pojo.SupplyAccountInfo" >
+		select * from supply_account_info
+	</select>
 	<select id="getSupplyInfoList" resultMap="getSupplyAccountInfoMap"
 		parameterType="java.util.Map">
 		select s.sid sid,s.userName userName,s.`password` password ,s.supplierName supplierName,s.abbreviation abbreviation,

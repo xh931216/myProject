@@ -5,23 +5,20 @@
 	<!-- 封装账号 -->
 	<resultMap type="com.mzrd.pojo.DesiredInfo" id="getMap">
 		<id property="deid" column="deid" />
-		<result property="srid" column="srid" />
-		<result property="id" column="id" />
-		<result property="state" column="st" />
+		<result property="srid" column="srid2" />
+		<result property="id" column="id2" />
+		<result property="state" column="stat" />
 		<result property="overDate" column="overDate" />
+		<result property="date" column="date"/>
 		<result property="supplier" column="supplier" />
-		<result property="guige" column="guige" />
-		<result property="date" column="date" />
-		<result property="unit" column="unit"/>
-		<result property="number" column="number"/>
 		<result property="remark" column="remark"/>
 		<result property="desiredId" column="desiredId"/>
 		<association property="supplyRankInfo" javaType="com.mzrd.pojo.SupplyRankInfo">
-			<id property="srid" column="srid" />
+			<id property="srid" column="srid2" />
 			<result property="srname" column="srname" />
 		</association>
 		<association property="staffAccountInfo" javaType="com.mzrd.pojo.StaffAccountInfo">
-			<id property="id" column="id" />
+			<id property="id" column="id2" />
 			<result property="userName" column="userName" />
 			<result property="password" column="password" />
 			<result property="rid" column="rid" />
@@ -30,52 +27,53 @@
 			<result property="email" column="email" />
 			<result property="state" column="sta" />
 		</association>
+		<association property="supplyAccountInfo" javaType="com.mzrd.pojo.SupplyAccountInfo">
+			<id property="sid" column="sid"/>
+			<result property="abbreviation" column="abbreviation"/>
+		</association>
 	</resultMap>	
-	
+	<select id="getDesiredInfoPdf" parameterType="com.mzrd.pojo.DesiredInfo" 
+		resultMap="getMap">
+		select di.srid srid2,di.*,si.*,di.id id2 from desired_info di,supply_rank_info si
+			where di.srid = si.srid and di.deid=#{deid}
+	</select>
 	<select id="getDesiredInfo" parameterType="com.mzrd.pojo.DesiredInfo" 
 		resultType="com.mzrd.pojo.DesiredInfo">
-			select * from desired_info where id=#{id} and srid=#{srid}
+			select * from desired_info where id=#{id} and srid=#{srid} and supplier=#{supplier}
+			and overDate = #{overDate} and remark=#{remark}
 	</select>
 	<select id="getSupllyDesiredList" parameterType="java.util.Map" resultMap="getMap">
-		select d.state st,s.state sta,s.*,d.*,sr.* from desired_info d,staff_account_info s  ,supply_rank_info sr
-		where s.id=d.id and d.state=1 and d.overDate>NOW() and sr.srid=d.srid
+		select *,sai.id id2,di.srid srid2 from desired_supply_info dsi,desired_info di,
+		staff_account_info sai,supply_rank_info sri where
+ 		dsi.deid=di.deid  and di.state=1 and dsi.sid=1 and sai.id=di.id and sri.srid=di.srid
+ 		and di.overDate>NOW()
 		<if test="srid!=null and srid!=''">
-			and d.srid=#{srid}
-		</if>
-		<if test="date!=null and date!=''">
-			and d.date like concat('%',#{date},'%')
+			and di.srid=#{srid}
 		</if>
 		<if test="overDate!=null and overDate!=''">
-			and d.overDate like concat('%',#{overDate},'%')
+			and di.overDate like concat('%',#{overDate},'%')
 		</if>
-		<if test="deid!=null and deid!=''">
-			and d.deid=#{deid}
-		</if>
-		and d.srid in 
-		(select sri.srid from supply_account_info sai,supply_rank_relation_info srri,supply_rank_info sri
-		where sri.srid=srri.srid and sai.sid=srri.sid and sai.sid=#{sid})
-		ORDER BY d.deid DESC  
-		
+		ORDER BY di.deid DESC 
 		<if test="start != null and limit != null">
 		  limit #{start},#{limit}
 		</if>
 	</select>
 	<select id="getStaffDesiredPage"  resultMap="getMap"
 	 parameterType="java.util.Map">
-		select di.state st,sa.state sta,sr.*,sa.*,di.*
- 		from supply_rank_info sr,staff_account_info sa,desired_info di ,post_info pi
-		where sr.srid=di.srid and di.id=sa.id and sa.rid=pi.rid
+		select sui.sid sid,sui.abbreviation abbreviation,di.*,sai.*,sri.*,
+		sai.id id2,sai.state sta,di.state stat,di.srid srid2
+ 		from desired_info di,staff_account_info sai,supply_rank_info sri,post_info poi,supply_account_info sui,
+		desired_supply_info desi
+		where di.srid=sri.srid and sai.id=di.id and sai.state=1 and poi.rid=sai.rid and
+		sui.sid=desi.sid and desi.deid=di.deid
 		<if test="select==1">
-			and di.id=#{id}
+			and sai.id=#{id}
 		</if>
 		<if test="select==2">
-			and pi.did=#{did}
+			and poi.did=#{did}
 		</if>
 		<if test="srid!=null and srid!=''">
 			and di.srid=#{srid}
-		</if>
-		<if test="date!=null and date!=''">
-			and di.date like concat('%',#{date},'%')
 		</if>
 		<if test="overDate!=null and overDate!=''">
 			and di.overDate like concat('%',#{overDate},'%')
@@ -83,6 +81,7 @@
 		 <if test="state != null and state != ''">
 		 and di.state=#{state}
 		 </if>
+		 ORDER BY di.deid DESC 
 		<if test="start != null and limit != null">
 		  limit #{start},#{limit}
 		</if>
@@ -92,16 +91,19 @@
 		select p.* from desired_info di,staff_account_info si,post_info p
  		where di.id=si.id and si.rid=p.rid and di.deid=#{deid}
 	</select>
-	<insert id="addDesiredInfo" parameterType="com.mzrd.pojo.DesiredInfo">
-		insert into desired_info (srid,supplier,guige,date,unit,number,overDate,remark,desiredId,id,state) 
-		values(#{srid},#{supplier},#{guige},#{date},#{unit},#{number},#{overDate},#{remark},#{desiredId},#{id},#{state});
-	</insert>
 	
+	<select id="getDesiredIdMax" resultType="java.lang.String"
+		parameterType="java.lang.String">
+		select Max(desiredId) from desired_info where desiredId like concat('%',#{date},'%')
+	</select>
+	<insert id="addDesiredInfo" parameterType="com.mzrd.pojo.DesiredInfo">
+		insert into desired_info (srid,supplier,overDate,remark,desiredId,id,state,date) 
+		values(#{srid},#{supplier},#{overDate},#{remark},#{desiredId},#{id},#{state},#{date});
+	</insert>
 	<update id="updateDesiredInfo" parameterType="com.mzrd.pojo.DesiredInfo">
 		update desired_info 
-		set srid=#{srid},date=#{date},overDate=#{overDate},supplier=#{supplier}
-		,guige=#{guige},unit=#{unit},number=#{number},remark=#{remark},desiredId=#{desiredId}
-		 ,state=#{state}
+		set srid=#{srid},id=#{id},overDate=#{overDate},supplier=#{supplier},
+		remark=#{remark},state=#{state},date=#{date}
 		where deid=#{deid}
 	</update>
 	

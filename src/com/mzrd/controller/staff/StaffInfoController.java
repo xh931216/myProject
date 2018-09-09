@@ -64,8 +64,8 @@ public class StaffInfoController {
 	public StaffAccountInfo getStaffAccountMessage(HttpSession session){
 		StaffAccountInfo si = (StaffAccountInfo) session.getAttribute("userInfo");
 		StaffAccountInfo si1 = new StaffAccountInfo();
-		si.setUserName(si.getUserName());
-		si.setPassword(si.getPassword());
+		si1.setUserName(si.getUserName());
+		si1.setPassword(si.getPassword());
 		StaffAccountInfo staffAccountInfo = staffAccountInfoService.getStaffAccount(si1);
 		return staffAccountInfo;
 	}

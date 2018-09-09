@@ -6,23 +6,30 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
+import com.mzrd.pojo.DesiredDetailsInfo;
 import com.mzrd.pojo.DesiredInfo;
+import com.mzrd.pojo.StaffAccountInfo;
  
 public class PdfUtils {
 	// 利用模板生成pdf
-	public static void fillTemplate(Map<String,String> data,String id) {
+	public static  boolean fillTemplate(Map<String,String> data,HttpServletRequest request) {
 		// 指定解析器
         System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
                 "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
         
         // 模板路径  
+       // String templatePath = request.getSession().getServletContext()  
+       // .getRealPath("/") + "upload/"test.pdf";
         String templatePath = "E:/eclipseWeb/mzrdProject/WebContent/assets/pdf/test.pdf";
-        // 生成的新文件路径  
-        String newPDFPath = "d:/pdf/"+id+".pdf";
+         // 生成的新文件路径  
+        String newPDFPath = "d:/pdf/"+data.get("desiredId")+".pdf" ;
 		PdfReader reader;
 		FileOutputStream out;
 		ByteArrayOutputStream bos;
@@ -52,28 +59,34 @@ public class PdfUtils {
             PdfImportedPage importPage = copy.getImportedPage(new PdfReader(bos.toByteArray()), 1);
             copy.addPage(importPage);
             doc.close();
- 
 		} catch (IOException e) {
 			System.out.println(1);
+			return false;
 		} catch (DocumentException e) {
 			System.out.println(2);
+			return false;
 		}
+		return true;
  
 	}
  
-	 public static void savePdf(DesiredInfo di,String sname,String srname) {
+	 public static boolean savePdf(DesiredInfo di,StaffAccountInfo si,List<DesiredDetailsInfo> ddi,HttpServletRequest request) {
 		 Map<String, String> o = new HashMap<>();
 		 o.put("supplier", di.getSupplier());
-		 o.put("guige", di.getGuige());
-		 o.put("sname", srname);
-		 o.put("number", di.getNumber()+"");
-		 o.put("number", di.getNumber()+"");
-		 o.put("unit", di.getUnit());
-		 SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
-		 o.put("overDate", sdf1.format(di.getOverDate()));
 		 o.put("desiredId", di.getDesiredId()+"");
-		 o.put("srname", sname);
-        fillTemplate(o,sdf.format(new Date()));
+		 o.put("srname", di.getSupplyRankInfo().getSrname());
+		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		 o.put("newDate", sdf.format(new Date()));
+		 o.put("date", sdf.format(di.getDate()));
+		 o.put("overDate", sdf.format(di.getOverDate()));
+		 o.put("remark", di.getRemark());
+		 o.put("sname", si.getSname());
+		 o.put("phone", si.getPhone());
+		 for(int i=0;i<ddi.size();i++){
+			 o.put("fill_"+(i*3+1), ddi.get(i).getGuige());
+			 o.put("fill_"+(i*3+2), ddi.get(i).getNumber()+"");
+			 o.put("fill_"+(i*3+3), ddi.get(i).getUnit());
+		 }
+        return fillTemplate(o,request);
     }
 }

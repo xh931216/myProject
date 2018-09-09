@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mzrd.dao.QuoteSupplyImageInfoDao">
+	
+	<insert id="addImageQuoteInfo" parameterType="com.mzrd.pojo.QuoteSupplyImageInfo">
+		insert into quote_supply_image_info(deid,sid,imageUrl,quoteDate,state) 
+		VALUES(#{deid},#{sid},#{imageUrl},#{quoteDate},#{state})
+	</insert>
+	<select id="getImageUrl" parameterType="java.lang.Integer" 
+		resultType="com.mzrd.pojo.QuoteSupplyImageInfo">
+		select * from quote_supply_image_info where deid=#{deid}
+	</select>
+	<update id="updateImageQuoteInfo" parameterType="com.mzrd.pojo.QuoteSupplyImageInfo">
+		update from quote_supply_image_info set sid=#{sid},imageUrl=#{imageUrl},state=#{state},
+		 quoteDate=#{quoteDate} where deid=#{deid}
+	</update>
+</mapper>

@@ -17,55 +17,65 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mzrd.controller.admin.PostInfoController;
 import com.mzrd.pojo.DepartmentInfo;
+import com.mzrd.pojo.DesiredDetailsInfo;
 import com.mzrd.pojo.DesiredInfo;
 import com.mzrd.pojo.PostInfo;
 import com.mzrd.pojo.StaffAccountInfo;
 import com.mzrd.pojo.SupplyRankInfo;
 import com.mzrd.service.AdminInfoService;
+import com.mzrd.service.DesiredDetailsInfoService;
 import com.mzrd.service.DesiredInfoService;
+import com.mzrd.service.DesiredSupplyInfoService;
 import com.mzrd.service.PostInfoService;
 import com.mzrd.service.SupplyAccountInfoService;
 import com.mzrd.service.SupplyRankInfoService;
+import com.mzrd.util.DesiredId;
 import com.mzrd.util.Image;
+import com.mzrd.util.JSONUtil;
 import com.mzrd.util.PdfUtils;
+
+import net.sf.json.JSONObject;
+
+
+
 @RequestMapping("/staff")
 @Controller
 public class StaffDesiredInfoController {
 	@Autowired
 	private DesiredInfoService desiredInfoService;
-	@Autowired 
-	private AdminInfoService adminInfoService;
 	@Autowired
-	private SupplyRankInfoService supplyRankInfoService;
+	private DesiredDetailsInfoService desiredDetailsInfoService;
 	@Autowired
-	private SupplyAccountInfoService supplyAccountInfoService;
+	private DesiredSupplyInfoService desiredSupplyInfoService;
 	@Autowired
 	private PostInfoService postInfoService;
 	PdfUtils pdfUtils = new PdfUtils();
+	JSONUtil jsonUtil = new JSONUtil();
+	DesiredId desriedId = new DesiredId();
 	//获取所有询价
 	@RequestMapping("/getStaffDesiredList.action")
 	@ResponseBody
 	public Map<String, Object> getStaffDesiredList(int page, int rows,String state,
-			String date,String overDate,String srid,HttpSession session){
+			String overDate,String srid,HttpSession session){
 		StaffAccountInfo staffInfo = (StaffAccountInfo) session.getAttribute("userInfo");
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("srid", srid);
-		params.put("date", date);
 		params.put("overDate", overDate);
 		params.put("state", state);
 		params.put("select", staffInfo.getPostInfo().getRselect());
 		params.put("id", staffInfo.getId());
 		params.put("did", staffInfo.getPostInfo().getDid());
-		int totalCount =  desiredInfoService.getStaffDesiredPage(params).size();
-			
+		int totalCount =  desiredInfoService.getStaffDesiredPage(params).size();			
 		params.put("start",(page - 1) * rows);
 		params.put("limit",rows);
 		List<DesiredInfo> dilist = desiredInfoService.getStaffDesiredPage(params);
@@ -120,37 +130,51 @@ public class StaffDesiredInfoController {
 	}
 	
 	//添加询价
-	@RequestMapping(value="/addStaffDesired.action",method=RequestMethod.POST,produces = "text/html;charset=UTF-8")
+	@RequestMapping(value="/addStaffDesired.action",method=RequestMethod.POST, produces = "text/html;charset=UTF-8")
 	@ResponseBody
-	public String addStaffDesired( HttpSession session,DesiredInfo si) {
-		StaffAccountInfo staffInfo = (StaffAccountInfo) session.getAttribute("userInfo");
+	public String addStaffDesired( HttpSession session,DesiredInfo si, 
+			String[] sidList,String shareItemDatas) {
+		StaffAccountInfo staffInfo = (StaffAccountInfo) session.getAttribute("userInfo");	
 		si.setId(staffInfo.getId());
-		System.out.println("aaaaa:"+si.toString());
-	    DesiredInfo gOk = desiredInfoService.getDesiredInfo(si);
-	    System.out.println(gOk.getId());
+		DesiredInfo gOk = desiredInfoService.getDesiredInfo(si);
 	    if(gOk!=null){
 			return "{\"success\":\"true\",\"message\":\"询价单已存在\"}";
 	    }
+		String desirid =  desriedId.getDeiredId(desiredInfoService.getDesiredIdMax());
+		si.setDesiredId(desirid);
 		int dOK = desiredInfoService.addDesiredInfo(si);
+		boolean inOk = false;
 		if(dOK == 1){
+			 int deid  =  desiredInfoService.getDesiredInfo(si).getDeid();
+			 int ddis =  desiredDetailsInfoService.addDesiredDetailsInfo(shareItemDatas,deid);
+			 if(ddis != 0){
+				 inOk = true;
+			 }
+			 int dsuis = desiredSupplyInfoService.addDesiredSupplyInfo(sidList,deid);
+			 if(dsuis != 0){
+				 inOk = true;
+			 }
+		}
+		if(inOk==true){
 			return "{\"success\":\"true\",\"message\":\"添加成功\"}";
 		}
-		return "{\"success\":\"false\",\"message\":\"添加失败\"}";
+		return "{\"success\":\""+inOk+"\",\"message\":\"添加失败\"}";
 	}
 	//修改询价
 	@RequestMapping(value="/updateStaffDesired.action",method=RequestMethod.POST,produces = "text/html;charset=UTF-8")
 	@ResponseBody
-	public String updateStaffDesired(DesiredInfo si,HttpSession session) {
-		StaffAccountInfo staffInfo = (StaffAccountInfo) session.getAttribute("userInfo");
+	public String updateStaffDesired(HttpSession session,DesiredInfo si, 
+			String[] sidList,String shareItemDatas) {
+		StaffAccountInfo staffInfo = (StaffAccountInfo) session.getAttribute("userInfo");	
+		si.setId(staffInfo.getId());
 		int del = staffInfo.getPostInfo().getRupdate();
-		System.out.println(del);
 		//判断权限
 		if(del==0){
 			return "{\"success\":\"false\",\"message\":\"没有操作权限\"}";
 		}
 		if(del==1){
 			if(si.getId()==staffInfo.getId()){
-				int dOK = desiredInfoService.updateDesiredInfo(si);
+				int dOK = desiredInfoService.updateDesiredInfo(si,sidList,shareItemDatas);
 				if(dOK == 1){
 					return "{\"success\":\"true\",\"message\":\"修改成功\"}";
 				}
@@ -162,7 +186,7 @@ public class StaffDesiredInfoController {
 			int did = staffInfo.getPostInfo().getDid();
 			PostInfo postinfo = desiredInfoService.getPostInfo(si);
 			if(did==postinfo.getDid()){
-				int dOK = desiredInfoService.updateDesiredInfo(si);
+				int dOK = desiredInfoService.updateDesiredInfo(si,sidList,shareItemDatas);
 				if(dOK == 1){
 					return "{\"success\":\"true\",\"message\":\"修改成功\"}";
 				}
@@ -170,7 +194,7 @@ public class StaffDesiredInfoController {
 			}
 			return "{\"success\":\"false\",\"message\":\"没有操作权限\"}";
 		}
-		int dOK = desiredInfoService.updateDesiredInfo(si);
+		int dOK = desiredInfoService.updateDesiredInfo(si,sidList,shareItemDatas);
 		if(dOK == 1){
 			return "{\"success\":\"true\",\"message\":\"修改成功\"}";
 		}
@@ -182,4 +206,5 @@ public class StaffDesiredInfoController {
 	        bin.registerCustomEditor(Date.class, new CustomDateEditor(
 	                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"), true));
 	}
+	
 }

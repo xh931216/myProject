@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mzrd.dao.DesiredSupplyInfoDao">
+	
+	<!-- <select id="getDesiredInfo" parameterType="com.mzrd.pojo.DesiredInfo" 
+		resultType="com.mzrd.pojo.DesiredInfo">
+			select * from desired_info where id=#{id} and srid=#{srid}
+	</select> -->
+	<insert id="addDesiredSupplyInfo" parameterType="com.mzrd.pojo.DesiredSupplyInfo">
+		insert into desired_supply_info (deid,sid) 
+		values(#{deid},#{sid});
+	</insert>
+	<delete id="deleteDesiredSupply" parameterType="java.lang.Integer">
+		delete from desired_supply_info  where deid=#{deid}
+	</delete> 
+	<!-- 
+	<update id="updateDesiredInfo" parameterType="com.mzrd.pojo.DesiredInfo">
+		update desired_info 
+		set srid=#{srid},date=#{date},overDate=#{overDate},supplier=#{supplier}
+		,guige=#{guige},unit=#{unit},number=#{number},remark=#{remark},desiredId=#{desiredId}
+		 ,state=#{state}
+		where deid=#{deid}
+	</update>
+	 -->
+</mapper>

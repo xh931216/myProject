@@ -78,6 +78,7 @@
 				var data = eval('(' + data + ')');
                 if(data.success=="true"){  
 					$("#adminListDg").datagrid("reload");
+	              	  $('#mainPanle').form('clear');
 	            }
 				$.messager.show({
 					title : "提示信息",

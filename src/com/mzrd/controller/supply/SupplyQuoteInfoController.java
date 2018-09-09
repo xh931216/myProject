@@ -54,24 +54,31 @@ public class SupplyQuoteInfoController {
 	//添加报价单
 	@RequestMapping(value="/addQuote.action",method=RequestMethod.POST,produces = "text/html;charset=UTF-8")
 	@ResponseBody
-	public String addQuote( @RequestParam(value = "file_upload", required = false) MultipartFile file,
-			HttpSession session,QuoteInfo qi,HttpServletRequest request)throws Exception{
+	public String addQuote( @RequestParam(value = "file_upload", required = false) MultipartFile file,Date quoteDate,
+			HttpSession session,String shareItemDatas,int deid,HttpServletRequest request)throws Exception{
 		SupplyAccountInfo staffInfo = (SupplyAccountInfo) session.getAttribute("userInfo");
-		qi.setSid(staffInfo.getSid()); 
-		QuoteInfo gOk = quoteInfoService.getQuoteInfo(qi);
-		if(gOk != null){
-			return "{\"success\":\"false\",\"message\":\"您已经报价,不能重复报价\"}";
-		}
+		DesiredInfo di = new DesiredInfo();
+		di.setDeid(deid);
+
 		String imagePath = null;
 		if (file != null && file.getSize() > 0) {  
-        	imagePath = image.saveFile(file); 
-        	qi.setQuoteImage(imagePath);
+        	imagePath = image.saveFile(file,request); 
         } 
-		int dOK = quoteInfoService.addQuoteInfo(qi);
-		if(dOK == 1){
-			return "{\"success\":\"true\",\"message\":\"添加成功\"}";
+		List<QuoteInfo> ql =  quoteInfoService.getQuoteInfo(di);
+		if(ql.size()!=0){
+			System.out.println(imagePath+";"+quoteDate);
+			 int qu = quoteInfoService.updateQuoteInfo(shareItemDatas,staffInfo,imagePath,deid,quoteDate);
+			 
+			 if(qu == 1){
+				return "{\"success\":\"true\",\"message\":\"报价修改成功\"}";
+			}
+			return "{\"success\":\"false\",\"message\":\"报价修改失败\"}";
 		}
-		return "{\"success\":\"false\",\"message\":\"添加失败\"}";
+		int dOK = quoteInfoService.addQuoteInfo(shareItemDatas,staffInfo,imagePath,deid,quoteDate);
+		if(dOK == 1){
+			return "{\"success\":\"true\",\"message\":\"报价添加成功\"}";
+		}
+		return "{\"success\":\"false\",\"message\":\"报价添加失败\"}";
 	}
 	
 	//删除报价
@@ -83,26 +90,6 @@ public class SupplyQuoteInfoController {
 			return "{\"success\":\"true\",\"message\":\"删除成功\"}";
 		}
 		return "{\"success\":\"false\",\"message\":\"删除失败\"}";
-	}
-	
-	//修改报价
-	@RequestMapping(value="/updateQuote.action",method=RequestMethod.POST,produces = "text/html;charset=UTF-8")
-	@ResponseBody
-	public String updateQuote(@RequestParam(value = "file_upload", required = false) MultipartFile file,
-			HttpSession session,QuoteInfo qi,HttpServletRequest request)throws Exception{
-		System.out.println(file.getSize()+";;"+qi.toString());
-		if(file.getSize()!=0){
-		String imagePath = null;
-		if (file != null && file.getSize() > 0) {  
-        	imagePath = image.saveFile(file); 
-        	qi.setQuoteImage(imagePath);
-        }  
-		}
-		int updateOk = quoteInfoService.updateQuoteInfo(qi);
-		if(updateOk == 1){
-			return "{\"success\":\"true\",\"message\":\"报价修改成功\"}";
-		}
-		return "{\"success\":\"true\",\"message\":\"报价修改失败\"}";
 	}
 	
 	 @org.springframework.web.bind.annotation.InitBinder

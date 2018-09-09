@@ -55,4 +55,9 @@ public class StaffAccountInfoServiceImpl implements StaffAccountInfoService{
 	public List<String> getStaffNameList(Map map) {
 		return staffAccountInfoDAO.getStaffNameList(map);
 	}
+
+	@Override
+	public StaffAccountInfo getStaffAccountById(StaffAccountInfo sa) {
+		return staffAccountInfoDAO.getStaffAccountById(sa);
+	}
 }

@@ -18,154 +18,243 @@
 
 </head>
 <body >
-	 <!-- 创建一个更改对话框 -->
-	 
-   <div id="mainPanle" region="center" style="background: #eee; overflow-y:hidden">
-	 <div style="width: 100%;height:100%;background-color: #FFFFFF"  >
-	 <div id="departDlg" title="添加信息"
-		closed="true" style="width:500px">
-		<div style="padding:10px 60px 20px 60px">
-			<form id="staffForm" method="POST" action="addStaffDesired.action" class="easyui-form" enctype="multipart/form-data">
-				<table cellpadding="7">	
-					<tr>
-						<td >询价单号:</td>
-							<td><input type="text" id="desiredId" style="width:250px" name="desiredId" class="easyui-textbox" required="required"/>
-						</td>
-					</tr>	
-					<tr>
-						<td style="width:70px">询价发出单位:</td>
-							<td>
-							<select id="supplier" class="easyui-combobox" name="supplier" style="width:250px;" required="required">  
+	 <div class="easyui-layout" style="width:100%; height:100%;">
+	
+     <div data-options="region:'north',border:false" style="height:230px;width:100%">
+         <form id="mainform" action="addStaffDesired.action" method="post" enctype="multipart/form-data">
+           <table class="formTable" border="0" cellspacing="0" cellpadding="5" width="100%">
+            <tr>
+                <td>
+                <input type="hidden" id="shareItemDatas" name="shareItemDatas" value="" />
+                </td>
+            </tr>
+            <tr>
+                <td width="15%" style="text-align: right">物资类别：</td>
+                <td width="35%"><input id="srname" class="easyui-combobox" style="width:250px" required="required" name="srid"
+						data-options="valueField:'srid',textField:'srname',url:'getRankAllNameList.action'" /></td>
+                <td width="15%" style="text-align: right">询价单位：</td>
+                <td width="35%"><select id="supplier" class="easyui-combobox" name="supplier" style="width:250px;" required="required">  
     							<option ></option>  
     							<option value="明州热电">明州热电</option>  
    								<option value="生物质">生物质</option>
-							</select>  
+							</select>  </td>
+            </tr>
+            <tr>
+				<td width="15%" style="text-align: right">报价截止日期：</td>
+                <td width="35%"><input type="text" id="overDate" style="width:250px" name="overDate" class="easyui-datetimebox" required="required"/>
 						</td>
-					</tr>	
-					 <tr>
-						<td style="width:70px">物资名称:</td>
-							<td><input id="srname" class="easyui-combobox" style="width:250px" required="required" name="srid"
-						data-options="valueField:'srid',textField:'srname',url:'getRankAllNameList.action'" />
-						</td>
-					</tr>
-					<tr>
-						<td >物资规格:</td>
-							<td><input type="text" id="guige" style="width:250px" name="guige" class="easyui-textbox"  required="required"/>
-						</td>
-					</tr>	
-					<tr>
-						<td >物资数量:</td>
-							<td><input type="text" id="number" style="width:250px" name="number" class="easyui-numberbox" required="required"/>
-						</td>
-					</tr>
-					<tr>
-						<td >物资单 位:</td>
-							<td><input type="text" id="unit" style="width:250px" name="unit" class="easyui-textbox" required="required"/>
-						</td>
-					</tr>
-							
-					
-					<tr>
-						<td >物资到货时间:</td>
-							<td><input type="text" id="date" style="width:250px" name="date" class="easyui-datetimebox" required="required"/>
-						</td>
-					</tr>
-					<tr>
-						<td >报价截止时间:</td>
-							<td><input type="text" id="overDate" style="width:250px" name="overDate" class="easyui-datetimebox" required="required"/>
-						</td>
-					</tr>
-					<tr>
-						<td >备        注:</td>
-							<td><input type="text" class="easyui-textbox" id="remark" 
-							data-options="multiline:true" style="height:50px;width:250px"
-							name="remark" required="required"/>
-						</td>
-					</tr>
-					<!-- <tr>
-						<td >询价单:</td>
-							<td>
-							  <input class="easyui-filebox" style="width:250px" data-options='prompt:"选择询价单照片",buttonText:"选择",onChange:change_photo' 
-							  id="file_upload" name="file_upload" required="required"/>
-							  <a href="javascript:void(0)" class="easyui-linkbutton"
-								onclick="imageShow();">浏览询价单</a>
-						</td>
-						
-					</tr> -->
-					<tr>
-						<td >发布:</td>
-        				<td style="text-align:left">
-           					<span class="radioSpan">
+				<td width="15%" style="text-align: right">询价查看单位：</td>
+                <td width="35%"><input id="sidList" class="easyui-combobox" style="width:250px" required="required" name="sidList"
+						data-options="valueField:'sid',textField:'abbreviation',url:'getSupplyInfo.action',multiple:true,
+								groupField:'group',
+								method:'get'," /></td>
+            </tr>
+           
+			 <tr>
+                <td width="15%" style="text-align: right">发布：</td>
+                <td width="35%"><span class="radioSpan">
                					 <input type="radio" name="state" value="0" checked="checked">否</input>
                					 <input type="radio" name="state" value="1">是</input>
-           					</span>
+           					</span></td>
+				<td width="15%" style="text-align: right">物资到货日期：</td>
+                <td width="35%"><input type="text" id="date" style="width:250px" name="date" class="easyui-datetimebox" required="required"/>
 						</td>
-					</tr>
-				</table>
-				
-			</form>
-			<div style="text-align:center;padding:3px">
-				<a href="javascript:void(0)" class="easyui-linkbutton" icon="icon-ok"
-					onclick="saveDesired();">添加</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:void(0)"  icon="icon-cancel"
-					class="easyui-linkbutton" onclick="clearForm();">清空</a>
-			</div>
-			</div>
-	</div>	
-	</div>
-	</div>
-	<!-- 图片预览功能 -->
-	<!-- <div style="display: none">
-    	<div id="dlg" class="datagrid-toolbar" style="padding:5px;">
-      	  <img id="Img" src="" onload="DrawImage(this)"/>
-    	</div>
-	</div> -->
+                
+            </tr>
+			 <tr>
+                <td width="15%" style="text-align: right">备注：</td>
+                <td width="85%" colspan="3"><textarea id="remark" name="remark" required="required"
+                        style="width: 90%; height: 100px;"></textarea>
+                </td>
+            </tr>
+        </table>
+        </form>
+    </div>
+    <div data-options="region:'center',border:false" style="height:430px">
+        <div class="easyui-tabs" data-options="border:false,plain:true" style="height:330px;width:100%">
+            <div title="物资详情" style="padding:5px;height:100px">
+                <div id="hioShareProfitItemForm_tb" style="padding:5px;height:auto;width:100%">
+                    <table cellpadding="0" cellspacing="0" >
+                        <td>
+                        <a href="javascript:void(0)" class="easyui-linkbutton addItem" iconCls="icon-add" plain="true">新增</a>
+                        </td>
+                        <td>
+                        <span class="toolbar-item dialog-tool-separator"></span>
+                        </td>
+						<td>
+                        <a href="javascript:void(0)" class="easyui-linkbutton saveItem" iconCls="icon-save"  plain="true">保存</a>
+                        </td>
+                        <td>
+                        <span class="toolbar-item dialog-tool-separator"></span>
+                        </td>
+                        <td>
+                        <a href="javascript:void(0)" class="easyui-linkbutton removeItem" iconCls="icon-remove" plain="true">删除</a>
+                        </td>
+                        <td>
+                        <span class="toolbar-item dialog-tool-separator"></span>
+                        </td>
+                    </table>
+                </div>
+                <table id="hioShareProfitItemForm" ></table>
+					
+            </div>
+        </div>
+            <div style=" margin:0 auto;width:100%;text-align:center">
+               <a href="javascript:void(0)" class="easyui-linkbutton" style="width:100px;height:30px;background-color:#FFF; font-size:12px; color:#F00"
+					onclick="submit();">提交</a>
+            </div>
+   </div>
+	 
+   </div>
 	<script type="text/javascript">
-	/* var url = null;
-	function imageShow(){
-		if(url == null){
-			$.messager.alert('提示', '先选择文件', 'info');
-			return;
-		}
-		 $('#dlg').dialog({
-	            title: '预览',
-	            width: 700,
-	            height: 400,
-	            resizable: true,
-	            closed: false,
-	            cache: false,
-	            modal: true
-	     });
-	}; */
-	
-	/* function change_photo(){
-		url = $(this).filebox('getValue');
-        PreviewImage($("input[name='file']")[0], 'Img', 'dlg'); 
-    };
-	 */
-    // 保存信息
-	function saveDesired() {
-		$("#staffForm").form("submit", {
-			onSubmit : function() {
-				return $(this).form('enableValidation').form('validate');
-			},
-			success : function(data) {	
-				var data = eval('(' + data + ')');
+	/**
+     * 变量区
+     */
+    var hioShareProfiltItemGrid; // 列表
+    var editIndex=undefined;
+    /**
+     * 初始加载
+     */
+    $(function(){
+        initActions();
+        initHioShareProfiltItemGrid();
+        loadHioShareProfiltItems();
+    });
+    
+    /**
+     * 初始化绑定事件
+     */
+    function initActions(){
+        $('.addItem').linkbutton({'onClick':function(){addItem();}});
+        $('.removeItem').linkbutton({'onClick':function(){removeItem();}});
+		$('.saveItem').linkbutton({'onClick':function(){endEditing();}});
+        
+    }
+    /**
+     * 初始化物资明细
+     */
+    function initHioShareProfiltItemGrid(){
+        hioShareProfiltItemGrid=$('#hioShareProfitItemForm').datagrid({    
+            idField : 'id',singleSelect:true,
+            fit:true, fitColumns : true,border : false,striped:true,
+            pagination:false,rownumbers:true,pageNumber:1,pageSize : 10,pageList : [ 5, 10, 15 ],
+            columns:[[    
+                {field:'id',title:'ID',hidden:true}
+                ,{field:'guige',title:'规格',sortable:false,width:70,align:'left',halign:'center',editor:{type:'textbox',
+					options:{required:true,precision:1}}}
+                ,{field:'number',title:'数量',sortable:false,width:70,align:'left',halign:'center',editor:{type:'numberbox',
+					options:{required:true}} }
+                ,{field:'unit',title:'单位',sortable:false,width:70,align:'left',halign:'center' ,editor:{type:'textbox',
+					options:{required:true,precision:1}} }
+				
+            ]],
+            toolbar:'#hioShareProfitItemForm_tb',
+            enableHeaderClickMenu: false,
+            enableHeaderContextMenu: false,
+            autoEditing:true,
+            extEditing:true,
+            onClickCell:onClickCell
+            });
+    }
+   
+    /**
+     * 选择单元格
+     * @param index
+     * @param field
+     */
+    function onClickCell(index, field){
+        if (editIndex != index){
+            if (endEditing()){
+                hioShareProfiltItemGrid.datagrid('selectRow', index)
+                        .datagrid('beginEdit', index);
+                var ed = hioShareProfiltItemGrid.datagrid('getEditor', {index:index,field:field});
+                if (ed){
+                    ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+                }
+                editIndex = index;
+            } else {
+                setTimeout(function(){
+                    hioShareProfiltItemGrid.datagrid('selectRow', editIndex);
+                },0);
+            }
+        }
+    }
+    /**
+     * 结束编辑
+     * @returns {Boolean}
+     */
+    function endEditing(){
+        if (editIndex == undefined){return true}
+        if (hioShareProfiltItemGrid.datagrid('validateRow', editIndex)){
+            hioShareProfiltItemGrid.datagrid('endEdit', editIndex);
+            editIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    /**
+     * 新增
+     */
+    function addItem(){
+        if (endEditing()){
+            hioShareProfiltItemGrid.datagrid('appendRow',{id:'2'
+//			Math.guid()
+			});
+            editIndex = hioShareProfiltItemGrid.datagrid('getRows').length-1;
+            hioShareProfiltItemGrid.datagrid('selectRow', editIndex)
+                    .datagrid('beginEdit', editIndex);
+        }
+
+    }
+	function loadHioShareProfiltItems(){
+        var action = $('#action').val();
+        if (action == 'edit'){
+            var shareItemDatas = $('#shareItemDatas').val();
+            if (!$.string.isNullOrEmpty(shareItemDatas)){
+                var shareItemDatasJson = $.parseJSON(shareItemDatas);
+                hioShareProfiltItemGrid.datagrid('loadData',shareItemDatasJson);
+            }
+        }
+    }
+    /**
+     * 删除
+     */
+    function removeItem(){
+        if (editIndex == undefined){return}
+        hioShareProfiltItemGrid.datagrid('cancelEdit', editIndex)
+            .datagrid('deleteRow', editIndex);
+        editIndex = undefined;
+        }
+    
+    
+    function submit(){
+		endEditing();
+        $('#mainform').form('submit',{
+            onSubmit:function(){
+                var isValid = $(this).form('enableValidation').form('validate');
+                var itemDatas = $('#hioShareProfitItemForm').datagrid('getData');
+                if (isValid){
+                  //  $.messager.progress();
+                    var itemDatasJson = JSON.stringify(itemDatas.rows)
+                    $('#shareItemDatas').val(itemDatasJson);
+                }
+                return isValid; // 返回false终止表单提交
+            },
+            success:function(data){
+                eval('data='+data);
                 if(data.success=="true"){  
-					$("#adminListDg").datagrid("reload");
+                   // $.messager.progress('close');
 	            }
 				$.messager.show({
 					title : "提示信息",
 					msg : data.message
 				});
-			}
-		});
-	}
+            }
+        });
+    }
 	
 	
-	function clearForm() {
-		$('#staffForm').form('clear');
-	}
     
 	</script>
 </body>

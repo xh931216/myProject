@@ -39,7 +39,17 @@ public class StaffQuoteInfoController {
 	public List getRankAllNameList(QuoteInfo qi){
 		return quoteInfoService.getAllQuoteList(qi);
 	}
-	
+	//下载报价单
+	@RequestMapping(value = "/quoteDownload.action" , produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String quoteDownload(QuoteInfo qi){
+		//System.out.println(qi.getQuoteImage());
+		//String upOk = image.downloadPicture(qi.getQuoteImage(),qi.getRemark());
+		/*if(upOk == "true"){
+			return "{\"success\":\"true\",\"message\":\"下载成功\"}";
+		}*/
+		return "{\"success\":\"false\",\"message\":\"下载失败\"}";
+	}
 	 @org.springframework.web.bind.annotation.InitBinder
 	 public void InitBinder(ServletRequestDataBinder bin) {
 	        bin.registerCustomEditor(Date.class, new CustomDateEditor(

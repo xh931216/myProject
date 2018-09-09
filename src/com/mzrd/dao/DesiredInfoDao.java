@@ -12,6 +12,8 @@ public interface DesiredInfoDao {
 	public List<DesiredInfo> getStaffDesiredPage(Map map);
 	public List<DesiredInfo> getSupllyDesiredList(Map map);
 	public DesiredInfo getDesiredInfo(DesiredInfo di);
+	public DesiredInfo getDesiredInfoPdf(DesiredInfo di);
+	public String getDesiredIdMax(String date);
 	public PostInfo getPostInfo(DesiredInfo di);
 	public int addDesiredInfo(DesiredInfo di);
 	public int updateDesiredInfo(DesiredInfo di);

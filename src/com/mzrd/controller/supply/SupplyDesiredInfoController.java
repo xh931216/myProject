@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +15,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.mzrd.pojo.DesiredDetailsInfo;
 import com.mzrd.pojo.DesiredInfo;
 import com.mzrd.pojo.StaffAccountInfo;
 import com.mzrd.pojo.SupplyAccountInfo;
 import com.mzrd.pojo.SupplyRankInfo;
 import com.mzrd.service.AdminInfoService;
+import com.mzrd.service.DesiredDetailsInfoService;
 import com.mzrd.service.DesiredInfoService;
 import com.mzrd.service.PostInfoService;
 import com.mzrd.service.StaffAccountInfoService;
@@ -29,40 +34,38 @@ import com.mzrd.util.PdfUtils;
 public class SupplyDesiredInfoController {
 	@Autowired
 	private DesiredInfoService desiredInfoService;
-	@Autowired 
-	private AdminInfoService adminInfoService;
+	@Autowired
+	private DesiredDetailsInfoService desiredDetailsInfoService;
 	@Autowired
 	private StaffAccountInfoService staffAccountInfoService;
-	@Autowired
-	private SupplyAccountInfoService supplyAccountInfoService;
-	@Autowired
-	private SupplyRankInfoService supplyRankInfoService;
-	@Autowired
-	private PostInfoService postInfoService;
 	PdfUtils pdfUtils = new PdfUtils();
 	//获取询价单pdf
-	@RequestMapping("/getSupplyDesiredPdf.action")
+	@RequestMapping(value="/getSupplyDesiredPdf.action",produces = "text/html;charset=UTF-8")
 	@ResponseBody
-	public void getSupplyDesiredPdf(DesiredInfo di){
-		Map<String, String> map = new HashMap<>();
-		map.put("id", di.getId()+"");
-		String srname = staffAccountInfoService.getStaffNameList(map).get(0);
-		Map<String, String> map1 = new HashMap<>();
-		map.put("id", di.getSrid()+"");
-		String sname =
-				supplyRankInfoService.getSupplyRankInfoList(map1).get(0).getSrname();
-		pdfUtils.savePdf( di,sname,srname);
+	public String getSupplyDesiredPdf(DesiredInfo  di,HttpServletRequest request,HttpSession session){
+		
+		DesiredInfo dii = desiredInfoService.getDesiredInfoPdf(di);
+		System.out.println(dii.toString());
+		StaffAccountInfo sa = new StaffAccountInfo();
+		//sa.setId(dii.getId());
+		StaffAccountInfo staffInfo = staffAccountInfoService.getStaffAccountById(sa);
+		List<DesiredDetailsInfo> ddi = desiredDetailsInfoService.getStaffDesiredDetailsList(di.getDeid());
+		boolean pdf = pdfUtils.savePdf(dii, staffInfo, ddi, request);
+		if(pdf==true){
+			return "{\"success\":\"true\",\"message\":\"下载成功\"}";
+		}
+		return "{\"success\":\"false\",\"message\":\"下载失败\"}";
+		
 	}
 	//获取所有询价
 	@RequestMapping("/getSupllyDesiredList.action")
 	@ResponseBody
 	public Map<String, Object> getSupllyDesiredList(int page, int rows,
-			String date,String overDate,String srid,HttpSession session){
+			String overDate,String srid,HttpSession session){
 		SupplyAccountInfo staffInfo = (SupplyAccountInfo) session.getAttribute("userInfo");
 		Map<String, Object> params = new HashMap<String, Object>();	
 		params.put("sid", staffInfo.getSid());
 		params.put("srid", srid);
-		params.put("date", date);
 		params.put("overDate", overDate);
 		int totalCount =  desiredInfoService.getSupllyDesiredList(params).size();
 		params.put("start",(page - 1) * rows);
