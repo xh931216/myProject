@@ -31,7 +31,9 @@ public class SupplyDesiredDetailsInfoController {
 	@RequestMapping("/getStaffDesiredDetailsList.action")
 	@ResponseBody
 	public List getStaffDesiredDetailsList(int deid,HttpSession session){
-		return desiredDetailsInfoService.getStaffDesiredDetailsList(deid);
+		SupplyAccountInfo supplyInfo = (SupplyAccountInfo) session.getAttribute("userInfo");
+		int sid = supplyInfo.getSid();
+		return desiredDetailsInfoService.getStaffDesiredDetailsList(deid,sid);
 	}
 	
 	 @org.springframework.web.bind.annotation.InitBinder

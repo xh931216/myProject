@@ -19,21 +19,11 @@
 </head>
 <body>
 	 <!-- 创建一个table -->
-	<table id="adminListDg" class="easyui-datagrid"></table>
-	
+	<table id="adminListDg" class="easyui-datagrid" style="width:100%"></table>
 	<!-- 工具栏 -->
 	<div id="adminListTb" style="padding:2px 5px;">
-		<a id="ainsert" href="javascript:void(0)" class="easyui-linkbutton"
-			iconCls="icon-add" plain="true" onclick="addStaff()">新增</a> 
 		<a id="aupdate" href="javascript:void(0)" class="easyui-linkbutton"
-			iconCls="icon-edit" plain="true" onclick="editStaff();">修改</a>
-		<a id="adelete" href="javascript:void(0)" class="easyui-linkbutton"
-			iconCls="icon-remove" plain="true" onclick="deleteStaff();">删除</a>
-	</div>
-	<!-- 工具栏 -->
-	<div id="adminListTb1" style="padding:2px 5px;">
-		<a id="ainsert" href="javascript:void(0)" class="easyui-linkbutton"
-			iconCls="icon-cut" plain="true" onclick="downStaff()">下载报价单</a> 
+			iconCls="icon-edit" plain="true" onclick="editStaff();">查看报价单</a>
 	</div>
 	<!-- 查询窗体 -->
 	<div id="searchOrderTb" style="padding:2px 5px;">
@@ -41,12 +31,9 @@
 		 &nbsp;&nbsp;&nbsp; 物资类别 &nbsp;
 			<input style="width:115px;" id="srname1" class="easyui-combobox" 
 				data-options="valueField:'srid',textField:'srname',url:'getRankAllNameList.action'" />
-			&nbsp;&nbsp;&nbsp; 发布状态 &nbsp;
-			 <select id="state1"  class="easyui-combobox" name="state" style="width:100px;">
-					<option value="0">未发布</option>
-					<option value="1" selected>已发布</option>
-			</select>
-			<BR />
+			<div id="selectUser"> &nbsp;&nbsp;&nbsp; 询价人 &nbsp; &nbsp; &nbsp;&nbsp;
+			<input class="easyui-textbox" type="text" id="userName" style="width:130px;"
+							name="userName"  /></div>
 			&nbsp;&nbsp;&nbsp; 报价截止时间&nbsp;<input type="text" id="overDate1" 
 			style="width:130px" name="overDate" class="easyui-datebox" />
 			
@@ -56,107 +43,92 @@
 		</form>
 	</div>
 	
-	<!-- 修改信息的对话框  -->
+	<!-- 报价信息的对话框  -->
 	<div id="powerDlg" class="easyui-dialog" title="修改信息"
-		closed="true" style="width:550px">
-		<div style="padding:10px 60px 20px 60px">
-			<form id="staffForm" method="POST" action="updateStaffDesired.action" class="easyui-form">
-				<table cellpadding="7">					
+		closed="true" style="width:900px;height:300px">
+		 <form id="mainform" action="addQuote.action" method="post" enctype="multipart/form-data">       
+    <div data-options="region:'center',border:false" style="height:250px">
+               <div id="hioShareProfitItemForm_tb" style="padding:5px;height:auto;width:98%">
+                    <table cellpadding="0" cellspacing="0" >
+						<td>
+                       
+				<a id="upload" href="javascript:void(0)" class="easyui-linkbutton"
+				iconCls="icon-cut" plain="true" onclick="submit();">下载报价单</a> </td>
+                        <td>
+                        <input type="hidden" class="easyui-textbox"  id="deid1" name="deid" value=""/>   
+                        </td>
+						<td>
+						<a href="javascript:void(0)" class="easyui-linkbutton"
+								onclick="imageShow();">  浏览附件  </a> 
+						</td>
+                        <td> 
+                          <input type="hidden"   class="easyui-textbox"  id="shareItemDatas1" name="shareItemDatas" value="" />
+                        </td>
+                    </table>
+					<table cellpadding="0" cellspacing="0">
 					<tr>
-						<td >询价单号:</td>
-							<td><input type="text" id="desiredId" style="width:250px" name="desiredId" class="easyui-textbox" required="required"/>
-							<INPUT  type="hidden" id="deid" name="deid" class="easyui-textbox"/>
-						</td>
-						
-					</tr>	
-					<tr>
-						<td style="width:70px">询价发出单位:</td>
-							<td>
-							<select id="supplier" class="easyui-combobox" name="supplier" style="width:250px;" required="required">  
-    							<option ></option>  
-    							<option value="明州热电">明州热电</option>  
-   								<option value="生物质">生物质</option>
-							</select>  
-						</td>
-					</tr>	
-					 <tr>
-						<td style="width:70px">物资名称:</td>
-							<td><input id="srname" class="easyui-combobox" style="width:250px" required="required" name="srid"
-						data-options="valueField:'srid',textField:'srname',url:'getRankAllNameList.action'" />
-						</td>
-					</tr>
-					<tr>
-						<td >物资规格:</td>
-							<td><input type="text" id="guige" style="width:250px" name="guige" class="easyui-textbox"  required="required"/>
-						</td>
-					</tr>	
-					<tr>
-						<td >物资数量:</td>
-							<td><input type="text" id="number" style="width:250px" name="number" class="easyui-numberbox" required="required"/>
-						</td>
-					</tr>
-					<tr>
-						<td >物资单 位:</td>
-							<td><input type="text" id="unit" style="width:250px" name="unit" class="easyui-textbox" required="required"/>
-						</td>
-					</tr>
-							
-					
-					<tr>
-						<td >物资到货时间:</td>
-							<td><input type="text" id="date" style="width:250px" name="date" class="easyui-datetimebox" required="required"/>
-						</td>
-					</tr>
-					<tr>
-						<td >报价截止时间:</td>
-							<td><input type="text" id="overDate" style="width:250px" name="overDate" class="easyui-datetimebox" required="required"/>
-						</td>
-					</tr>
-					<tr>
-						<td >备        注:</td>
-							<td><input type="text" class="easyui-textbox" id="remark" 
-							data-options="multiline:true" style="height:50px;width:250px"
-							name="remark" required="required"/>
-						</td>
-					</tr>
-					<tr>
-						<td >发布:</td>
-        				<td style="text-align:left">
-           					<span class="radioSpan">
-               					 <input type="radio" name="state" value="0" checked="checked">否</input>
-               					 <input type="radio" name="state" value="1">是</input>
-           					</span>
-						</td>
-					</tr>
-				</table>
-			</form>
-			<div style="text-align:center;padding:3px">
-				<a href="javascript:void(0)" class="easyui-linkbutton"
-					onclick="saveStaff();">修改</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:void(0)"
-					class="easyui-linkbutton" onclick="clearAdminForm();">清空</a>
-			</div>
-		</div>
+						<td width="500px">   <div id="quoteDate" ></div></td>
+						<td><div style="color:red;font-weight:bold;font-size:20px;float:right ">
+                    		<div id="countPrice">      </div></div>  </td></tr>
+					</table>
+                </div>
+                 <table id="hioShareProfitItemForm" style="width:100%;height:220px;"></table>
+				
+            </div>
+   </div>
+	  </form>
 	</div>
-	<div id="image1" class="easyui-dialog" title="报价单显示"
-		closed="true" style="width:750px;height:500px">
+	<!-- 图片预览功能 -->
+	 <div style="display: none">
     	<div id="dlg" class="datagrid-toolbar" style="padding:5px;">
       	  <img id="Img" src="" onload="DrawImage(this)"/>
     	</div>
 	</div>
-	
 	<!-- 提示信息的对话框  -->
-	<div id="powerDlg22" class="easyui-dialog" 
-		closed="true" style="width:550px">
+	<div id="powerDlg1" class="easyui-dialog" title="消息提示"
+		closed="true" style="width:370px">
 		<div style="padding:10px 60px 20px 60px">
-			<DIV id="showMess">正在下载中.......</DIV>
+			<DIV id="showMess"></DIV>
 		</div>
 	</div>
 	<script type="text/javascript">
-	var imageurl = null;
+	var url = null;
+	function imageShow(){
+		if(url == null){
+			$.messager.alert('提示', '没有附件', 'info');
+			return;
+		}
+		  $('#dlg').dialog({
+	            title: '预览',
+	            width: 700,
+	            height: 400,
+	            resizable: true,
+	            closed: false,
+	            cache: false,
+	            modal: true
+	     }); 
+	};
+	
+	function change_photo(){
+		url = $(this).filebox('getValue');
+        PreviewImage($("input[name='file_upload']")[0], 'Img', 'dlg'); 
+    };
+	
 		$(function() {
+			$.ajax({
+		        type : 'post',
+		        async : false,    
+		        url : 'getStaffMessage.action',
+				dataType : 'json',
+		        success : function(data) {
+		        	if(data.postInfo.rname=='采购员')
+		        	{
+			        	$("#selectUser").hide();
+		        	}
+		        }
+		   	 });
 			$('#adminListDg').datagrid({
-				url : 'getStaffDesiredList.action',
+				url : 'getStaffQuoteList.action',
 				singleSelect:true,
 				loadMsg:'加载中，请稍后...',
 				queryParams : {},//查询条件
@@ -168,20 +140,16 @@
 				multiSort: true, //启用排序
 				sortable: true, //启用排序列
 				autoRowHeight: true, //自动行高
-				toolbar : '#adminListTb', //为datagrid添加工具栏
 				header : '#searchOrderTb', //为datagrid标头添加搜索栏
 				columns : [ [ { //编辑datagrid的列
-					title : '序号',
-					field : 'deid',
-					align : 'center',
-					checkbox : true
-				}, {
+					title : '序号',field : 'deid',hidden:'true'
+					},{
 					field : 'id',
 					title : '询价人',
 					width : 100,
 					formatter: function(value, row,index){
 						if(row.staffAccountInfo){
-					        return row.staffAccountInfo.userName;
+					        return row.staffAccountInfo.sname;
 						}else{
 							value;
 						}
@@ -210,415 +178,334 @@
 					title : '报价截止时间',
 					width : 150
 				},{
+					field : 'date',
+					title : '到货时间',
+					width : 150
+				},{
+					field : 'supplyId',
+					title : '发送公司',
+					width : 100,
+					formatter: function(value, row,index){
+						var sId = row.supplyId;
+						if(sId){
+							var arr = sId.split(",");
+							var index = 0;
+							for(var i=0;i<arr.length;i++){
+								if(arr[i]!=''){
+									index++;
+								}
+							}	
+					        return index+"家";
+						}
+					}
+				},{
 					field : 'remark',
 					title : '备注',
 					width : 300
-				},{
-					field : 'state',
-					title : '状态',
-					width : 100,
-					formatter: function(value, row, index){
-						if(row.state == '1'){
-							return "已发布";
-						}else{
-							return "未发布";
-						}
-					}
 				} ] ],
 	            view: detailview,
-				pagination : true,
 	            detailFormatter: function (index, row) {
-	                return '<div style="padding:2px"><table id="divadsf" class="ddv"></table></div>'; 
-				},
-				 onExpandRow: function (index, row) {
-		            	var ddv = $(this).datagrid('getRowDetail',index).find('table.ddv');
-						ddv.datagrid({
-		                    url: 'getStaffDesiredDetailsList.action?deid=' + row.deid,
-		                    fitColumns: true,
-		                    singleSelect: true,
-							loadMsg:'加载中，请稍后...',
-		                    rownumbers: true,
-							autoRowHeight: true, //自动行高
-							multiSort: true, //启用排序
-							sortable: true, //启用排序列s
-							
-		                    loadMsg: '',
-		                    columns: [[
+	                 return '<div style="padding:2px"><table class="ddv" id="ddv"></table></div>'; 
+				}
+				
+				,  
+			onExpandRow: function(index,row){//父亲级列表，注意此时行索引为index                                  
+				var ddv = $(this).datagrid('getRowDetail',index).find('table.ddv');
+				ddv.datagrid({
+					url:"getStaffQuoteSupplyList.action?deid="+row.deid,
+					fitColumns:true,
+					singleSelect:true,
+					loadMsg:'加载中，请稍后...',
+					autoRowHeight:true,
+					multiSort: true, //启用排序
+					rownumbers : true, //显示行号
+					sortable: true, //启用排序列
+					autoRowHeight: true, //自动行高
+					toolbar : '#adminListTb', //为datagrid添加工具栏
+					columns : [ [ { //编辑datagrid的列
+					title : '序号',
+					field : 'sid',
+					align : 'center',
+					checkbox : true
+				}, {
+					field : 'userName',
+					title : '登录名',
+					width : 100
+				}, {
+					field : 'supplierName',
+					title : '公司名称',
+					width : 150
+				}, {
+					field : 'abbreviation',
+					title : '简称',
+					width : 100
+				}, {
+					field : 'address',
+					title : '公司地址',
+					width : 100
+				}, {
+					field : 'contact',
+					title : '联系人',
+					width : 100
+				}, {
+					field : 'phone',
+					title : '电话号码',
+					width : 100
+				}, {
+					field : 'email',
+					title : '邮箱',
+					width : 200
+				} ] ],
+                view: detailview,  
+                detailFormatter:function(index,r){  
+                    return '<div style="padding:2px"><table class="dddv" id="dddv"></table></div>';  
+                },  
+                onExpandRow: function(index1,r){//子列表，此时行索引为index1
+                    var dddv = $(this).datagrid('getRowDetail',index1).find('table.dddv');
+                    dddv.datagrid({
+                        fitColumns:true,
+                        nowrap:false,
+                        singleSelect:true,
+                        height:'auto',
+                        autoRowHeight:true,
+						url: "getStaffDesiredDetaiSupplylsList.action?deid="+row.deid+"&sid="+r.sid,
+						loadMsg:'加载中，请稍后...',
+		                rownumbers: true,
+						multiSort: true, //启用排序
+						sortable: true, //启用排序列s
+                        columns: [[
 								{title : '序号',field : 'dedid',hidden:'true'},
+		                        { field: 'dename', title: '物资名称', width: 40 },
 		                        { field: 'guige', title: '物资规格', width: 40 },
 		                        { field: 'number', title: '物资数量', width: 40 },
-		                        { field: 'unit', title: '物资单位', width: 40 },
-		                        { field: 'date', title: '到货时间', width: 80 }
-		                    ]],
-		                    onClickRow:function(rowIndex,rowData){
-								$("#image1").dialog("open").dialog('setTitle', '报价单');
-								$("#Img").attr('src',rowData.quoteImage)
-							},
-							onResize:function(){
-								$('#adminListDg').datagrid('fixDetailRowHeight',index);
-							},
-							onLoadSuccess:function(){
-								$('#adminListDg').datagrid('fixDetailRowHeight',index);
-							}
-		                });
-		                $('#adminListDg').datagrid('fixDetailRowHeight', index);
-		            }
-				
-				
-				 /* onExpandRow: function (index, row) {
-						if(row.state==1){
-		            	var ddv = $(this).datagrid('getRowDetail',index).find('table.ddv');
-						ddv.datagrid({
-		                    url: 'getAllQuoteList.action?deid=' + row.deid,
-		                    fitColumns: true,
-		                    singleSelect: true,
-							loadMsg:'加载中，请稍后...',
-		                    rownumbers: true,
-							autoRowHeight: true, //自动行高
-							multiSort: true, //启用排序
-							sortable: true, //启用排序列s
-							toolbar : '#adminListTb1', //为datagrid添加工具栏
-		                    loadMsg: '',
-		                    columns: [[
-								{title : '序号',field : 'deid',align : 'center',checkbox : true},
-								{field : 'supplierName',title : '报价公司简称',width : 60,
-									formatter: function(value, row,index){
-										if(row.supplyAccountInfo){
-											return row.supplyAccountInfo.supplierName;
-										}else{
-											value;
-										}
-									}
-								},
-								{field : 'contact',title : '报价公司联系人',width : 60,
-									formatter: function(value, row,index){
-										if(row.supplyAccountInfo){
-											return row.supplyAccountInfo.contact;
-										}else{
-											value;
-										}
-									}
-								},
-								{field : 'phone',title : '报价公司电话',width : 60,
-									formatter: function(value, row,index){
-										if(row.supplyAccountInfo){
-											return row.supplyAccountInfo.phone;
-										}else{
-											value;
-										}
-									}
-								},
-								{field : 'email',title : '报价公司邮箱',width : 100,
-									formatter: function(value, row,index){
-										if(row.supplyAccountInfo){
-											return row.supplyAccountInfo.email;
-										}else{
-											value;
-										}
-									}
-								},
-								{field : 'address',title : '报价公司地址',width : 100,
-									formatter: function(value, row,index){
-										if(row.supplyAccountInfo){
-											return row.supplyAccountInfo.address;
-										}else{
-											value;
-										}
-									}
-								},
-		                        { field: 'price', title: '报价单价', width: 40 },
-		                        { field: 'number', title: '报价数量', width: 40 },
-		                        { field: 'unit', title: '报价单位', width: 40 },
-		                        { field: 'quoteDate', title: '到货时间', width: 80 },
-		                        { field: 'remark', title: '备注', width: 150 }
-		                    ]],
-							onClickRow:function(rowIndex,rowData){
-								$("#image1").dialog("open").dialog('setTitle', '报价单');
-								$("#Img").attr('src',rowData.quoteImage)
-							},
-							onResize:function(){
-								$('#adminListDg').datagrid('fixDetailRowHeight',index);
-							},
-							onLoadSuccess:function(){
-								$('#adminListDg').datagrid('fixDetailRowHeight',index);
-							}
-		                });
-		                $('#adminListDg').datagrid('fixDetailRowHeight', index);
-						}
-		            } */
-				
-				
-				
-			});
+		                        { field: 'unit', title: '物资单位', width: 40},
+		                        { field: 'beizhu', title: '备注', width: 40 },
+								{field:'qid' , title:'编号',width:0,hidden:true}
+								,{field:'price',title:'物资单价',width: 40 }
+								,{field:'remark',title:'备注',width:40 }
+		                    ]], 
+                        onResize:function(){                        
+                                ddv.datagrid('fixDetailRowHeight',index1);
+                                $('#adminListDg').datagrid('fixDetailRowHeight',index);
+                         },
+                        onLoadSuccess:function(){
+                            setTimeout(function(){                                  
+                                ddv.datagrid('fixDetailRowHeight',index1);//在加载成功时，获取父列表的明细高度，使其适应明显点开后的高度，注意此时的行索引为index1
+                                ddv.datagrid('fixRowHeight',index1);//在加载成功时，获取子明细点开后父列表的列高，防止在超过加载成功前的高度时，出现垂直方向的滑动条
+                                $('#adminListDg').datagrid('fixDetailRowHeight',index);//在加载成功时，获取爷爷列表的明细高度，使其适应前面父列表和子列表的高度变化，注意此时的行索引为index
+                                $('#adminListDg').datagrid('fixRowHeight',index);//在加载成功时，获取父列表的明细点开后爷爷列表的高度，防止在超过加载成功前的高度时，出现垂直方向的滑动条
+                            },0);
+                        }
+                    });
+                    ddv.datagrid('fixDetailRowHeight',index1);
+                    ddv.datagrid('fixRowHeight',index1);
+                    $('#adminListDg').datagrid('fixDetailRowHeight',index);
+                    $('#adminListDg').datagrid('fixRowHeight',index);
+                }, 
+                onResize:function(){                    
+                        $('#adminListDg').datagrid('fixDetailRowHeight',index);                                      
+                },
+                onLoadSuccess:function(){
+                    setTimeout(function(){
+                        $('#adminListDg').datagrid('fixDetailRowHeight',index);//在加载爷爷列表明细（即：父列表）成功时，获取此时整个列表的高度，使其适应变化后的高度，此时的索引
+                        $('#adminListDg').datagrid('fixRowHeight',index);//防止出现滑动条
+                    },0);
+                }
+            });
+            $('#adminListDg').datagrid('fixDetailRowHeight',index);
+			}
+	});
+
 		});
 		
-		$.ajax({  
-	         url:'getDesiredInfo.action',  
-	         cache:false,  
-	         success:function(data){
-	        	 var insert=data.postInfo.rinsert;
-	        	 var rdelete=data.postInfo.rdelete;
-	        	 var rupdate=data.postInfo.rupdate;
-	        	 if(insert==0){
-		        	 $("#ainsert").hide();
-	        	 }
-	        	 if(rdelete==0){
-		        	 $("#adelete").hide();
-	        	 }
-	        	 if(rupdate==0){
-		        	 $("#aupdate").hide();
-	        	 }
-	         }
-		})
 		// 查询询价
 		function searchPostInfo() {
 			var overDate=$('#overDate1').datebox('getValue');
 			var srid = $('#srname1').combobox("getValue");
-			var state = $('#state1').combobox("getValue");
+			var userName =$("#userName").val();
 			$('#adminListDg').datagrid('load', {
 				srid  : srid,
 				overDate:overDate,
-				state : state
+				userName:userName
 			});
 		}
 		var id=0;
-        function addStaff(){
-			window.open("staffDesiredAdd.html","_self");
+		function upload(){
+			var row = $("#adminListDg").datagrid("getSelected");
+			var deid = row.deid;
+			$.ajax({
+                type : 'post',
+                async : false,    
+                url : 'getSupplyDesiredPdf.action?deid='+deid,
+        		dataType : 'json',
+                success : function(data) {
+                    if(data.success=="true"){ 
+						 $("#powerDlg1").dialog("open").dialog('setTitle', '信息提示');
+						$("#showMess").html("d:/pdf/"+row.desiredId+"询价单.pdf查看");
+    	            }else{
+    	            	$("#powerDlg1").dialog("open").dialog('setTitle', '信息提示');
+						$("#showMess").html("请关闭文件，重新下载");
+    	            }
+    				$.messager.show({
+    					title : "提示信息",
+    					msg : data.message
+    				});
+                }
+            });
 		}
-		//下载报价单
-		function downStaff() {
-			// 获取选中的员工记录行
-			var rows = $("#divadsf").datagrid('getSelections');
-			if (rows.length >0 && rows.length<=1 ) {
-				var row = $("#divadsf").datagrid("getSelected");
-				$.messager.confirm('Confirm', '确认要下载?', function(r) {
-					$("#powerDlg22").dialog("open").dialog('setTitle', '');
-				if (r) {
-						var date = new Date();
-						  var seperator1 = "_";
-						  var month = date.getMonth() + 1;
-							var strDate = date.getDate();
-							var minute = date.getMinutes();
-						var hour = date.getHours();
-						var second =date.getSeconds();
-						if(hour>=0 && hour<=9){
-						hour ="0"+hour;
-			}
-		if(minute>=0 && minute<=9){
-			minute ="0"+minute;
-		}
-		if (month >= 1 && month <= 9) {
-		     month = "0" + month;
-		 }
-		 if (strDate >= 0 && strDate <= 9) {
-		     strDate = "0" + strDate;
-		 }
-		 if (second >= 0 && second <= 9) {
-		     second = "0" + second;
-		 }
-		 var d12 =date.getFullYear() + "" + month + "" + strDate
-          + "" + hour + "" + minute+""+second;
-						// 发送请求
-						$.post('quoteDownload.action', {
-							quoteImage : row.quoteImage,
-							remark : d12
-						}, function(result) {
-							if (result.success == 'true') {
-							
-							   $('#powerDlg22').window('close');
-							  $.messager.alert('提示', "请到d:/"+d12+".jpg", 'info');
-							} else {
-								$.messager.show({
-									title : '提示信息',
-									msg : result.message
-								});
-							}
-						}, 'json');
-
-					}
-				});
-			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个', 'info');
-			}else {
-				$.messager.alert('提示', '请选择', 'info');
-			}
-		}
-		// 删除询价
-		function deleteStaff() {
-			// 获取选中的员工记录行
-			var rows = $("#adminListDg").datagrid('getSelections');
-			if (rows.length >0 && rows.length<=1 ) {
-				var row = $("#adminListDg").datagrid("getSelected");
-				state = row.state;
-				if(state == "0"){
-				$.messager.confirm('Confirm', '确认要删除'+row.desiredId+'?', function(r) {
-					if (r) {
-						deid = row.deid;
-						
-						// 发送请求
-						$.post('deleteDesiredInfo.action', {
-							deid : deid,
-							id :row.id
-						}, function(result) {
-							if (result.success == 'true') {
-								$("#adminListDg").datagrid('reload'); 
-								$.messager.show({
-									title : '提示信息',
-									msg : result.message
-								});
-							} else {
-								$.messager.show({
-									title : '提示信息',
-									msg : result.message
-								});
-							}
-						}, 'json');
-
-					}
-				});
-				}else{
-					$.messager.alert('提示', '询价单已发布，不能删除', 'info');
-				}
-			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个询价单', 'info');
-			}else {
-				$.messager.alert('提示', '请选择未发布的询价单', 'info');
-			}
-		}
-		
-		 //设置密码窗口
-        function editPassword() {
-            var rows = $("#adminListDg").datagrid('getSelections');
-			if (rows.length >0 && rows.length<=1 ) {
-				var row = $("#adminListDg").datagrid("getSelected");
-				id = row.id;
-				// 打开“修改”对话框
-				$("#pass").dialog("open").dialog('setTitle', '重置密码');
-			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个员工', 'info');
-			}else {
-				$.messager.alert('提示', '请选择要修改的员工', 'info');
-			}
-        }
-        //关闭登录窗口
-        function closePwd() {
-            $('#pass').window('close');
-        }
-        //修改密码
-        function savePass() {
-            var $rePass = $('#txtRePass');
-            $.ajax({  
-	              url:'updateStaff.action?id='+id+'&password=' + $rePass.val(),  
-	              cache:false,  
-	              success:function(data){  
-	                  eval('data='+data);  
-	                  if(data.success=="true"){  
-						 $("#adminListDg").datagrid("reload");
-	                  	  $("#pass").dialog("close");
-	                  }
-					  $.messager.show({
-						title : "提示信息",
-						msg : data.message
-					});
-	              }  
-             })  
-            
-        }
-        
-        //设置询价信息窗口
+        //设置报价信息窗口
         function editStaff() {
-            var rows = $("#adminListDg").datagrid('getSelections');
+			var rows = $("#ddv").datagrid('getSelections');
 			if (rows.length >0 && rows.length<=1 ) {
 				var row = $("#adminListDg").datagrid("getSelected");
-				state =row.state;
-				if(state == "0"){
+				var r = $("#ddv").datagrid("getSelected");
 				// 打开“修改”对话框
-				$("#powerDlg").dialog("open").dialog('setTitle', '修改询价');
-				$("#deid").textbox("setValue",row.deid);
-				$("#state").textbox("setValue",row.state);
-				$("#overDate").datetimebox("setValue",row.overDate);
-				$("#date").datetimebox("setValue",row.date);
-				$("#supplier").textbox("setValue",row.supplier);
-				$("#number").textbox("setValue",row.number);
-				$("#remark").textbox("setValue",row.remark);
-				$("#unit").textbox("setValue",row.unit);
-				$("#guige").textbox("setValue",row.guige);
-				$("#srname").combobox("select",row.srid);
-				$("#desiredId").textbox("setValue",row.desiredId);
-				}else{
-					$.messager.alert('提示', '询价单已发布，不能修改', 'info');
-				}
+				getImageUrl(row.deid,r.sid);
 			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个询价单', 'info');
+				$.messager.alert('提示', '只能选择一个公司信息', 'info');
 			}else {
-				$.messager.alert('提示', '请选择未发布的询价单', 'info');
+				$.messager.alert('提示', '请选择公司信息', 'info');
 			}
+			
         }
-        // 保存询价信息
-		function saveStaff() {
-			$("#staffForm").form("submit", {
-				onSubmit : function() {
-					return $(this).form('enableValidation').form('validate');
-				},
-				success : function(data) {	
-					eval('data='+data);  
-	                if(data.success=="true"){  
-						$("#adminListDg").datagrid("reload");
-		              	  $('#powerDlg').form('clear');
-		            }
-					$.messager.show({
-						title : "提示信息",
-						msg : data.message
-					});
-				}
-			});
-		}
-		
-		
-		function clearForm() {
-			$('#staffForm').form('clear');
-		}
-        $.extend($.fn.validatebox.defaults.rules, {
-			myvalidate : {
-                validator : function(value, param) {
-                    var username = $("#susername").val();
-                    var row = $("#adminListDg").datagrid("getSelected");
-                    var name = row.userName;
-                    var haha=" " ;
-                    $.ajax({
-                        type : 'post',
-                        async : false,    
-                        url : 'getAllNameList.action',
-                        data : {
-                            "userName" : username,
-                            "name" : name
-                        },
-						dataType : 'json',
-                        success : function(data) {
-							haha = data.message;
-                        }
-                    });
-                    console.log(haha);
-                    return haha.indexOf("true");
-                },
-                message : '登录名已经被占用'
-            },
-            equals: {
-                validator: function(value,param){
-                    return value == $(param[0]).val();
-                },
-                message: '密码不一致！'
-            },
-        	telNum:{ //既验证手机号，又验证座机号
-		      validator: function(value, param){
-		          return /(^(0[0-9]{2,3}\-)?([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$)|(^((\d3)|(\d{3}\-))?(1[358]\d{9})$)/.test(value);
-		         },   
-		       message: '请输入正确的电话号码。'
-		    } 
+        /**
+         * 变量区
+         */
+        var hioShareProfiltItemGrid; // 列表
+        var editIndex=undefined;
+        /**
+         * 初始加载
+         */
+        $(function(){
+           $('.saveItem').linkbutton({'onClick':function(){endEditing();}});
+            loadHioShareProfiltItems();
         });
-		function clearAdminForm() {
-			$('#departForm').form('clear');
-		}
+        
+		function loadHioShareProfiltItems(){
+        var action = $('#action').val();
+        if (action == 'edit'){
+            var shareItemDatas = $('#shareItemDatas').val();
+            if (!$.string.isNullOrEmpty(shareItemDatas)){
+                var shareItemDatasJson = $.parseJSON(shareItemDatas);
+                hioShareProfiltItemGrid.datagrid('loadData',shareItemDatasJson);
+            }
+        }
+    }
+        function getImageUrl(deid,sid){
+        	$.ajax({
+                type : 'post',
+                async : false,    
+                url : 'getImageUrl.action?deid='+deid+"&sid="+sid,
+        		dataType : 'json',
+                success : function(data) { 
+					$("#powerDlg").dialog("open").dialog('setTitle', '报价详情单');
+					$("#deid1").textbox("setValue",deid);
+					initHioShareProfiltItemGrid(deid,sid);
+					url=data.imageUrl;
+					$("#Img").attr('src',url);
+					$("#quoteDate").html("到货时间："+data.quoteDate);
+				}
+            });
+        }
+        /**
+         * 初始化物资明细
+         */
+        function initHioShareProfiltItemGrid(deid,sid){
+            hioShareProfiltItemGrid=$('#hioShareProfitItemForm').datagrid({    
+                url : 'getStaffDesiredDetailsList.action?deid='+deid+"&sid="+sid,
+                singleSelect:true,
+            enableHeaderClickMenu: false,
+            enableHeaderContextMenu: false,
+            autoEditing:true,
+            extEditing:true,
+            onLoadSuccess: compute,//加载完毕后执行计算
+                columns:[[    
+						{title : '序号',field : 'dedid',hidden:'true'},
+						{ field: 'dename', title: '物资名称', width: 80,ReadOnly:true },
+						{ field: 'guige', title: '物资规格', width: 80,ReadOnly:true },
+						{ field: 'number', title: '物资数量', width: 80,ReadOnly:true },
+						{ field: 'unit', title: '物资单位', width: 80,ReadOnly:true },
+						{ field: 'beizhu', title: '物资备注', width: 400,ReadOnly:true },
+						{field:'qid' , title:'编号',width:0,hidden:true}
+						,{field:'price',title:'物资单价',width:80,ReadOnly:true}
+		                ,{field:'remark',title:'报价备注' ,width:400,ReadOnly:true }
+		                 ]]
+                });
+        }
+        function compute() {//计算函数
+            var rows = hioShareProfiltItemGrid.datagrid('getRows');//获取当前的数据行
+            var ptotal = 0;
+            for (var i = 0; i < rows.length; i++) {
+            	 ptotal += (rows[i]['price']*rows[i]['number']);
+            }
+            $('#countPrice').html("总价："+ptotal+"");
+            //新增一行显示统计信息
+          //  $('#dg').datagrid('appendRow', { itemid: '<b>统计：</b>', listprice: ptotal , unitcost: utotal});
+        }
+       
+	function loadHioShareProfiltItems(){
+        var action = $('#action').val();
+        if (action == 'edit'){
+            var shareItemDatas = $('#shareItemDatas').val();
+            if (!$.string.isNullOrEmpty(shareItemDatas)){
+                var shareItemDatasJson = $.parseJSON(shareItemDatas);
+                hioShareProfiltItemGrid.datagrid('loadData',shareItemDatasJson);
+            }
+        }
+    }
+    
+    
+        function submit(){
+				var row = $("#adminListDg").datagrid("getSelected");
+				var r1 = $("#ddv").datagrid("getSelected");
+				    $.messager.defaults = { ok: "是", cancel: "否" ,width:250};
+					$.messager.confirm('提示框', '是否下载附件？', function(r) {
+						var state;
+						if (r) {
+							state=1;
+						}else{
+							state=0;
+						}
+						// 发送请求
+							$.post('getSupplyQuotePdf.action', {
+								deid : row.deid,
+								sid:r1.sid,
+								state:state
+							}, function(data) {
+								
+								if(data.success=="true"){ 
+									$("#powerDlg1").dialog("open").dialog('setTitle', '信息提示');
+									$("#showMess").html("d:/pdf/"+row.desiredId+".pdf查看");
+								}else{
+									$("#powerDlg1").dialog("open").dialog('setTitle', '信息提示');
+									$("#showMess").html("请关闭文件，重新下载");
+								}
+								$.messager.show({
+									title : "提示信息",
+									msg : data.message
+								});
+									
+							}, 'json');
+					});
+        }
+		
+		function getNowFormatDate() {
+    var date = new Date();
+    var seperator1 = "-";
+    var seperator2 = ":";
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+            + " " + date.getHours() + seperator2 + date.getMinutes()
+            + seperator2 + date.getSeconds();
+    return currentdate;
+}
 	</script>
 </body>
 </html>

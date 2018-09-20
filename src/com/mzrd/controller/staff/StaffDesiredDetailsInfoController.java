@@ -23,13 +23,18 @@ import com.mzrd.util.PdfUtils;
 public class StaffDesiredDetailsInfoController {
 	@Autowired
 	private DesiredDetailsInfoService desiredDetailsInfoService;
-	//获取所有询价
+	//获取询价
 	@RequestMapping("/getStaffDesiredDetailsList.action")
 	@ResponseBody
 	public List getStaffDesiredDetailsList(int deid){
-		return desiredDetailsInfoService.getStaffDesiredDetailsList(deid);
+		return desiredDetailsInfoService.getStaffDesiredDetailsList(deid,0);
 	}
-	
+	//获取询价
+	@RequestMapping("/getStaffDesiredDetaiSupplylsList.action")
+	@ResponseBody
+	public List getStaffDesiredDetaiSupplylsList(int deid,int sid){
+		return desiredDetailsInfoService.getStaffDesiredDetaiSupplylsList(deid, sid);
+	}
 	 @org.springframework.web.bind.annotation.InitBinder
 	 public void InitBinder(ServletRequestDataBinder bin) {
 	        bin.registerCustomEditor(Date.class, new CustomDateEditor(

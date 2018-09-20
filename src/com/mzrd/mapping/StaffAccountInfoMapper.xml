@@ -6,7 +6,7 @@
 	<resultMap type="com.mzrd.pojo.StaffAccountInfo" id="getStaffAccountInfoMap">
 		<id property="id" column="id" />
 		<result property="userName" column="userName" />
-		<result property="password" column="password" />
+		
 		<result property="rid" column="rid" />
 		<result property="sname" column="sname" />
 		<result property="phone" column="phone" />
@@ -16,10 +16,6 @@
 			<id property="rid" column="rid" />
 			<result property="rname" column="rname" />
 			<result property="did" column="did" />
-			<result property="rselect" column="rselect" />
-			<result property="rinsert" column="rinsert" />
-			<result property="rupdate" column="rupdate" />
-			<result property="rdelete" column="rdelete" />
 			<result property="state" column="pstate" />
 		</association>
 		<association property="departmentInfo" javaType="com.mzrd.pojo.DepartmentInfo">
@@ -28,7 +24,7 @@
 		</association>
 	</resultMap>	
 	<select id="getStaffAccount" parameterType="com.mzrd.pojo.StaffAccountInfo" resultMap="getStaffAccountInfoMap">
-		select id,userName,password,s.rid rid,rname,did,rselect,rinsert,rdelete,rupdate,s.state state,p.state pstate
+		select id,userName,password,s.rid rid,rname,did,s.state state,p.state pstate
 			,sname,phone,email
 		 from staff_account_info s, post_info p
 		 where s.userName=#{userName} and s.password=#{password} and s.rid = p.rid and s.state=1
@@ -38,8 +34,8 @@
 		 from staff_account_info where id=#{id}
 	</select>
 	<select id="getStaffAccountByState" parameterType="com.mzrd.pojo.StaffAccountInfo" resultType="com.mzrd.pojo.StaffAccountInfo">
-		select id,userName,password,s.rid rid,rname,p.did did,rselect,rinsert,rdelete,
-		rupdate,sname,phone,email,s.state state,p.state pstate,dname
+		select id,userName,password,s.rid rid,rname,p.did did,
+		sname,phone,email,s.state state,p.state pstate,dname
 		 from staff_account_info s, post_info p,department_info d
 		 where s.rid = #{rid} and s.rid = p.rid  and d.did = p.did
 		 <if test="state!=null">
@@ -61,8 +57,8 @@
 	</select>
 	<select id="getStaffAccountPage"  resultMap="getStaffAccountInfoMap" 
 		parameterType="java.util.Map">
-		select id,userName,password,s.rid rid,rname,p.did did,rselect,rinsert,rdelete,
-		rupdate,sname,phone,email,s.state state,p.state pstate,dname
+		select id,userName,password,s.rid rid,rname,p.did did,
+		sname,phone,email,s.state state,p.state pstate,dname
 		 from staff_account_info s, post_info p,department_info d
 		 where s.rid = p.rid  and d.did = p.did
 		 <if test="state != null and state != ''">

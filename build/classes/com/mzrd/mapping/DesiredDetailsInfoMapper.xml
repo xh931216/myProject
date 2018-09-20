@@ -7,6 +7,8 @@
 		<id property="dedid" column="dedid2" />
 		<result property="deid" column="deid" />
 		<result property="guige" column="guige" />
+		<result property="dename" column="dename"/>
+		<result property="beizhu" column="beizhu"/>
 		<result property="unit" column="unit" />
 		<result property="number" column="number" />
 		<result property="qid" column="qid"/>
@@ -15,15 +17,24 @@
 		<result property="remark" column="remark"/>
 		
 	</resultMap>
-	<select id="getStaffDesiredDetailsList" parameterType="java.lang.Integer" 
+	<select id="getStaffDesiredDetailsList" parameterType="java.util.Map" 
 		resultMap="getMap">
 			select si.*,si.dedid dedid2,qi.*  from desired_details_info si LEFT JOIN quote_info qi
-			on qi.dedid=si.dedid   where si.deid=#{deid} 
+			on qi.dedid=si.dedid   
+			<if test="sid!=0">
+			and qi.sid=#{sid}
+			</if>
+			where si.deid=#{deid} 
 	</select>
-	
+	<select id="getStaffDesiredDetaiSupplylsList" parameterType="java.util.Map" 
+		resultMap="getMap">
+			select si.*,si.dedid dedid2,qi.*  from desired_details_info si, quote_info qi,desired_info di
+			where qi.dedid=si.dedid and di.deid=si.deid and di.supplyId like CONCAT('%,',#{sid},',%') and qi.sid=#{sid}
+			and si.deid=#{deid} 
+	</select>
 	<insert id="addDesiredDetailsInfo" parameterType="com.mzrd.pojo.DesiredDetailsInfo">
-		insert into desired_details_info (deid,guige,unit,number) 
-		values(#{deid},#{guige},#{unit},#{number});
+		insert into desired_details_info (deid,guige,unit,number,dename,beizhu) 
+		values(#{deid},#{guige},#{unit},#{number},#{dename},#{beizhu});
 	</insert>
 	
 	<delete id="deleteDesiredDetails" parameterType="java.lang.Integer">

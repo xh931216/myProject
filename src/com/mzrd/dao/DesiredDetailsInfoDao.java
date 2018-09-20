@@ -10,7 +10,8 @@ import com.mzrd.pojo.StaffAccountInfo;
 import com.mzrd.pojo.SupplyAccountInfo;
 
 public interface DesiredDetailsInfoDao {
-	public List getStaffDesiredDetailsList(int deid);
+	public List getStaffDesiredDetailsList(Map map);
+	public List getStaffDesiredDetaiSupplylsList(Map map);
 	public int addDesiredDetailsInfo(DesiredDetailsInfo di);
 	public int deleteDesiredDetails(int deid);
 }

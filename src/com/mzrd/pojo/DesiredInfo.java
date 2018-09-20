@@ -11,6 +11,7 @@ public class DesiredInfo {
 	private int deid;
 	private int srid;
 	private int id;
+	private String supplyId;
 	private String desiredId;
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	private Date overDate;
@@ -30,6 +31,12 @@ public class DesiredInfo {
 	}
 	public void setDeid(int deid) {
 		this.deid = deid;
+	}
+	public String getSupplyId() {
+		return supplyId;
+	}
+	public void setSupplyId(String supplyId) {
+		this.supplyId = supplyId;
 	}
 	public int getSrid() {
 		return srid;

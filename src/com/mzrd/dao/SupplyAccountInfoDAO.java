@@ -8,7 +8,9 @@ import com.mzrd.pojo.*;
 public interface SupplyAccountInfoDAO {
 	public List<String> getSupplyNameList(Map map);
 	public SupplyAccountInfo getSupplyInfoByUserName(SupplyAccountInfo sa);
-	public List<SupplyAccountInfo> getSupplyInfo();
+	public List<SupplyAccountInfo> getSupplyInfo(int srid);
+	public List<SupplyAccountInfo> getStaffQuoteSupplyList(int deid);
+	public SupplyAccountInfo getStaffQuoteSupply(int sid);
 	public List<SupplyAccountInfo> getSupplyInfoList(Map map);
 	public int deleteSupply(SupplyAccountInfo sa);
 	public int updateSupply(SupplyAccountInfo sa);

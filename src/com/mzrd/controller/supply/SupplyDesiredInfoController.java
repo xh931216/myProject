@@ -1,5 +1,6 @@
 package com.mzrd.controller.supply;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -7,10 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,21 +43,34 @@ public class SupplyDesiredInfoController {
 	private StaffAccountInfoService staffAccountInfoService;
 	PdfUtils pdfUtils = new PdfUtils();
 	//获取询价单pdf
-	@RequestMapping(value="/getSupplyDesiredPdf.action",produces = "text/html;charset=UTF-8")
+	@RequestMapping(value="/getSupplyDesiredPdf.action")
 	@ResponseBody
-	public String getSupplyDesiredPdf(DesiredInfo  di,HttpServletRequest request,HttpSession session){
+	public ResponseEntity<byte[]> getSupplyDesiredPdf(HttpServletResponse response,DesiredInfo  di,HttpServletRequest request,HttpSession session) throws IOException{
+		SupplyAccountInfo supplyInfo = (SupplyAccountInfo) session.getAttribute("userInfo");
 		
 		DesiredInfo dii = desiredInfoService.getDesiredInfoPdf(di);
-		System.out.println(dii.toString());
+		//System.out.println(dii.toString());
 		StaffAccountInfo sa = new StaffAccountInfo();
-		//sa.setId(dii.getId());
+		sa.setId(dii.getId());
 		StaffAccountInfo staffInfo = staffAccountInfoService.getStaffAccountById(sa);
-		List<DesiredDetailsInfo> ddi = desiredDetailsInfoService.getStaffDesiredDetailsList(di.getDeid());
-		boolean pdf = pdfUtils.savePdf(dii, staffInfo, ddi, request);
-		if(pdf==true){
-			return "{\"success\":\"true\",\"message\":\"下载成功\"}";
-		}
-		return "{\"success\":\"false\",\"message\":\"下载失败\"}";
+		List<DesiredDetailsInfo> ddi = desiredDetailsInfoService.getStaffDesiredDetailsList(di.getDeid(),supplyInfo.getSid());
+		return pdfUtils.savePdf(response,dii, staffInfo, ddi, request);
+		
+	}
+	//获取报价单pdf
+	@RequestMapping(value="/getSupplyQuotePdf.action")
+	@ResponseBody
+	public ResponseEntity<byte[]> getSupplyQuotePdf(HttpServletResponse response,DesiredInfo  di,String shareItemDatas ,String quoteDate,
+			HttpServletRequest request,HttpSession session) throws IOException{
+		System.out.println(quoteDate);
+		SupplyAccountInfo supplyInfo = (SupplyAccountInfo) session.getAttribute("userInfo");
+		
+		DesiredInfo dii = desiredInfoService.getDesiredInfoPdf(di);
+		StaffAccountInfo sa = new StaffAccountInfo();
+		sa.setId(dii.getId());
+		StaffAccountInfo staffInfo = staffAccountInfoService.getStaffAccountById(sa);
+		List<DesiredDetailsInfo> ddi = desiredDetailsInfoService.getStaffDesiredDetailsList(di.getDeid(),supplyInfo.getSid());
+		return pdfUtils.saveQuotePdf(response,supplyInfo,dii, staffInfo, ddi, request,shareItemDatas,quoteDate);
 		
 	}
 	//获取所有询价
@@ -67,6 +83,7 @@ public class SupplyDesiredInfoController {
 		params.put("sid", staffInfo.getSid());
 		params.put("srid", srid);
 		params.put("overDate", overDate);
+		System.out.println(params.get("sid"));
 		int totalCount =  desiredInfoService.getSupllyDesiredList(params).size();
 		params.put("start",(page - 1) * rows);
 		params.put("limit",rows);
@@ -76,6 +93,25 @@ public class SupplyDesiredInfoController {
 		result.put("rows", dilist);
 		return result;
 	}
+		//获取所有已报价询价
+		@RequestMapping("/getSupllyDesiredAllList.action")
+		@ResponseBody
+		public Map<String, Object> getSupllyDesiredAllList(int page, int rows,
+				String overDate,String srid,HttpSession session){
+			SupplyAccountInfo staffInfo = (SupplyAccountInfo) session.getAttribute("userInfo");
+			Map<String, Object> params = new HashMap<String, Object>();	
+			params.put("sid", staffInfo.getSid());
+			params.put("srid", srid);
+			params.put("overDate", overDate);
+			int totalCount =  desiredInfoService.getSupllyDesiredAllList(params).size();
+			params.put("start",(page - 1) * rows);
+			params.put("limit",rows);
+			List<DesiredInfo> dilist = desiredInfoService.getSupllyDesiredAllList(params);
+			Map<String, Object> result = new HashMap<String, Object>();
+			result.put("total", totalCount);
+			result.put("rows", dilist);
+			return result;
+		}
 	
 	 @org.springframework.web.bind.annotation.InitBinder
 	 public void InitBinder(ServletRequestDataBinder bin) {

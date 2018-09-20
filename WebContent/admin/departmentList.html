@@ -92,7 +92,7 @@
 	<script type="text/javascript">
 		$(function() {
 			$('#adminListDg').datagrid({
-				singleSelect : false,
+				singleSelect : true,
 				url : 'getDepartmentInfoList.action',
 				rownumbers : true, //显示行号
 				fit : true, //设置自适应
@@ -112,19 +112,12 @@
 		var id=0;
         // 修改部门
 		function editPowers() {
-			var rows = $("#adminListDg").datagrid('getSelections');
-			if (rows.length >0 && rows.length<=1 ) {
 				var row = $("#adminListDg").datagrid("getSelected");
 				id = row.did;
 				// 打开“修改”对话框
 				$("#powerDlg").dialog("open").dialog('setTitle', '修改部门');
+				$("#dname").textbox("setValue",row.dname);
 				$('#adminForm').form('clear');
-				
-			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个部门', 'info');
-			}else {
-				$.messager.alert('提示', '请选择要修改的部门', 'info');
-			}
 		}
 
 		// 保存修改部门信息
@@ -154,19 +147,12 @@
 		}
 		// 打开删除部门对话框
 		function deleteStaff() {
-			var rows = $("#adminListDg").datagrid('getSelections');
-			if (rows.length  >0 && rows.length<=1 ) {
 				var row = $("#adminListDg").datagrid("getSelected");
 				id = row.did;
 				// 打开“删除”对话框
 				$('#deleteAdminDlg').dialog('open').dialog('setTitle', '删除部门');
 				$('#deleteName').html('是否删除 部门《'+row.dname+'》?');
-				
-			}else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个部门', 'info');
-			} else {
-				$.messager.alert('提示', '请选择要删除的部门', 'info');
-			}
+		
 		}
 		
 		// 保存删除的部门信息

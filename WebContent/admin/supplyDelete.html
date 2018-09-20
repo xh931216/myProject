@@ -47,7 +47,7 @@
 	<script type="text/javascript">
 		$(function() {
 			$('#adminListDg').datagrid({
-				singleSelect : false,
+				singleSelect : true,
 				url : 'getSupplyInfoList.action',
 				queryParams : {},//查询条件
 				pagination : true,//启动分页
@@ -120,8 +120,6 @@
 		// 删除供应商
 		function deleteSupply() {
 			// 获取选中的供应商记录行
-			var rows = $("#adminListDg").datagrid('getSelections');
-			if (rows.length >0 && rows.length<=1 ) {
 				var row = $("#adminListDg").datagrid("getSelected");
 				state = row.state;
 				if(state == "1"){
@@ -146,11 +144,6 @@
 				}else{
 					$.messager.alert('提示', '供应商已是不供应', 'info');
 				}
-			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个供应商', 'info');
-			}else {
-				$.messager.alert('提示', '请选择要在供应的供应商', 'info');
-			}
 		}
 		
 		

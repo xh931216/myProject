@@ -9,12 +9,14 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mzrd.pojo.DesiredDetailsInfo;
 import com.mzrd.pojo.DesiredInfo;
 import com.mzrd.pojo.PostInfo;
 import com.mzrd.pojo.SupplyAccountInfo;
 import com.mzrd.service.DesiredDetailsInfoService;
 import com.mzrd.service.DesiredInfoService;
 import com.mzrd.service.DesiredSupplyInfoService;
+import com.mzrd.util.JSONUtil;
 import com.mzrd.dao.DesiredDetailsInfoDao;
 import com.mzrd.dao.DesiredInfoDao;
 import com.mzrd.dao.DesiredSupplyInfoDao;
@@ -25,11 +27,8 @@ public class DesiredInfoServiceImpl implements DesiredInfoService{
 	@Autowired
 	private DesiredDetailsInfoDao desiredDetailsInfoDao;
 	@Autowired
-	private DesiredDetailsInfoService desiredDetailsInfoService;
-	@Autowired
 	private DesiredSupplyInfoDao desiredSupplyInfoDao;
-	@Autowired
-	private DesiredSupplyInfoService desiredSupplyInfoService;
+	JSONUtil jsonUtil = new JSONUtil();
 
 	@Override
 	public int addDesiredInfo(DesiredInfo di) {
@@ -37,28 +36,15 @@ public class DesiredInfoServiceImpl implements DesiredInfoService{
 	}
 
 	@Override
-	public int updateDesiredInfo(DesiredInfo di,String[] sidList,String shareItemDatas) {
+	public int updateDesiredInfo(DesiredInfo di,String shareItemDatas) {
 		int deid = di.getDeid();
-		int dd = desiredDetailsInfoDao.deleteDesiredDetails(deid);
-		if(dd==0){
-			return 0;
-		}
-		int ds = desiredSupplyInfoDao.deleteDesiredSupply(deid);
-		if(ds==0){
-			return 0;
-		}
-		int dei = desiredInfoDao.updateDesiredInfo(di);
-		if(dei==0){
-			return 0;
-		}
-		int ddis =  desiredDetailsInfoService.addDesiredDetailsInfo(shareItemDatas,deid);
-		if(ddis == 0){
-			return 0;
-		}
-		int dsuis = desiredSupplyInfoService.addDesiredSupplyInfo(sidList,deid);
-		if(dsuis == 0){
-			return 0;
-		 }
+		 desiredDetailsInfoDao.deleteDesiredDetails(deid);
+		List<DesiredDetailsInfo> list = jsonUtil.strToList(shareItemDatas,DesiredDetailsInfo.class);
+		for (DesiredDetailsInfo ps : list) {
+			ps.setDeid(deid);
+			 desiredDetailsInfoDao.addDesiredDetailsInfo(ps);
+        }
+		desiredInfoDao.updateDesiredInfo(di);
 		return 1;
 		
 	}
@@ -66,14 +52,8 @@ public class DesiredInfoServiceImpl implements DesiredInfoService{
 	@Override
 	public int deleteDesiredInfo(DesiredInfo di) {
 		int deid = di.getDeid();
-		int dd = desiredDetailsInfoDao.deleteDesiredDetails(deid);
-		if(dd==0){
-			return 0;
-		}
-		int ds = desiredSupplyInfoDao.deleteDesiredSupply(deid);
-		if(ds==0){
-			return 0;
-		}
+		desiredDetailsInfoDao.deleteDesiredDetails(deid);
+		 desiredSupplyInfoDao.deleteDesiredSupply(deid);
 		return desiredInfoDao.deleteDesiredInfo(di);
 	}
 
@@ -108,6 +88,16 @@ public class DesiredInfoServiceImpl implements DesiredInfoService{
 	@Override
 	public DesiredInfo getDesiredInfoPdf(DesiredInfo di) {
 		return desiredInfoDao.getDesiredInfoPdf(di);
+	}
+
+	@Override
+	public List<DesiredInfo> getSupllyDesiredAllList(Map map) {
+		return desiredInfoDao.getSupllyDesiredAllList(map);
+	}
+
+	@Override
+	public List<DesiredInfo> getStaffQuoteList(Map map) {
+		return desiredInfoDao.getStaffQuoteList(map);
 	}
 	
 

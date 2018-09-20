@@ -8,7 +8,7 @@
 		select * from admin_info
 		 where name=#{name} and password=#{password} 
 	</select>
-	<select id="getAdminList" resultType="com.mzrd.pojo.AdminInfo">
+	 <select id="getAdminList" resultType="com.mzrd.pojo.AdminInfo">
 		select * from admin_info
 	</select>
 	
@@ -18,5 +18,5 @@
 	</select>
 	<update id="updateAdmin" parameterType="com.mzrd.pojo.AdminInfo" >
 		update admin_info set `password`=#{password} where id=#{id}
-	</update>
+	</update> 
 </mapper>

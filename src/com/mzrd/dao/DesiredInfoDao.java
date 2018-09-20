@@ -11,6 +11,8 @@ import com.mzrd.pojo.SupplyAccountInfo;
 public interface DesiredInfoDao {
 	public List<DesiredInfo> getStaffDesiredPage(Map map);
 	public List<DesiredInfo> getSupllyDesiredList(Map map);
+	public List<DesiredInfo> getStaffQuoteList(Map map);
+	public List<DesiredInfo> getSupllyDesiredAllList(Map map);
 	public DesiredInfo getDesiredInfo(DesiredInfo di);
 	public DesiredInfo getDesiredInfoPdf(DesiredInfo di);
 	public String getDesiredIdMax(String date);

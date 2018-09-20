@@ -25,14 +25,14 @@ import com.mzrd.pojo.StaffAccountInfo;
 import com.mzrd.pojo.SupplyAccountInfo;
 import com.mzrd.pojo.SupplyRankInfo;
 import com.mzrd.service.QuoteInfoService;
-import com.mzrd.util.Image;
+import com.mzrd.util.Image1;
 import com.sun.org.apache.bcel.internal.generic.FMUL;
 @RequestMapping("/supply")
 @Controller
 public class SupplyQuoteInfoController {
 	@Autowired
 	private QuoteInfoService quoteInfoService;
-	Image image = new Image();
+	Image1 image = new Image1();
 	//获取所有类别
 	@RequestMapping("/getQuoteList.action")
 	@ResponseBody
@@ -59,16 +59,14 @@ public class SupplyQuoteInfoController {
 		SupplyAccountInfo staffInfo = (SupplyAccountInfo) session.getAttribute("userInfo");
 		DesiredInfo di = new DesiredInfo();
 		di.setDeid(deid);
-
 		String imagePath = null;
 		if (file != null && file.getSize() > 0) {  
         	imagePath = image.saveFile(file,request); 
         } 
-		List<QuoteInfo> ql =  quoteInfoService.getQuoteInfo(di);
+		List<QuoteInfo> ql =  quoteInfoService.getQuoteInfo(deid,staffInfo.getSid());
 		if(ql.size()!=0){
 			System.out.println(imagePath+";"+quoteDate);
 			 int qu = quoteInfoService.updateQuoteInfo(shareItemDatas,staffInfo,imagePath,deid,quoteDate);
-			 
 			 if(qu == 1){
 				return "{\"success\":\"true\",\"message\":\"报价修改成功\"}";
 			}

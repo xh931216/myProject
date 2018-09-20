@@ -46,34 +46,38 @@
 	
 	<!-- 报价信息的对话框  -->
 	<div id="powerDlg" class="easyui-dialog" title="修改信息"
-		closed="true" style="width:800px;height:400px">
+		closed="true" style="width:900px;height:400px">
 		 <form id="mainform" action="addQuote.action" method="post" enctype="multipart/form-data">       
     <div data-options="region:'center',border:false" style="height:250px">
-               <div id="hioShareProfitItemForm_tb" style="padding:5px;height:auto;width:100%">
+               <div id="hioShareProfitItemForm_tb" style="padding:5px;height:auto;width:98%">
                     <table cellpadding="0" cellspacing="0" >
 						<td>
                         <a href="javascript:void(0)" class="easyui-linkbutton saveItem" iconCls="icon-save"  plain="true">保存报价</a>
                         </td>
-                        <td> 
+                        <td>
                         <input type="hidden" class="easyui-textbox"  id="deid1" name="deid" value=""/>   
-               		   <input type="hidden"   class="easyui-textbox"  id="shareItemDatas1" name="shareItemDatas" value="" />
+                        </td>
+                        <td>
+                        <a id="uploadQuote" href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-cut" plain="true" onclick="uploadQuote();">下载报价单模板</a>
+                        <td> 
+                          <input type="hidden"   class="easyui-textbox"  id="shareItemDatas1" name="shareItemDatas" value="" />
                         </td>
                     </table>
+                        <div style="color:red;font-weight:bold;font-size:20px;float:right ">
+                    		<div id="countPrice">      </div></div>
                 </div>
                  <table id="hioShareProfitItemForm" style="width:100%;height:220px;"></table>
 				
-            <div style=" margin:0 auto;width:100%;text-align:center">
+            <div style="  padding-right 4px;width:100%;text-align:center">
 					到货时间：	<input type="text" id="quoteDate" style="width:250px" name="quoteDate" class="easyui-datetimebox" prompt="请输入到货时间" required="required"/>
+						<br/>
 						
-             <input class="easyui-filebox" style="width:250px" data-options='prompt:"选择报价单照片",buttonText:"选择",onChange:change_photo' 
+            附       件： <input class="easyui-filebox" style="width:250px" data-options='prompt:"选择报价单照片",buttonText:"选择",onChange:change_photo'
 							  id="file_upload" name="file_upload" required="required"/>
 							  <a href="javascript:void(0)" class="easyui-linkbutton"
 								onclick="imageShow();">浏览报价单</a> 
-								发布：
-								<span class="radioSpan">
-               					 <input type="radio" name="state" value="0" checked="checked">否</input>
-               					 <input type="radio" name="state" value="1">是</input>
-           					</span></br>
+								<br/>
                <a href="javascript:void(0)" class="easyui-linkbutton" style="width:100px;height:30px;background-color:#FFF; font-size:12px; color:#F00"
 					onclick="submit();">确认报价</a>
             </div>
@@ -88,7 +92,7 @@
 	</div>
 	<!-- 提示信息的对话框  -->
 	<div id="powerDlg1" class="easyui-dialog" title="消息提示"
-		closed="true" style="width:350px">
+		closed="true" style="width:370px">
 		<div style="padding:10px 60px 20px 60px">
 			<DIV id="showMess"></DIV>
 		</div>
@@ -200,9 +204,11 @@
 		                    loadMsg: '',
 		                    columns: [[
 								{title : '序号',field : 'dedid',hidden:'true'},
+		                        { field: 'dename', title: '物资名称', width: 40 },
 		                        { field: 'guige', title: '物资规格', width: 40 },
 		                        { field: 'number', title: '物资数量', width: 40 },
-		                        { field: 'unit', title: '物资单位', width: 40}
+		                        { field: 'unit', title: '物资单位', width: 40},
+		                        { field: 'beizhu', title: '备注', width: 40 }
 		                    ]],
 		                    onClickRow:function(rowIndex,rowData){
 								
@@ -231,39 +237,52 @@
 		}
 		var id=0;
 		function upload(){
+			var rows = $("#adminListDg").datagrid('getSelections');
+			if(rows.length >0 && rows.length<=1){
+			
 			var row = $("#adminListDg").datagrid("getSelected");
 			var deid = row.deid;
-			$.ajax({
-                type : 'post',
-                async : false,    
-                url : 'getSupplyDesiredPdf.action?deid='+deid,
-        		dataType : 'json',
-                success : function(data) {
-                    if(data.success=="true"){ 
-						 $("#powerDlg1").dialog("open").dialog('setTitle', '信息提示');
-						$("#showMess").html("在d:/pdf/"+row.desiredId+".pdf查看");
-    	            }
-    				$.messager.show({
-    					title : "提示信息",
-    					msg : data.message
-    				});
-                }
-            });
-		}
-        //设置报价信息窗口
-        function editStaff() {
-            var rows = $("#adminListDg").datagrid('getSelections');
-			if (rows.length >0 && rows.length<=1 ) {
-				var row = $("#adminListDg").datagrid("getSelected");
-				state =row.state;
-				// 打开“修改”对话框
-				
-				getImageUrl(row.deid);
+			var url="getSupplyDesiredPdf.action?deid="+deid;
+	        open(url);
+			
 			} else if(rows.length>1){
 				$.messager.alert('提示', '只能选择一个询价单', 'info');
 			}else {
-				$.messager.alert('提示', '请选择未发布的询价单', 'info');
+				$.messager.alert('提示', '请选择要下载的询价单', 'info');
 			}
+		}
+		
+		function uploadQuote(){
+			var rows = $("#adminListDg").datagrid('getSelections');
+			if(rows.length >0 && rows.length<=1){
+			var row = $("#adminListDg").datagrid("getSelected");
+			var quoteDate = $("#quoteDate").datetimebox('getValue');
+			var deid = row.deid;
+			var itemDatas = $('#hioShareProfitItemForm').datagrid('getData');
+			var itemDatasJson = JSON.stringify(itemDatas.rows);
+			var url='getSupplyQuotePdf.action?deid='+deid+"&shareItemDatas="+itemDatasJson+"&quoteDate="+quoteDate;
+	        open(url);
+
+			} else if(rows.length>1){
+				$.messager.alert('提示', '只能选择一个询价单', 'info');
+			}else {
+				$.messager.alert('提示', '请选择要下载的询价单', 'info');
+			}
+		}
+        //设置报价信息窗口
+        function editStaff() {
+        	var rows = $("#adminListDg").datagrid('getSelections');
+			if(rows.length >0 && rows.length<=1){
+			var row = $("#adminListDg").datagrid("getSelected");
+			state =row.state;
+			// 打开“修改”对话框
+			getImageUrl(row.deid);
+			$.messager.alert('提示', '附件只支持.jpg,.bmp,.gif,.png后缀的图片', 'info');
+        } else if(rows.length>1){
+			$.messager.alert('提示', '只能选择一个询价单', 'info');
+		}else {
+			$.messager.alert('提示', '请选择询价单', 'info');
+		}
         }
         /**
          * 变量区
@@ -274,7 +293,7 @@
          * 初始加载
          */
         $(function(){
-           $('.saveItem').linkbutton({'onClick':function(){endEditing();}});
+           $('.saveItem').linkbutton({'onClick':function(){endEditing();compute();}});
             loadHioShareProfiltItems();
         });
         
@@ -289,38 +308,25 @@
         }
     }
         function getImageUrl(deid){
+
         	$.ajax({
                 type : 'post',
                 async : false,    
                 url : 'getImageUrl.action?deid='+deid,
         		dataType : 'json',
                 success : function(data) {
-				if(data.state==0){
 				$("#powerDlg").dialog("open").dialog('setTitle', '');
 				$("#deid1").textbox("setValue",deid);
 				initHioShareProfiltItemGrid(deid);
-                	if(data.imageUrl!=null){
-                		url = data.imageUrl;
-                		//$("#file_upload").filebox("setValue",url);
-						$("#quoteDate").datetimebox("setValue",data.quoteDate);
-                    	$("#Img").attr('src',url);
-                		//$("#file_upload").filebox("setValue",url);
-						$.messager.alert('提示', '报价单已经上传过，不用重新上传，可以直接查看，没有则上传！', 'info');
-				
-                	}else{
-						url = null;
-						$("#Img").attr('src',url);
-                		$("#file_upload").filebox("setValue",url);
-					}
-                
-				}else{
-					$.messager.show({
-    					title : "提示信息",
-    					msg : "你已发布不能修改"
-    				});
+
+						$("#quoteDate").datetimebox("setValue",data.quoteDate);				
 				}
-				}
+
             });
+			url=null;
+			imageurl=null;
+			$("#Img").attr('src',url); 
+        	$("#file_upload").filebox('setValue','');
         }
         /**
          * 初始化物资明细
@@ -333,19 +339,32 @@
             enableHeaderContextMenu: false,
             autoEditing:true,
             extEditing:true,
+            onLoadSuccess: compute,//加载完毕后执行计算
             onClickCell:onClickCell,
                 columns:[[    
 						{title : '序号',field : 'dedid',hidden:'true'},
+						{ field: 'dename', title: '物资名称', width: 80,ReadOnly:true },
 						{ field: 'guige', title: '物资规格', width: 80,ReadOnly:true },
 						{ field: 'number', title: '物资数量', width: 80,ReadOnly:true },
 						{ field: 'unit', title: '物资单位', width: 80,ReadOnly:true },
-						{field:'qid' , title:'编号',width:80,hidden:true}
+						{ field: 'beizhu', title: '物资备注', width: 400,ReadOnly:true },
+						{field:'qid' , title:'编号',width:0,hidden:true}
 						,{field:'price',title:'物资单价',sortable:false,width:80,prompt:'请输入物资单件',align:'left',halign:'center',editor:{type:'numberbox',
 							options:{required:true}} }
 		                ,{field:'remark',title:'备注',sortable:false,width:400,align:'left',halign:'center' ,editor:{type:'textbox',
 							options:{required:false,precision:1}},prompt:'请输入备注'  }
-                ]]
+		                 ]]
                 });
+        }
+        function compute() {//计算函数
+            var rows = hioShareProfiltItemGrid.datagrid('getRows');//获取当前的数据行
+            var ptotal = 0;
+            for (var i = 0; i < rows.length; i++) {
+            	 ptotal += (rows[i]['price']*rows[i]['number']);
+            }
+            $('#countPrice').html("总价："+ptotal+"");
+            //新增一行显示统计信息
+          //  $('#dg').datagrid('appendRow', { itemid: '<b>统计：</b>', listprice: ptotal , unitcost: utotal});
         }
        function onClickCell(index, field){
         if (editIndex != index){
@@ -363,6 +382,7 @@
                 },0);
             }
         }
+        compute();
     }
     /**
      * 结束编辑
@@ -422,12 +442,14 @@
     					title : "提示信息",
     					msg : data.message
     				});
+					url=null;
+					imageurl=null;
+					$("#Img").attr('src',url); 
+		        	$("#file_upload").filebox('setValue','');
                 }
             });
 			
         }
-    	
-		
 	</script>
 </body>
 </html>

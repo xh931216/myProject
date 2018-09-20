@@ -10,6 +10,7 @@ import com.mzrd.pojo.PostInfo;
 import com.mzrd.pojo.SupplyAccountInfo;
 
 public interface DesiredDetailsInfoService {
-	public List getStaffDesiredDetailsList(int deid);
+	public List getStaffDesiredDetailsList(int deid,int sid);
+	public List getStaffDesiredDetaiSupplylsList(int deid,int sid);
 	public int addDesiredDetailsInfo(String shareItemDatas,int deid);
 }

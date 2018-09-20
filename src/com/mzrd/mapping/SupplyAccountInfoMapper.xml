@@ -6,7 +6,7 @@
 	<resultMap type="com.mzrd.pojo.SupplyAccountInfo" id="getSupplyAccountInfoMap">
 		<id property="sid" column="sid" />
 		<result property="userName" column="userName" />
-		<result property="password" column="password" />
+		
 		<result property="supplierName" column="supplierName" />
 		<result property="abbreviation" column="abbreviation" />
 		<result property="address" column="address" />
@@ -27,6 +27,8 @@
 			and userName!=#{name}
 		</if>
 	</select>
+	
+	
 	<select id="getSupplyInfoByUserName" resultType="com.mzrd.pojo.SupplyAccountInfo" 
 		parameterType="com.mzrd.pojo.SupplyAccountInfo">
 		select * from supply_account_info where userName=#{userName} and state=1
@@ -34,8 +36,22 @@
 			and password=#{password}
 		</if>
 	</select>
-	<select id="getSupplyInfo" resultType="com.mzrd.pojo.SupplyAccountInfo" >
-		select * from supply_account_info
+	<select id="getSupplyInfo" resultType="com.mzrd.pojo.SupplyAccountInfo" 
+		parameterType="java.lang.Integer">
+		select si.* from supply_account_info si,supply_rank_relation_info sri 
+		where si.sid=sri.sid and sri.srid=#{srid}
+	</select>
+	
+	<select id="getStaffQuoteSupplyList" resultType="com.mzrd.pojo.SupplyAccountInfo" 
+		parameterType="java.lang.Integer">
+		select si.* FROM
+		desired_info di,quote_supply_image_info qi,supply_account_info si
+		where di.deid=qi.deid and si.sid=qi.sid and di.deid=#{deid}
+	</select>
+	<select id="getStaffQuoteSupply" resultType="com.mzrd.pojo.SupplyAccountInfo" 
+		parameterType="java.lang.Integer">
+		select * FROM supply_account_info 
+		where sid=#{sid} 
 	</select>
 	<select id="getSupplyInfoList" resultMap="getSupplyAccountInfoMap"
 		parameterType="java.util.Map">

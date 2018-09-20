@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-public class Image {
+public class Image1 {
 	//нд╪Чобть
 	public String  downloadPicture(String urlList,String name) {
         URL url = null;

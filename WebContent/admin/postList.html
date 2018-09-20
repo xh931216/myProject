@@ -22,11 +22,11 @@
 	<!-- 工具栏 -->
 	<div id="adminListTb" style="padding:2px 5px;">
 		<a href="javascript:void(0)" class="easyui-linkbutton"
-			iconCls="icon-add" onclick="addStaff();" plain="true">添加职位</a> 
+			iconCls="icon-add" onclick="addStaff();" plain="true">添加角色</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton"
-			iconCls="icon-edit" plain="true" onclick="editPowers();">修改职位</a>
+			iconCls="icon-edit" plain="true" onclick="editPowers();">修改角色</a>
 		<a href="javascript:void(0)" class="easyui-linkbutton"
-			iconCls="icon-cancel" plain="true" onclick="deleteStaff();">删除职位</a>
+			iconCls="icon-cancel" plain="true" onclick="deleteStaff();">删除角色</a>
 	</div>
 	<!-- 查询窗体 -->
 	<div id="searchOrderTb" style="padding:2px 5px;">
@@ -36,16 +36,14 @@
 			<input style="width:115px;" id="dname"
 					class="easyui-combobox" value="请选择" name="dname" 
 				data-options="valueField:'did',textField:'dname',url:'getDepartmentInfoList.action'" />
-					&nbsp;&nbsp;&nbsp; 职位名称 &nbsp;<input class="easyui-textbox" name="rname"
-					id="rname" style="width:110px" placeholder="请输入职位名称"/>
 					 <a href="javascript:void(0)"
 					class="easyui-linkbutton" iconCls="icon-search" plain="true"
 					onclick="searchPostInfo();">查找</a>
 			</div>
 		</form>
 	</div>
-	<!-- 修改职位的对话框  -->
-	<div id="powerDlg" class="easyui-dialog" title="修改职位"
+	<!-- 修改角色的对话框  -->
+	<div id="powerDlg" class="easyui-dialog" title="修改角色"
 		closed="true" style="width:450px">
 		<div style="padding:10px 60px 20px 60px">
 			<form id="adminForm" method="POST" action="">
@@ -54,13 +52,19 @@
 						<td>部门名称</td>
 						<td><input style="width:200px;" id="dnameupdate"
 					class="easyui-combobox"  name="did" 
-				data-options="valueField:'did',textField:'dname',url:'getDepartmentInfoList.action'" /></td>
-					</tr>				
+				data-options="valueField:'did',textField:'dname',url:'getDepartmentInfoList.action',
+				onSelect:function(region){
+					$('#postupdate').combobox('clear');//清除原有项目
+					$('#postupdate').combobox('reload','getPostInfoAndDepartmentInfoList.action?did='+region.did);//重新加载
+				}" /></td>
+				</tr>				
 					<tr>
-						<td>职位名称:</td>
-							<td><input class="easyui-textbox" type="text" id="rnameupdate"
-							name="dname" placeholder="请输入新职位名称"></input>
-						</td>
+						<td>角色名称</td>
+						<td><select id="rnameupdate" class="easyui-combobox" name="rname" style="width:200px;">
+					<option value="采购员">采购员</option>
+					<option value="经理">经理</option>
+					<option value="高管">高管</option>
+				</select></td>
 					</tr>
 				</table>
 			</form>
@@ -71,7 +75,7 @@
 		</div>
 	</div>
 	<!-- 新增职位的对话框  -->
-	<div id="addAdminDlg" class="easyui-dialog" title="添加职位" closed="true"
+	<div id="addAdminDlg" class="easyui-dialog" title="添加部门角色" closed="true"
 		style="width:440px;">
 		<div style="padding:10px 60px 20px 60px">
 			<form id="addAdminForm" method="POST" action="">
@@ -82,42 +86,13 @@
 					class="easyui-combobox" value="请选择" name="did" 
 				data-options="valueField:'did',textField:'dname',url:'getDepartmentInfoList.action'" /></td>
 					</tr>
+					
 					<tr>
-						<td>职位名称</td>
-						<td><input class="easyui-textbox" type="text" id="rnameadd" style="width:200px;"
-							name="rname" placeholder="请输入职位名称"></input></td>
-					</tr>
-					<tr>
-						<td>查询权限</td>
-						<td><select id="rselectadd" class="easyui-combobox" name="rselect" style="width:200px;">
-					<option value="0" selected>不能</option>
-					<option value="1">自己</option>
-					<option value="2">部门</option>
-					<option value="3">公司</option>
-				</select></td>
-					</tr><tr>
-						<td>删除权限</td>
-						<td><select id="rdeleteadd" class="easyui-combobox" name="rdelete" style="width:200px;">
-					<option value="0" selected>不能</option>
-					<option value="1">自己</option>
-					<option value="2">部门</option>
-					<option value="3">公司</option>
-				</select></td>
-					</tr>
-					<tr>
-						<td>添加权限</td>
-						<td><select id="rinsertadd" class="easyui-combobox" name="rinsert" style="width:200px;">
-					<option value="0" selected>不能</option>
-					<option value="1">能</option>
-				</select></td>
-					</tr>
-					<tr>
-						<td>更改权限</td>
-						<td><select id="rupdateadd" class="easyui-combobox" name="rupdate" style="width:200px;">
-					<option value="0" selected>不能</option>
-					<option value="1">自己</option>
-					<option value="2">部门</option>
-					<option value="3">公司</option>
+						<td>角色名称</td>
+						<td><select id="rname" class="easyui-combobox" name="rname" style="width:200px;">
+					<option value="采购员">采购员</option>
+					<option value="经理">经理</option>
+					<option value="高管">高管</option>
 				</select></td>
 					</tr>
 				</table>
@@ -129,30 +104,11 @@
 			</div>
 		</div>
 	</div>
-	<!-- 删除职位的对话框  -->
-	<div id="deleteAdminDlg" class="easyui-dialog" title="删除职位" closed="true"
-		style="width:400px;">
-		<div style="padding:10px 60px 20px 60px">
-			<form id="addAdminForm" method="POST" action="">
-				<table cellpadding="5">
-					<tr>
-						<td></td>
-						<td><div id="deleteName"></div></td>
-					</tr>
-				</table>
-			</form>
-			<div style="text-align:center;padding:3px">
-				<a href="javascript:void(0)" class="easyui-linkbutton"
-					onclick="deleteS();">是</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<a href="javascript:void(0)" class="easyui-linkbutton"
-					onclick="closeS();">否</a>
-			</div>
-		</div>
-	</div>
+	
 	<script type="text/javascript">
 		$(function() {
 			$('#adminListDg').datagrid({
-				singleSelect : false,
+				singleSelect : true,
 				url : 'getPostInfoList.action',
 				queryParams : {},//查询条件
 				pagination : true,//启动分页
@@ -164,11 +120,11 @@
 				header : '#searchOrderTb', //为datagrid标头添加搜索栏
 				columns : [ [ { //编辑datagrid的列
 					title : '序号',
-					field : 'did',
+					field : 'rid',
 					align : 'center',
 					checkbox : true
 				}, {
-					field : 'di',
+					field : 'did',
 					title : '所属部门',
 					width : 100,
 					formatter: function(value, row, index){
@@ -178,62 +134,46 @@
 							value;
 						}
 					}
-				}, {
+				},  {
 					field : 'rname',
-					title : '职位名称',
+					title : '角色名称',
 					width : 100
 				} ] ]
 			});
 		});
 		// 查询职位
 		function searchPostInfo() {
-			var rname = $('#rname').val();
 			var did = $('#dname').combobox("getValue");
 			if(did == '请选择'){
 				did=0;
 			}
 			$('#adminListDg').datagrid('load', {
-				rname : rname,
 				did : did
 			});
 		}
 		var id=0;
         // 修改职位
 		function editPowers() {
-			var rows = $("#adminListDg").datagrid('getSelections');
-			if (rows.length >0 && rows.length<=1 ) {
-				var row = $("#adminListDg").datagrid("getSelected");
+			var row = $("#adminListDg").datagrid("getSelected");
 				id = row.rid;
-				// 打开“修改”对话框
-				$("#powerDlg").dialog("open").dialog('setTitle', '修改职位');
-				$("#rnameupdate").textbox("setValue",row.rname);
-				$("#dnameupdate").textbox("setValue",row.di.did);
-				$("#dnameupdate").textbox("setText",row.di.dname);
-				
-			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个职位', 'info');
-			}else {
-				$.messager.alert('提示', '请选择要修改的职位', 'info');
-			}
+			// 打开“修改”对话框
+			$("#powerDlg").dialog("open").dialog('setTitle', '修改角色');
+			$("#rnameupdate").combobox("setValue",row.rname);
+			$("#rnameupdate").combobox("setText",row.rname);
+			$("#dnameupdate").textbox("setValue",row.di.did);
+			$("#dnameupdate").textbox("setText",row.di.dname);
 		}
-
 		// 保存修改职位信息
 		function savePowers() {
-			if($('#rnameupdate').val() == null || $('#rnameupdate').val() == ""){
-				$.messager.show({
-					title : "提示信息",
-					msg : "职位名称不能为空"
-				});
-				return;
-			}
 			 $.ajax({  
-	              url:'updatePostInfo.action?rid='+id +'&rname='+$('#rnameupdate').val()+'&did='+$('#dnameupdate').combobox("getValue"),  
+	              url:'updatePostInfo.action?rid='+id +'&rname='+$('#rnameupdate').combobox("getValue")+'&did='+$('#dnameupdate').combobox("getValue"),  
 	              cache:false,  
 	              success:function(data){  
 	                  eval('data='+data);  
 	                  if(data.success=="true"){  
 						$("#adminListDg").datagrid("reload");
 	                	  $('#powerDlg').form('clear');
+	                	  $('#powerDlg').window('close');
 	                  }
 					  $.messager.show({
 						title : "提示信息",
@@ -244,54 +184,39 @@
 		}
 		// 打开删除职位对话框
 		function deleteStaff() {
-			var rows = $("#adminListDg").datagrid('getSelections');
-			if (rows.length  >0 && rows.length<=1 ) {
-				var row = $("#adminListDg").datagrid("getSelected");
-				id = row.rid;
-				// 打开“删除”对话框
-				$('#deleteAdminDlg').dialog('open').dialog('setTitle', '删除职位');
-				$('#deleteName').html('是否删除   职位：<'+row.rname+'>?');
-				
-			}else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个职位', 'info');
-			} else {
-				$.messager.alert('提示', '请选择要删除的职位', 'info');
-			}
+			var row = $("#adminListDg").datagrid("getSelected");
+			id = row.rid;
+			$.messager.confirm('提示框', '确定删除？', function(r) {
+				if (r) {
+					$.ajax({  
+			              url:'deletePostInfo.action?rid='+id ,  
+			              cache:false,  
+			              success:function(data){  
+			                  eval('data='+data);  
+			                  if(data.success=="true"){  
+								$("#adminListDg").datagrid("reload");
+			                  	  $("#deleteAdminDlg").dialog("close");
+			                  }
+							  $.messager.show({
+								title : "提示信息",
+								msg : data.message
+							});
+			              }  
+		           })  
+				}
+			});		
 		}
 		
-		// 保存删除的部门信息
-		function deleteS() {
-			 $.ajax({  
-	              url:'deletePostInfo.action?rid='+id ,  
-	              cache:false,  
-	              success:function(data){  
-	                  eval('data='+data);  
-	                  if(data.success=="true"){  
-						$("#adminListDg").datagrid("reload");
-	                  	  $("#deleteAdminDlg").dialog("close");
-	                  }
-					  $.messager.show({
-						title : "提示信息",
-						msg : data.message
-					});
-	              }  
-             })  
-		}
+		
 		// 打开新增部门对话框
 		function addStaff() {
-			$('#addAdminDlg').dialog('open').dialog('setTitle', '新增职位');
+			$('#addAdminDlg').dialog('open').dialog('setTitle', '新增角色');
 			urls = 'addPostInfo.action';
 		}
 		
 		// 保存新增的部门信息
 		function saveStaff() {
-			if($('#rnameadd').val() == null || $('#rnameadd').val() == ""){
-				$.messager.show({
-					title : "提示信息",
-					msg : "职位名称不能为空"
-				});
-				return;
-			}
+			
 			var did = $('#dnameadd').combobox("getValue");
 			if(did == '请选择'){
 				$.messager.show({
@@ -319,9 +244,6 @@
 		function clearAddAdminForm() {
 			$('#addAdminForm').form('clear');
 		}
-		function closeS() {
-            $('#deleteAdminDlg').window('close');
-        }
 	</script>
 </body>
 </html>

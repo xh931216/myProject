@@ -31,12 +31,12 @@
             <tr>
                 <td width="15%" style="text-align: right">物资类别：</td>
                 <td width="35%"><input id="srname" class="easyui-combobox" style="width:250px" required="required" name="srid"
-						data-options="valueField:'srid',textField:'srname',url:'getRankAllNameList.action'" /></td>
+						 /></td>
                 <td width="15%" style="text-align: right">询价单位：</td>
-                <td width="35%"><select id="supplier" class="easyui-combobox" name="supplier" style="width:250px;" required="required">  
-    							<option ></option>  
+                <td width="35%"><select id="supplier" class="easyui-combobox" name="supplier" style="width:250px;" required="required" >  
+    							
     							<option value="明州热电">明州热电</option>  
-   								<option value="生物质">生物质</option>
+   								<option value="明州生物质">明州生物质</option>
 							</select>  </td>
             </tr>
             <tr>
@@ -44,10 +44,8 @@
                 <td width="35%"><input type="text" id="overDate" style="width:250px" name="overDate" class="easyui-datetimebox" required="required"/>
 						</td>
 				<td width="15%" style="text-align: right">询价查看单位：</td>
-                <td width="35%"><input id="sidList" class="easyui-combobox" style="width:250px" required="required" name="sidList"
-						data-options="valueField:'sid',textField:'abbreviation',url:'getSupplyInfo.action',multiple:true,
-								groupField:'group',
-								method:'get'," /></td>
+                <td width="35%"><input id="sidList" class="easyui-combobox" style="width:250px" required="required" name="supplyList"
+						 /></td>
             </tr>
            
 			 <tr>
@@ -57,7 +55,7 @@
                					 <input type="radio" name="state" value="1">是</input>
            					</span></td>
 				<td width="15%" style="text-align: right">物资到货日期：</td>
-                <td width="35%"><input type="text" id="date" style="width:250px" name="date" class="easyui-datetimebox" required="required"/>
+                <td width="35%"><input type="text" id="date" style="width:250px" name="date" class="easyui-datetimebox" validType="md['#overDate']" required="required"/>
 						</td>
                 
             </tr>
@@ -116,15 +114,65 @@
      * 初始加载
      */
     $(function(){
+    	 $("#srname").combobox({
+    		valueField:'srid',
+    		textField:'srname',
+    		missingMesage: '请选择',
+    		url:'getRankAllNameList.action',
+            editable: false, //不允许手动输入
+            onSelect: function (record) {
+            	 $("#sidList").combobox({
+                    disabled: false,
+                    url:'getSupplyInfo.action?srid='+record.srid,
+                    editable: false,
+                    valueField:'sid',
+                    missingMesage: '请先选择物资类别',
+            		textField:'abbreviation',
+            		multiple:true,
+            		groupField:'group',
+            		onShowPanel: function () {
+ 						var v = $(this).combobox('panel')[0].childElementCount;
+ 						// 判断下拉框高度（如果下拉框的数值小于10个，那么下拉框高度自动显示，如果大于10个，下拉框高度最高200）
+ 						if (v <= 10) {
+ 							$(this).combobox('panel').height("auto");
+ 						} else {
+ 							$(this).combobox('panel').height(200);
+ 						}
+ 					},
+            	    onLoadSuccess: function () { //加载完成后,val[0]写死设置选中第一项
+                        var val = $("#sidList").combobox("getData");
+                        for (var a = 0; a < val.length; a++) {
+                        	$(this).combobox('select', val[a]['sid']);
+                        }
+                    } 
+                }).combobox('clear');
+            }
+        });
+       
         initActions();
         initHioShareProfiltItemGrid();
         loadHioShareProfiltItems();
     });
-    
+   
+    $("#sidList").click(function(){
+        var srid = $("#srname").val();
+    	$.messager.alert('提示', srid+",,", 'info');
+    	$("#sidList").combobox({
+    		valueField:'sid',
+    		textField:'abbreviation',
+    		url:'getSupplyInfo.action?srid='+srid,
+    		/* multiple:true,
+    		groupField:'group',
+    		method:'get' */
+    	});
+	});
+	
     /**
      * 初始化绑定事件
      */
     function initActions(){
+    	
+
         $('.addItem').linkbutton({'onClick':function(){addItem();}});
         $('.removeItem').linkbutton({'onClick':function(){removeItem();}});
 		$('.saveItem').linkbutton({'onClick':function(){endEditing();}});
@@ -140,12 +188,16 @@
             pagination:false,rownumbers:true,pageNumber:1,pageSize : 10,pageList : [ 5, 10, 15 ],
             columns:[[    
                 {field:'id',title:'ID',hidden:true}
-                ,{field:'guige',title:'规格',sortable:false,width:70,align:'left',halign:'center',editor:{type:'textbox',
+                ,{field:'dename',title:'物质名称',sortable:false,width:70,align:'left',halign:'center',editor:{type:'textbox',
 					options:{required:true,precision:1}}}
-                ,{field:'number',title:'数量',sortable:false,width:70,align:'left',halign:'center',editor:{type:'numberbox',
+                ,{field:'guige',title:'物质规格',sortable:false,width:70,align:'left',halign:'center',editor:{type:'textbox',
+					options:{required:true,precision:1}}}
+                ,{field:'number',title:'物质数量',sortable:false,width:70,align:'left',halign:'center',editor:{type:'numberbox',
 					options:{required:true}} }
-                ,{field:'unit',title:'单位',sortable:false,width:70,align:'left',halign:'center' ,editor:{type:'textbox',
+                ,{field:'unit',title:'物质单位',sortable:false,width:70,align:'left',halign:'center' ,editor:{type:'textbox',
 					options:{required:true,precision:1}} }
+                ,{field:'beizhu',title:'备注',sortable:false,width:140,align:'left',halign:'center' ,editor:{type:'textbox',
+					options:{required:false,precision:1}} }
 				
             ]],
             toolbar:'#hioShareProfitItemForm_tb',
@@ -253,8 +305,30 @@
             }
         });
     }
-	
-	
+    $("#overDate").datebox({  
+    	  onSelect : function(beginDate){  
+    	    $('#date').datebox('calendar').calendar({  
+    	      validator: function(date){  
+    	    	  $.messager.alert('提示', beginDate < date, 'info');
+    	        return beginDate < date;
+    	      }  
+    	    }); 
+    	  }  
+    	}); 
+
+    $.extend($.fn.validatebox.defaults.rules, {//验证开始时间小于结束时间 
+    	md: { 
+    	validator: function(value, param){ 
+    	startTime2 = $(param[0]).datetimebox('getValue'); 
+    	var d1 = $.fn.datebox.defaults.parser(startTime2); 
+    	var d2 = $.fn.datebox.defaults.parser(value); 
+    	varify=d2>d1; 
+    	return varify; 
+    	 
+    	}, 
+    	message: '结束时间要大于开始时间！' 
+    	} 
+    })
     
 	</script>
 </body>

@@ -11,7 +11,7 @@ import com.mzrd.pojo.SupplyAccountInfo;
 
 public interface QuoteInfoDao {
 	public int addQuoteInfo(QuoteInfo qi);
-	public List<QuoteInfo> getQuoteInfo(DesiredInfo qi);
+	public List<QuoteInfo> getQuoteInfo(Map map);
 	public List<QuoteInfo> getAllQuoteList(QuoteInfo qi);
 	public List<QuoteInfo> getQuoteList(Map map);
 	public int deleteQuoteInfo(QuoteInfo qi);

@@ -102,7 +102,7 @@
 	<script type="text/javascript">
 		$(function() {
 			$('#adminListDg').datagrid({
-				singleSelect : false,
+				singleSelect : true,
 				url : 'getSupplyInfoList.action',
 				queryParams : {},//查询条件
 				pagination : true,//启动分页
@@ -189,8 +189,6 @@
         
         //设置供应商信息窗口
         function editSupply() {
-            var rows = $("#adminListDg").datagrid('getSelections');
-			if (rows.length >0 && rows.length<=1 ) {
 				var row = $("#adminListDg").datagrid("getSelected");
 				// 打开“修改”对话框
 				$("#departDlg").dialog("open").dialog('setTitle', '信息修改');
@@ -202,11 +200,6 @@
 				$("#saddress").textbox("setValue",row.address);
 				$("#sphone").textbox("setValue",row.phone);
 				$("#semail").textbox("setText",row.email);
-			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个员工', 'info');
-			}else {
-				$.messager.alert('提示', '请选择要修改的员工', 'info');
-			}
         }
         // 保存供应商信息
 		function saveSupply() {
@@ -218,7 +211,7 @@
 					var data = eval('(' + data + ')');
 	                if(data.success=="true"){  
 						$("#adminListDg").datagrid("reload");
-	                	  $('#powerDlg').form('clear');
+							$("#departDlg").dialog("close");
 		            }
 					$.messager.show({
 						title : "提示信息",

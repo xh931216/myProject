@@ -33,10 +33,10 @@
 	<!-- 查询窗体 -->
 	<div id="searchOrderTb" style="padding:2px 5px;">
 		<form id="searchPostForm" method="get">
-		 &nbsp;&nbsp;&nbsp; 物资类别 &nbsp;
-			<input style="width:115px;" id="srname1" class="easyui-combobox" 
+		 &nbsp;&nbsp;&nbsp; 物资类别 &nbsp; &nbsp; &nbsp;
+			<input style="width:130px;" id="srname1" class="easyui-combobox" 
 				data-options="valueField:'srid',textField:'srname',url:'getRankAllNameList.action'" />
-			&nbsp;&nbsp;&nbsp; 发布状态 &nbsp;
+			&nbsp;&nbsp;&nbsp; 发布状态 &nbsp; &nbsp; &nbsp;
 			 <select id="state1"  class="easyui-combobox" name="state" style="width:100px;">
 					<option value="0">未发布</option>
 					<option value="1" selected>已发布</option>
@@ -44,7 +44,10 @@
 			<BR />
 			&nbsp;&nbsp;&nbsp; 报价截止时间&nbsp;<input type="text" id="overDate1" 
 			style="width:130px" name="overDate" class="easyui-datebox" />
-			
+			<div id="selectUser"> &nbsp;&nbsp;&nbsp; 询价人 &nbsp; &nbsp; &nbsp;&nbsp;
+			<input class="easyui-textbox" type="text" id="userName" style="width:130px;"
+							name="userName"  ></input></div>
+		
 			<a href="javascript:void(0)"
 				class="easyui-linkbutton" iconCls="icon-search" plain="true"
 				onclick="searchPostInfo();">查找</a>
@@ -58,46 +61,45 @@
        
      <div data-options="region:'north',border:false" style="height:230px;width:100%">
             <table class="formTable" border="0" cellspacing="0" cellpadding="5" width="100%">
-    		  
+            <tr>
+                <td>
+                <input type="hidden" id="shareItemDatas1" name="shareItemDatas" value="" />
+                </td>
+				<td><input type="hidden" id="deid1" name="deid" value="" />
+                </td>
+            </tr>
             <tr>
                 <td width="15%" style="text-align: right">物资类别：</td>
                 <td width="35%"><input id="srname" class="easyui-combobox" style="width:250px" required="required" name="srid"
-						data-options="valueField:'srid',textField:'srname',url:'getRankAllNameList.action'" /></td>
+						 /></td>
                 <td width="15%" style="text-align: right">询价单位：</td>
-                <td width="35%"><select id="supplier" class="easyui-combobox" name="supplier" style="width:250px;" required="required">  
-    							<option ></option>  
+                <td width="35%"><select id="supplier" class="easyui-combobox" name="supplier" style="width:250px;" required="required" >  
+    							
     							<option value="明州热电">明州热电</option>  
-   								<option value="生物质">生物质</option>
-   								
-							</select> 
-						<input type="hidden" class="easyui-textbox"  id="deid1" name="deid" value=""/>   
-               		 <input type="hidden"   class="easyui-textbox"  id="shareItemDatas1" name="shareItemDatas" value="" />
-							</td>
-							
+   								<option value="明州生物质">明州生物质</option>
+							</select>  </td>
             </tr>
             <tr>
 				<td width="15%" style="text-align: right">报价截止日期：</td>
                 <td width="35%"><input type="text" id="overDate" style="width:250px" name="overDate" class="easyui-datetimebox" required="required"/>
 						</td>
-						
 				<td width="15%" style="text-align: right">询价查看单位：</td>
-                <td width="35%"><input id="sidList" class="easyui-combobox" style="width:250px" required="required" name="sidList"
-						data-options="valueField:'sid',textField:'abbreviation',url:'getSupplyInfo.action',multiple:true,
-								groupField:'group',
-								method:'get'," /></td>
+                <td width="35%"><input id="sidList" class="easyui-combobox" style="width:250px" required="required" name="supplyList"
+						 /></td>
             </tr>
-            
+           
 			 <tr>
                 <td width="15%" style="text-align: right">发布：</td>
                 <td width="35%"><span class="radioSpan">
                					 <input type="radio" name="state" value="0" checked="checked">否</input>
                					 <input type="radio" name="state" value="1">是</input>
            					</span></td>
-                <td width="15%" style="text-align: right">物资到货时间：</td>
+				<td width="15%" style="text-align: right">物资到货日期：</td>
                 <td width="35%"><input type="text" id="date" style="width:250px" name="date" class="easyui-datetimebox" required="required"/>
 						</td>
+                
             </tr>
-            <tr>
+			 <tr>
                 <td width="15%" style="text-align: right">备注：</td>
                 <td width="85%" colspan="3"><textarea id="remark" name="remark" required="required"
                         style="width: 90%; height: 100px;"></textarea>
@@ -152,14 +154,31 @@
 	<script type="text/javascript">
 	var imageurl = null;
 		$(function() {
+		$("#srname").combobox({
+    		valueField:'srid',
+    		textField:'srname',
+    		url:'getRankAllNameList.action',
+            editable: false, //不允许手动输入
+            onSelect: function (record) {
+            	 $("#sidList").combobox({
+                    disabled: false,
+                    url:'getSupplyInfo.action?srid='+record.srid,
+                    editable: false,
+                    valueField:'sid',
+            		textField:'abbreviation',
+            		multiple:true,
+            		groupField:'group'
+                }).combobox('clear');
+            }
+        });
 			$('#adminListDg').datagrid({
 				url : 'getStaffDesiredList.action',
 				singleSelect:true,
 				loadMsg:'加载中，请稍后...',
 				queryParams : {},//查询条件
-				pagination : true,//启动分页
-				pageSize : 5,//设置初始每页记录数（页大小）
-				pageList : [5, 10 ,15],//设置可供选择的页大小
+				pagination : false,//启动分页
+				pageSize : 10,//设置初始每页记录数（页大小）
+				pageList : [10, 15 ,20],//设置可供选择的页大小
 				rownumbers : true, //显示行号
 				fit : true, //设置自适应
 				multiSort: true, //启用排序
@@ -190,7 +209,7 @@
 				}, {
 					field : 'supplier',
 					title : '询价单位',
-					width : 100
+					width : 130
 				}, {
 					field : 'srid',
 					title : '物资名称',
@@ -214,6 +233,18 @@
 					field : 'remark',
 					title : '备注',
 					width : 300
+				},{
+					field : 'supplyId',
+					title : '询价查看单位',
+					width : 300,
+					hidden:true,
+					formatter: function(value, row,index){
+						if(row.supplyId){
+					        return row.supplyId;
+						}else{
+							value;
+						}
+					}
 				},{
 					field : 'state',
 					title : '状态',
@@ -246,9 +277,11 @@
 		                    loadMsg: '',
 		                    columns: [[
 								{title : '序号',field : 'dedid',hidden:'true'},
+		                        { field: 'dename', title: '物质名称', width: 40 },
 		                        { field: 'guige', title: '物资规格', width: 40 },
 		                        { field: 'number', title: '物资数量', width: 40 },
-		                        { field: 'unit', title: '物资单位', width: 40 }
+		                        { field: 'unit', title: '物资单位', width: 40 },
+		                        { field: 'beizhu', title: '备注', width: 40 }
 		                    ]],
 		                    onClickRow:function(rowIndex,rowData){
 								$("#image1").dialog("open").dialog('setTitle', '报价单');
@@ -267,33 +300,29 @@
 			});
 		});
 		
-		$.ajax({  
-	         url:'getDesiredInfo.action',  
-	         cache:false,  
-	         success:function(data){
-	        	 var insert=data.postInfo.rinsert;
-	        	 var rdelete=data.postInfo.rdelete;
-	        	 var rupdate=data.postInfo.rupdate;
-	        	 if(insert==0){
-		        	 $("#ainsert").hide();
-	        	 }
-	        	 if(rdelete==0){
-		        	 $("#adelete").hide();
-	        	 }
-	        	 if(rupdate==0){
-		        	 $("#aupdate").hide();
-	        	 }
-	         }
-		})
+		$.ajax({
+        type : 'post',
+        async : false,    
+        url : 'getStaffMessage.action',
+		dataType : 'json',
+        success : function(data) {
+        	if(data.postInfo.rname=='采购员')
+        	{
+	        	$("#selectUser").hide();
+        	}
+        }
+   	 });
 		// 查询询价
 		function searchPostInfo() {
 			var overDate=$('#overDate1').datebox('getValue');
 			var srid = $('#srname1').combobox("getValue");
 			var state = $('#state1').combobox("getValue");
+			var userName = $("#userName").val();
 			$('#adminListDg').datagrid('load', {
 				srid  : srid,
 				overDate:overDate,
-				state : state
+				state : state,
+				userName : userName
 			});
 		}
 		var id=0;
@@ -304,8 +333,6 @@
 		// 删除询价
 		function deleteStaff() {
 			// 获取选中的员工记录行
-			var rows = $("#adminListDg").datagrid('getSelections');
-			if (rows.length >0 && rows.length<=1 ) {
 				var row = $("#adminListDg").datagrid("getSelected");
 				state = row.state;
 				if(state == "0"){
@@ -337,11 +364,6 @@
 				}else{
 					$.messager.alert('提示', '询价单已发布，不能删除', 'info');
 				}
-			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个询价单', 'info');
-			}else {
-				$.messager.alert('提示', '请选择未发布的询价单', 'info');
-			}
 		}
 		
         //设置询价信息窗口
@@ -353,24 +375,38 @@
 				if(state == "0"){
 				// 打开“修改”对话框
 				$("#powerDlg").dialog("open").dialog('setTitle', '修改询价单');
-				$("#deid1").textbox("setValue",row.deid);
+				$("#deid1").val(row.deid);
 				$("#state").textbox("setValue",row.state);
 				$("#overDate").datetimebox("setValue",row.overDate);
 				$("#date").datetimebox("setValue",row.date);
-				$("#supplier").textbox("setValue",row.supplier);
 				$("#remark").val(row.remark);
-				//$("#srid").combobox("select",row.srid);
 				$("#srname").textbox("setValue",row.supplyRankInfo.srid);
 				$("#srname").textbox("setText",row.supplyRankInfo.srname);
-				 var supplyAccountInfolist = row.supplyAccountInfo;
-				 var si = [];
-				 var abb =[];
-				for(let k in supplyAccountInfolist){
-					abb[k]= supplyAccountInfolist[k].abbreviation;
-					si[k] =supplyAccountInfolist[k].sid;
-				} 
-				//$('#sidList').combobox('setTexts',abb); 
-				$('#sidList').combobox('setValues',si);
+				$("#sidList").combobox({
+                    disabled: false,
+                    url:'getSupplyInfo.action?srid='+row.supplyRankInfo.srid,
+                    editable: false,
+                    valueField:'sid',
+            		textField:'abbreviation',
+            		multiple:true,
+            		groupField:'group',
+            		onLoadSuccess: function (res) {
+						// 下拉框默认选择第一项
+					if (res) {
+						var val = $(this).combobox('getData');
+						var supplyId = row.supplyId;
+						var arr = supplyId.split(",");
+							for(var i=0;i<val.length;i++){
+								for(var k=0;k<arr.length;k++){
+									if(arr[k] == val[i]['sid']){
+										$(this).combobox('select', val[i]['sid']); //这个数据根据自己情况来设定
+									}
+								}
+							}
+						}
+					}
+                });
+				$("#supplier").combobox("setValues",row.supplier);
 				initHioShareProfiltItemGrid(row.deid);
 				}else{
 					$.messager.alert('提示', '询价单已发布，不能修改', 'info');
@@ -415,12 +451,16 @@
                 pagination:false,rownumbers:true,pageNumber:1,pageSize : 10,pageList : [ 5, 10, 15 ],
                 columns:[[    
                     {field:'id',title:'ID',hidden:true}
-                    ,{field:'guige',title:'规格',sortable:false,width:70,align:'left',halign:'center',editor:{type:'textbox',
+                    ,{field:'dename',title:'物资名称',sortable:false,width:70,align:'left',halign:'center',editor:{type:'textbox',
     					options:{required:true,precision:1}}}
-                    ,{field:'number',title:'数量',sortable:false,width:70,align:'left',halign:'center',editor:{type:'numberbox',
+                    ,{field:'guige',title:'物资规格',sortable:false,width:70,align:'left',halign:'center',editor:{type:'textbox',
+    					options:{required:true,precision:1}}}
+                    ,{field:'number',title:'物资数量',sortable:false,width:70,align:'left',halign:'center',editor:{type:'numberbox',
     					options:{required:true}} }
-                    ,{field:'unit',title:'单位',sortable:false,width:70,align:'left',halign:'center' ,editor:{type:'textbox',
+                    ,{field:'unit',title:'物资单位',sortable:false,width:70,align:'left',halign:'center' ,editor:{type:'textbox',
     					options:{required:true,precision:1}} }
+                    ,{field:'beizhu',title:'备注',sortable:false,width:70,align:'left',halign:'center',editor:{type:'textbox',
+    					options:{required:true,precision:1}}}
                     
     				
                 ]],
@@ -511,11 +551,9 @@
                     var isValid = $(this).form('enableValidation').form('validate');
                     var itemDatas = $('#hioShareProfitItemForm').datagrid('getData');
                     if (isValid){
-                      //  $.messager.progress();
-                        var itemDatasJson = JSON.stringify(itemDatas.rows);
-                        $("#shareItemDatas1").textbox("setValue",itemDatasJson);
-                       // $('#shareItemDatas1').val(itemDatasJson);
-                       // $.messager.alert('提示', itemDatasJson, 'info');
+                         var itemDatasJson = JSON.stringify(itemDatas.rows);
+                        $("#shareItemDatas1").val(itemDatasJson);
+						
                     }
                     return isValid; // 返回false终止表单提交
                 },
@@ -525,7 +563,6 @@
 						$("#adminListDg").datagrid("reload");
 						$("#hioShareProfitItemForm").datagrid("reload");
 	                	 $('#powerDlg').dialog("close");
-                       // $.messager.progress('close');
     	            }
     				$.messager.show({
     					title : "提示信息",

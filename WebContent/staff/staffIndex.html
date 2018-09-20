@@ -10,42 +10,16 @@
     <script type="text/javascript" src="../Easyui/jquery.easyui.min.js"></script>
 	<script type="text/javascript" src='../assets/js/adminIndex.js'> </script>
     <script type="text/javascript">
-	 var _menus = {"menus":[
-    						{"menuid":"1","icon":"icon-sys","menuname":"资料管理",
-    							"menus":[{"menuid":"32","menuname":"更改资料","icon":"icon-edit","url":"staffMessage.html"}
-    										]
-    						}]};
-	 $.ajax({  
-         url:'getDesiredInfo.action',  
-         cache:false,  
-         success:function(data){
-        	 var insert=data.postInfo.rinsert;
-        	 var select=data.postInfo.rselect;
-        	 if(insert !=0 && select!=0){
-        	 _menus = {"menus":[{"menuid":"1","icon":"icon-sys","menuname":"询价单管理",
-        							"menus":[
-        							        	 {"menuid":"33","menuname":"添加询价","icon":"icon-add","url":"staffDesiredAdd.html"},
-        							         {"menuid":"34","menuname":"查询询价","icon":"icon-nav","url":"staffDesiredList.html"}
-        				 ]}]};
-        	 }
-        	 if(insert ==0 && select!=0){
-            	 _menus = {"menus":[{"menuid":"1","icon":"icon-sys","menuname":"询价单管理",
-            							"menus":[{"menuid":"34","menuname":"查询询价","icon":"icon-nav","url":"staffDesiredList.html"}
-            				 ]}]};
-            	 }
-        	 if(insert !=0 && select==0){
-            	 _menus = {"menus":[{"menuid":"1","icon":"icon-sys","menuname":"询价单管理",
-            							"menus":[
-            							        	 {"menuid":"33","menuname":"添加询价","icon":"icon-add","url":"staffDesiredAdd.html"}]}]};
-            	 }
-        	 if(insert ==0 && select==0){
-            	 _menus = {"menus":[{"menuid":"1","icon":"icon-sys","menuname":"询价单管理",
-            							"menus":[
-            							        	]}]};
-            	 }
-        	 InitLeftMenu();
-         }  
-    })  
+    var _menus = {"menus":[
+   						{"menuid":"1","icon":"icon-sys","menuname":"资料管理",
+							"menus":[{"menuid":"32","menuname":"更改资料","icon":"icon-edit","url":"staffMessage.html"}
+							]
+   						},{"menuid":"1","icon":"icon-sys","menuname":"询价单管理",
+							"menus":[{"menuid":"33","menuname":"添加询价","icon":"icon-add","url":"staffDesiredAdd.html"},
+							       {"menuid":"34","menuname":"查询询价","icon":"icon-nav","url":"staffDesiredList.html"},
+							       {"menuid":"34","menuname":"查询报价","icon":"icon-nav","url":"staffQuoteList.html"}
+							]}
+   						]};
 	
          //设置登录窗口
         function openPwd() {
@@ -124,11 +98,11 @@
 <div style=" position:absolute; z-index:100000; height:2046px;top:0px;left:0px; width:100%; background:white; text-align:center;">
     <img src="../assets/images/noscript.gif" alt='抱歉，请开启脚本支持！' />
 </div></noscript>
-    <div region="north" split="true" border="false" style="overflow: hidden; height: 30px;
+    <div region="north" split="true" border="false" style="overflow: hidden; height: 70px;
         background: url(../assets/images/layout-browser-hd-bg.gif) #7f99be repeat-x center 50%;
         line-height: 20px;color: #fff; font-family: Verdana, 微软雅黑,黑体">
-        <span style="float:right; padding-right:20px;" class="head">欢迎 您登陆系统  <a href="#" id="editpass">修改密码</a> <a href="#" id="loginOut">安全退出</a></span>
-        <span style="padding-left:10px; font-size: 16px; "><img src="../assets/images/blocks.gif" width="20" height="20" align="absmiddle" /> 上海明州热电有限公司</span>
+        <span style="float:right; padding-right:20px;" width="80" class="head">欢迎 您登陆系统  <a href="#" id="editpass">修改密码</a> <a href="#" id="loginOut">安全退出</a></span>
+        <span style="padding-left:10px; font-size: 16px; "><img src="../assets/images/blocks.jpg" width="150" height="70" align="absmiddle" /> </span>
     </div>
     <div region="south" split="true" style="height: 30px; background: #D2E0F2; ">
         <div class="footer">上海第二工业大学|技术支持</div>

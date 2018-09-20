@@ -1,6 +1,7 @@
 package com.mzrd.service.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,8 +55,11 @@ public class QuoteInfoServiceImpl implements QuoteInfoService{
 		return qid;
 	}
 	@Override
-	public List<QuoteInfo> getQuoteInfo(DesiredInfo qi) {
-		return quoteInfoDao.getQuoteInfo(qi);
+	public List<QuoteInfo> getQuoteInfo(int deid,int sid) {
+		Map map = new HashMap<>();
+		map.put("sid", sid);
+		map.put("deid", deid);
+		return quoteInfoDao.getQuoteInfo(map);
 	}
 	@Override
 	public List<QuoteInfo> getQuoteList(Map map) {

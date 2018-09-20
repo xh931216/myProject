@@ -59,7 +59,7 @@ function PreviewImage(fileObj,imgPreviewId,divPreviewId){
                 var reader = new FileReader();   
                 reader.onload = function(e){  
                     document.getElementById(imgPreviewId).setAttribute("src",e.target.result);  
-                };
+                }    
                 reader.readAsDataURL(fileObj.files[0]);  
             }else if(browserVersion.indexOf("SAFARI")>-1){  
                 alert("不支持Safari6.0以下浏览器的图片预览!");  
@@ -103,4 +103,4 @@ function PreviewImage(fileObj,imgPreviewId,divPreviewId){
         }                  
         fileObj.outerHTML=fileObj.outerHTML;  
     }  
-};
+}

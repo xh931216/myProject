@@ -80,8 +80,18 @@ public class SupplyAccountInfoServiceImpl implements SupplyAccountInfoService{
 	}
 
 	@Override
-	public List<SupplyAccountInfo> getSupplyInfo() {
-		return supplyAccountInfoDAO.getSupplyInfo();
+	public List<SupplyAccountInfo> getSupplyInfo(int srid) {
+		return supplyAccountInfoDAO.getSupplyInfo(srid);
+	}
+
+	@Override
+	public List<SupplyAccountInfo> getStaffQuoteSupplyList(int deid) {
+		return supplyAccountInfoDAO.getStaffQuoteSupplyList(deid);
+	}
+
+	@Override
+	public SupplyAccountInfo getStaffQuoteSupply(int sid) {
+		return supplyAccountInfoDAO.getStaffQuoteSupply(sid);
 	}
 	
 }

@@ -4,15 +4,14 @@
 <mapper namespace="com.mzrd.dao.QuoteSupplyImageInfoDao">
 	
 	<insert id="addImageQuoteInfo" parameterType="com.mzrd.pojo.QuoteSupplyImageInfo">
-		insert into quote_supply_image_info(deid,sid,imageUrl,quoteDate,state) 
-		VALUES(#{deid},#{sid},#{imageUrl},#{quoteDate},#{state})
+		insert into quote_supply_image_info(deid,sid,imageUrl,quoteDate) 
+		VALUES(#{deid},#{sid},#{imageUrl},#{quoteDate})
 	</insert>
-	<select id="getImageUrl" parameterType="java.lang.Integer" 
+	<select id="getImageUrl" parameterType="java.util.Map" 
 		resultType="com.mzrd.pojo.QuoteSupplyImageInfo">
-		select * from quote_supply_image_info where deid=#{deid}
+		select * from quote_supply_image_info where deid=#{deid} and sid=#{sid}
 	</select>
 	<update id="updateImageQuoteInfo" parameterType="com.mzrd.pojo.QuoteSupplyImageInfo">
-		update from quote_supply_image_info set sid=#{sid},imageUrl=#{imageUrl},state=#{state},
-		 quoteDate=#{quoteDate} where deid=#{deid}
+		update  quote_supply_image_info set sid=#{sid},imageUrl=#{imageUrl},quoteDate=#{quoteDate} where deid=#{deid}
 	</update>
 </mapper>

@@ -50,8 +50,9 @@ public class PostInfoController {
 	public String addPost(PostInfo di){
 		List<PostInfo> diList =  postInfoService.getPostInfoList(di);
 		if(diList.size() != 0){
-			return "{\"success\":\"false\",\"message\":\"职位已存在\"}";
+			return "{\"success\":\"false\",\"message\":\"角色已存在\"}";
 		}
+		
 		int addOk = postInfoService.addPostInfo(di);
 		if(addOk == 1){
 			return "{\"success\":\"true\",\"message\":\"添加成功\"}";
@@ -64,8 +65,9 @@ public class PostInfoController {
 	public String updatePostInfo(PostInfo di){
 		List<PostInfo> diList =  postInfoService.getPostInfoList(di);
 		if(diList.size() != 0){
-			return "{\"success\":\"false\",\"message\":\"职位已存在\"}";
+			return "{\"success\":\"false\",\"message\":\"角色已存在\"}";
 		}
+		
 		int updateOk = postInfoService.updatePostInfo(di);
 		if(updateOk == 1){
 			return "{\"success\":\"true\",\"message\":\"修改成功\"}";
@@ -76,6 +78,7 @@ public class PostInfoController {
 	@RequestMapping(value="/updatePostInfoPower.action", produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String updatePostInfoPower(PostInfo di){
+		
 		int updateOk = postInfoService.updatePostInfoPower(di);
 		if(updateOk == 1){
 			return "{\"success\":\"true\",\"message\":\"权限修改成功\"}";

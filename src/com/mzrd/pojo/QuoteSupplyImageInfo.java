@@ -11,7 +11,6 @@ public class QuoteSupplyImageInfo {
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	private Date quoteDate;
 	private String imageUrl;
-	private int state;
 	public QuoteSupplyImageInfo() {
 		super();
 	}
@@ -47,12 +46,6 @@ public class QuoteSupplyImageInfo {
 		this.imageUrl = imageUrl;
 	}
 	
-	public int getState() {
-		return state;
-	}
-	public void setState(int state) {
-		this.state = state;
-	}
 	@Override
 	public String toString() {
 		return "QuoteSupplyImageInfo [qiid=" + qiid + ", deid=" + deid + ", sid=" + sid + ", imageUrl=" + imageUrl

@@ -8,7 +8,7 @@ import com.mzrd.pojo.*;
 public interface QuoteInfoService {
 	public int addQuoteInfo(String shareItemDatas,SupplyAccountInfo si,
 				String imageUrl,int deid,Date quoteDate);
-	public List<QuoteInfo> getQuoteInfo(DesiredInfo qi);
+	public List<QuoteInfo> getQuoteInfo(int deid,int sid);
 	public List<QuoteInfo> getAllQuoteList(QuoteInfo qi);
 	public List<QuoteInfo> getQuoteList(Map map);
 	public int deleteQuoteInfo(QuoteInfo qi);

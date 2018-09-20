@@ -13,6 +13,7 @@
 		<result property="supplier" column="supplier" />
 		<result property="remark" column="remark"/>
 		<result property="desiredId" column="desiredId"/>
+		<result property="supplyId" column="supplyId"/>
 		<association property="supplyRankInfo" javaType="com.mzrd.pojo.SupplyRankInfo">
 			<id property="srid" column="srid2" />
 			<result property="srname" column="srname" />
@@ -42,11 +43,16 @@
 			select * from desired_info where id=#{id} and srid=#{srid} and supplier=#{supplier}
 			and overDate = #{overDate} and remark=#{remark}
 	</select>
-	<select id="getSupllyDesiredList" parameterType="java.util.Map" resultMap="getMap">
-		select *,sai.id id2,di.srid srid2 from desired_supply_info dsi,desired_info di,
-		staff_account_info sai,supply_rank_info sri where
+	<select id="getSupllyDesiredAllList" parameterType="java.util.Map" resultMap="getMap">
+		<!-- select *,sai.id id2,di.srid srid2 from desired_supply_info dsi,desired_info di,
+		staff_account_info sai,supply_rank_info sri,quote_supply_image_info qsii where
  		dsi.deid=di.deid  and di.state=1 and dsi.sid=1 and sai.id=di.id and sri.srid=di.srid
- 		and di.overDate>NOW()
+ 		and qsii.deid=di.deid -->
+		select DISTINCT di.*,sai.*,sri.*,
+		sai.id id2,sai.state sta,di.state stat,di.srid srid2
+ 		from desired_info di,staff_account_info sai,supply_rank_info sri,post_info poi,quote_info qi,desired_details_info ddi
+		where sai.id=di.id and di.srid=sri.srid and poi.rid=sai.rid and di.state=1 and qi.sid=#{sid}
+		and di.supplyId like CONCAT('%,',#{sid},',%') and qi.dedid=ddi.dedid and ddi.deid=di.deid
 		<if test="srid!=null and srid!=''">
 			and di.srid=#{srid}
 		</if>
@@ -58,22 +64,73 @@
 		  limit #{start},#{limit}
 		</if>
 	</select>
-	<select id="getStaffDesiredPage"  resultMap="getMap"
-	 parameterType="java.util.Map">
-		select sui.sid sid,sui.abbreviation abbreviation,di.*,sai.*,sri.*,
+	<select id="getSupllyDesiredList" parameterType="java.util.Map" resultMap="getMap">
+		<!-- select *,sai.id id2,di.srid srid2 from desired_supply_info dsi,desired_info di,
+		staff_account_info sai,supply_rank_info sri where
+ 		dsi.deid=di.deid  and di.state=1 and dsi.sid=1 and sai.id=di.id and sri.srid=di.srid
+ 		and di.overDate>NOW() -->
+ 		
+ 		select di.*,sai.*,sri.*,
 		sai.id id2,sai.state sta,di.state stat,di.srid srid2
- 		from desired_info di,staff_account_info sai,supply_rank_info sri,post_info poi,supply_account_info sui,
-		desired_supply_info desi
-		where di.srid=sri.srid and sai.id=di.id and sai.state=1 and poi.rid=sai.rid and
-		sui.sid=desi.sid and desi.deid=di.deid
-		<if test="select==1">
+ 		from desired_info di,staff_account_info sai,supply_rank_info sri,post_info poi
+		where sai.id=di.id and di.srid=sri.srid and poi.rid=sai.rid and di.state=1
+		and di.overDate>NOW() and di.supplyId like CONCAT('%,',#{sid},',%')
+		<if test="srid!=null and srid!=''">
+			and di.srid=#{srid}
+		</if>
+		<if test="overDate!=null and overDate!=''">
+			and di.overDate like concat('%',#{overDate},'%')
+		</if>
+		ORDER BY di.deid DESC 
+		<if test="start != null and limit != null">
+		  limit #{start},#{limit}
+		</if>
+	</select>
+	<select id="getStaffQuoteList" parameterType="java.util.Map" resultMap="getMap">
+
+		select di.*,sai.*,sri.*,
+		sai.id id2,sai.state sta,di.state stat,di.srid srid2
+ 		from desired_info di,staff_account_info sai,supply_rank_info sri,post_info poi
+		where sai.id=di.id and di.srid=sri.srid and poi.rid=sai.rid and di.state=1
+		
+		<if test="id!=null and id!=''">
 			and sai.id=#{id}
 		</if>
-		<if test="select==2">
+		<if test="did!=null and did!=''">
 			and poi.did=#{did}
 		</if>
 		<if test="srid!=null and srid!=''">
 			and di.srid=#{srid}
+		</if>
+		<if test="overDate!=null and overDate!=''">
+			and di.overDate like concat('%',#{overDate},'%')
+		</if>
+		<if test="userName!=null and userName!=''">
+			and sai.userName like concat('%',#{userName},'%')
+		</if>
+		ORDER BY di.deid DESC 
+		<if test="start != null and limit != null">
+		  limit #{start},#{limit}
+		</if>
+	</select>
+	<select id="getStaffDesiredPage"  resultMap="getMap"
+	 parameterType="java.util.Map">
+		
+		select di.*,sai.*,sri.*,
+		sai.id id2,sai.state sta,di.state stat,di.srid srid2
+ 		from desired_info di,staff_account_info sai,supply_rank_info sri,post_info poi
+		where sai.id=di.id and di.srid=sri.srid and poi.rid=sai.rid
+		<if test="id!=null and id!=''">
+			and sai.id=#{id}
+		</if>
+		<if test="did!=null and did!=''">
+			and poi.did=#{did}
+		</if>
+		<if test="srid!=null and srid!=''">
+			and di.srid=#{srid}
+		</if>
+		<if test="userName!=null and userName!=''">
+			and sai.userName like concat('%',#{userName},'%')
 		</if>
 		<if test="overDate!=null and overDate!=''">
 			and di.overDate like concat('%',#{overDate},'%')
@@ -97,12 +154,12 @@
 		select Max(desiredId) from desired_info where desiredId like concat('%',#{date},'%')
 	</select>
 	<insert id="addDesiredInfo" parameterType="com.mzrd.pojo.DesiredInfo">
-		insert into desired_info (srid,supplier,overDate,remark,desiredId,id,state,date) 
-		values(#{srid},#{supplier},#{overDate},#{remark},#{desiredId},#{id},#{state},#{date});
+		insert into desired_info (srid,supplier,overDate,remark,desiredId,id,state,date,supplyId) 
+		values(#{srid},#{supplier},#{overDate},#{remark},#{desiredId},#{id},#{state},#{date},#{supplyId});
 	</insert>
 	<update id="updateDesiredInfo" parameterType="com.mzrd.pojo.DesiredInfo">
 		update desired_info 
-		set srid=#{srid},id=#{id},overDate=#{overDate},supplier=#{supplier},
+		set srid=#{srid},overDate=#{overDate},supplier=#{supplier},
 		remark=#{remark},state=#{state},date=#{date}
 		where deid=#{deid}
 	</update>

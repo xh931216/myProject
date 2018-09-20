@@ -1,4 +1,4 @@
-package com.mzrd.controller.supply;
+package com.mzrd.controller.staff;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,22 +29,18 @@ import com.mzrd.service.QuoteInfoService;
 import com.mzrd.service.QuoteSupplyImageInfoService;
 import com.mzrd.util.Image1;
 import com.sun.org.apache.bcel.internal.generic.FMUL;
-@RequestMapping("/supply")
+@RequestMapping("/staff")
 @Controller
-public class SupplyQuoteImageInfoController {
+public class StaffQuoteImageInfoController {
 	@Autowired
 	private QuoteSupplyImageInfoService quoteSupplyImageInfoService;
 	
 	//获取所有类别
 	@RequestMapping("/getImageUrl.action")
 	@ResponseBody
-	public QuoteSupplyImageInfo getImageUrl(int deid,HttpSession session){
-		SupplyAccountInfo supplyInfo = (SupplyAccountInfo) session.getAttribute("userInfo");
-		QuoteSupplyImageInfo qi = quoteSupplyImageInfoService.getImageUrl(deid,supplyInfo.getSid());
-		if(qi!=null){
-			return qi;
-		}
-		return new QuoteSupplyImageInfo();
+	public QuoteSupplyImageInfo getImageUrl1(int deid,int sid){
+		QuoteSupplyImageInfo qi = quoteSupplyImageInfoService.getImageUrl(deid,sid);
+		return qi;
 	}
 
 }

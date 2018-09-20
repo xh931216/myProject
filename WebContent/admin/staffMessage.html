@@ -40,7 +40,37 @@
 				onclick="searchPostInfo();">查找</a>
 		</form>
 	</div>
-	
+	<!-- 修改职位的对话框  -->
+	<div id="powerDlg" class="easyui-dialog" title="修改职位"
+		closed="true" style="width:450px">
+		<div style="padding:10px 60px 20px 60px">
+			<form id="adminForm" method="POST" action="">
+				<table cellpadding="5">	
+				<tr>
+						<td>部门名称</td>
+						<td><input style="width:200px;" id="dnameupdate"
+					class="easyui-combobox"  name="did" 
+				data-options="valueField:'did',textField:'dname',url:'getDepartmentInfoList.action',
+				onSelect:function(region){
+					$('#postupdate').combobox('clear');//清除原有项目
+					$('#postupdate').combobox('reload','getPostInfoAndDepartmentInfoList.action?did='+region.did);//重新加载
+				}" /></td>
+					</tr>				
+					<tr>
+						<td>职位名称:</td>
+							<td><input style="width:200px;" id="postupdate" 
+							class="easyui-combobox" name="rid"
+						data-options="url:'getPostInfoAndDepartmentInfoList.action',valueField:'rid',textField:'rname'" />
+						</td>
+					</tr>
+				</table>
+			</form>
+			<div style="text-align:center;padding:3px">
+				<a href="javascript:void(0)" class="easyui-linkbutton"
+					onclick="savePowers();">修改</a>
+			</div>
+		</div>
+	</div>
 	<!-- 修改信息的对话框  -->
 	<div id="departDlg" class="easyui-dialog" title="修改信息"
 		closed="true" style="width:400px">
@@ -51,7 +81,7 @@
 						<td >登录名:</td>
 							<td><input id="susername" class="easyui-textbox" type="text" name="userName" 
 							data-options="required:true,validType:'myvalidate'"/>
-							<input id="sid" class="easyui-validatebox" type="text" name="id" style="width:152px;display:none;"/>
+							<input id="sid" class="easyui-textbox" type="hidden" name="id"/>
 
 						</td>
 					</tr>
@@ -84,7 +114,7 @@
 	<script type="text/javascript">
 		$(function() {
 			$('#adminListDg').datagrid({
-				singleSelect : false,
+				singleSelect : true,
 				url : 'getStaffInfoList.action',
 				queryParams : {},//查询条件
 				pagination : true,//启动分页
@@ -160,15 +190,135 @@
 				state : state
 			});
 		}
-		function addStaff(){
-			window.open( "staffAdd.html");
-		}
 		var id=0;
+        function addStaff(){
+			window.open("staffAdd.html","_self");
+		}
+		// 删除员工
+		function deleteStaff() {
+			// 获取选中的员工记录行
+			
+				var row = $("#adminListDg").datagrid("getSelected");
+				state = row.state;
+				if(state == "1"){
+				$.messager.confirm('Confirm', '确认要删除'+row.userName+'?', function(r) {
+					if (r) {
+						id = row.id;
+						// 发送请求
+						$.post('deleteStaff.action', {
+							id : id
+						}, function(result) {
+							if (result.success == 'true') {
+								$("#adminListDg").datagrid('reload'); 
+								$.messager.show({
+									title : '提示信息',
+									msg : result.message
+								});
+							} else {
+								$.messager.show({
+									title : '提示信息',
+									msg : result.message
+								});
+							}
+						}, 'json');
+
+					}
+				});
+				}else{
+					$.messager.alert('提示', '员工已经离职', 'info');
+				}
+			
+		}
+		
+		 // 修改职位
+		function editStaffPowers() {
+			
+				var row = $("#adminListDg").datagrid("getSelected");
+				id = row.id;
+				state = row.state;
+				if(state == "1"){
+				// 打开“修改”对话框
+				$("#powerDlg").dialog("open").dialog('setTitle', '修改职位');
+				$("#dnameupdate").textbox("setValue",row.departmentInfo.did);
+				$("#dnameupdate").textbox("setText",row.departmentInfo.dname);
+				$('#postupdate').combobox('reload','getPostInfoAndDepartmentInfoList.action?did='
+						+row.departmentInfo.did);
+				$("#postupdate").textbox("setValue",row.postInfo.rid);
+				$("#postupdate").textbox("setText",row.postInfo.rname);
+				}else{
+					$.messager.alert('提示', '员工已经离职', 'info');
+				}
+		}
+		
+		// 保存修改职位信息
+		function savePowers() {
+			 $.ajax({  
+	              url:'updateStaff.action?rid='+$('#postupdate').combobox("getValue")
+	            		  +'&id='+id,  
+	              cache:false,  
+	              success:function(data){  
+	                  eval('data='+data);  
+	                  if(data.success=="true"){  
+						 $("#adminListDg").datagrid("reload");
+	                	  $('#powerDlg').form('clear');
+	                	  $('#powerDlg').window('close');
+	                  }
+					  $.messager.show({
+						title : "提示信息",
+						msg : data.message
+					});
+	              }  
+             })  
+		}
+		 //设置密码窗口
+        function editPassword() {
+           
+				var row = $("#adminListDg").datagrid("getSelected");
+				id = row.id;
+				// 打开“修改”对话框
+				var rows = $("#adminListDg").datagrid('getSelections');
+					state = row.state;
+					if(state == "1"){
+					$.messager.confirm('Confirm', '确认重置《'+row.userName+'》密码?', function(r) {
+						if (r) {
+							// 发送请求
+							$.post('updateStaffpassword.action', {
+								id : id
+							}, function(result) {
+								if (result.success == 'true') {
+									$("#adminListDg").datagrid('reload'); 
+									$.messager.show({
+										title : '提示信息',
+										msg : result.message
+									});
+								} else {
+									$.messager.show({
+										title : '提示信息',
+										msg : result.message
+									});
+								}
+							}, 'json');
+
+						}
+					});
+					}else{
+						$.messager.alert('提示', '员工已经离职', 'info');
+					}
+			
+        }
+        //关闭登录窗口
+        function closePwd() {
+            $('#pass').window('close');
+        }
+      
         //设置员工信息窗口
         function editStaff() {
-            var rows = $("#adminListDg").datagrid('getSelections');
-			if (rows.length >0 && rows.length<=1 ) {
-				var row = $("#adminListDg").datagrid("getSelected");
+        	var row = $("#adminListDg").datagrid("getSelected");
+			id = row.id;
+			// 打开“修改”对话框
+			var rows = $("#adminListDg").datagrid('getSelections');
+				state = row.state;
+				if(state == "1"){
 				// 打开“修改”对话框
 				$("#departDlg").dialog("open").dialog('setTitle', '信息修改');
 				$("#sid").textbox("setValue",row.id);
@@ -176,11 +326,9 @@
 				$("#ssname").textbox("setValue",row.sname);
 				$("#sphone").textbox("setValue",row.phone);
 				$("#semail").textbox("setText",row.email);
-			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个员工', 'info');
-			}else {
-				$.messager.alert('提示', '请选择要修改的员工', 'info');
-			}
+				}else{
+					$.messager.alert('提示', '员工已经离职', 'info');
+				}
         }
         // 保存员工信息
 		function saveStaff() {
@@ -192,7 +340,6 @@
 					var data = eval('(' + data + ')');
 	                if(data.success=="true"){  
 						$("#adminListDg").datagrid("reload");
-	                	  $('#powerDlg').form('clear');
 		            }
 					$.messager.show({
 						title : "提示信息",
@@ -243,7 +390,10 @@
 		         },   
 		       message: '请输入正确的电话号码。'
 		    } 
-        });
+        })
+		function clearAdminForm() {
+       	 $('#departDlg').form('clear');
+		} 
 	</script>
 </body>
 </html>

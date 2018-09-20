@@ -34,10 +34,10 @@
 	  	select s.*,q.*,sa.*, q.state st,sa.state sta,sa.sid sida from quote_info q, desired_info d,supply_rank_info s,supply_account_info sa where
 	  	 q.deid=d.deid and s.srid=d.srid and sa.sid=q.sid and d.deid=#{deid} and q.state=1
 	</select>
-	<select id="getQuoteInfo" parameterType="com.mzrd.pojo.DesiredInfo"
+	<select id="getQuoteInfo" parameterType="java.util.Map"
 	resultType="com.mzrd.pojo.QuoteInfo">
 		select qi.* from quote_info qi,desired_details_info si
-		where qi.dedid=si.dedid and si.deid=#{deid}
+		where qi.dedid=si.dedid and si.deid=#{deid} and qi.sid=#{sid}
 	</select>
 	
 	<select id="getQuoteList" parameterType="com.mzrd.pojo.QuoteInfo"

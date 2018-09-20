@@ -1,5 +1,6 @@
 package com.mzrd.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,13 +27,24 @@ public class DesiredDetailsInfoServiceImpl implements DesiredDetailsInfoService{
 		List<DesiredDetailsInfo> list = jsonUtil.strToList(shareItemDatas,DesiredDetailsInfo.class);
 		for (DesiredDetailsInfo ps : list) {
 			ps.setDeid(deid);
+			System.out.println(dad+","+ps);
 			dad = desiredDetailsInfoDao.addDesiredDetailsInfo(ps);
         }
 		return dad;
 	}
 	@Override
-	public List getStaffDesiredDetailsList(int deid) {
-		return desiredDetailsInfoDao.getStaffDesiredDetailsList(deid);
+	public List getStaffDesiredDetailsList(int deid,int sid) {
+		Map map = new HashMap<>();
+		map.put("deid", deid);
+		map.put("sid", sid);
+		return desiredDetailsInfoDao.getStaffDesiredDetailsList(map);
+	}
+	@Override
+	public List getStaffDesiredDetaiSupplylsList(int deid, int sid) {
+		Map map = new HashMap<>();
+		map.put("deid", deid);
+		map.put("sid", sid);
+		return desiredDetailsInfoDao.getStaffDesiredDetaiSupplylsList(map);
 	}
 	
 }

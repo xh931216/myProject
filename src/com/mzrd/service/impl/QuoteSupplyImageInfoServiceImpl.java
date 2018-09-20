@@ -1,5 +1,8 @@
 package com.mzrd.service.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +22,11 @@ public class QuoteSupplyImageInfoServiceImpl implements QuoteSupplyImageInfoServ
 	}
 
 	@Override
-	public QuoteSupplyImageInfo getImageUrl(int deid) {
-		
-		return quoteSupplyImageInfoDao.getImageUrl(deid);
+	public QuoteSupplyImageInfo getImageUrl(int deid,int sid) {
+		Map map = new HashMap<>();
+		map.put("deid",deid);
+		map.put("sid", sid);
+		return quoteSupplyImageInfoDao.getImageUrl(map);
 	}
 	
 }

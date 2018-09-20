@@ -8,8 +8,10 @@ import com.sun.jmx.snmp.Timestamp;
 public class DesiredDetailsInfo {
 	private int dedid;
 	private int deid;
+	private String dename;
 	private String guige;
 	private String unit;
+	private String beizhu;
 	private int  number;
 	private int qid;
 	private int sid;
@@ -29,6 +31,13 @@ public class DesiredDetailsInfo {
 	public void setSid(int sid) {
 		this.sid = sid;
 	}
+	
+	public String getBeizhu() {
+		return beizhu;
+	}
+	public void setBeizhu(String beizhu) {
+		this.beizhu = beizhu;
+	}
 	public String getPrice() {
 		return price;
 	}
@@ -42,6 +51,12 @@ public class DesiredDetailsInfo {
 		this.remark = remark;
 	}
 	
+	public String getDename() {
+		return dename;
+	}
+	public void setDename(String dename) {
+		this.dename = dename;
+	}
 	public DesiredDetailsInfo() {
 		super();
 	}
@@ -85,11 +100,11 @@ public class DesiredDetailsInfo {
 	}
 	@Override
 	public String toString() {
-		return "DesiredDetailsInfo [dedid=" + dedid + ", deid=" + deid  + ", guige=" + guige
+		return "DesiredDetailsInfo [dedid=" + dedid + ", deid=" + deid + ", dename=" + dename + ", guige=" + guige
 				+ ", unit=" + unit + ", number=" + number + ", qid=" + qid + ", sid=" + sid + ", price=" + price
-				+ ", remark=" + remark +  ", quoteSupplyImageInfo=" + quoteSupplyImageInfo
-				+ "]";
+				+ ", remark=" + remark + ", quoteSupplyImageInfo=" + quoteSupplyImageInfo + "]";
 	}
+	
 	
 	
 }
