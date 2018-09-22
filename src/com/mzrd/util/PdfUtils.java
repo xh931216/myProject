@@ -2,7 +2,6 @@ package com.mzrd.util;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,10 +20,8 @@ import org.springframework.http.ResponseEntity;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
-import com.itextpdf.text.pdf.codec.Base64.OutputStream;
 import com.mzrd.pojo.DesiredDetailsInfo;
 import com.mzrd.pojo.DesiredInfo;
-import com.mzrd.pojo.QuoteInfo;
 import com.mzrd.pojo.QuoteSupplyImageInfo;
 import com.mzrd.pojo.StaffAccountInfo;
 import com.mzrd.pojo.SupplyAccountInfo;
@@ -175,18 +171,19 @@ public class PdfUtils {
 			}
 		}
 		
-		
+		 ResponseEntity<byte[]> res = null;
 		Map<String,String> map2 = new HashMap();
         if(state == 1){
         	map2.put("img", qsi.getImageUrl());
+        	Map<String,Object> m=new HashMap();
+            m.put("datemap",o);
+            m.put("imgmap",map2);
+            res =fillTemplateImage(response,m,o.get("desiredId"),"staffQuote.pdf",request);
 		}else{
-			map2.put("img", "");
+			res =fillTemplate(response,o,o.get("desiredId"),"staffQuote.pdf",request);
 		}
-       // map2.put("img","https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537035541712&di=f17cfc64333ab901ea6d5546dc4734cc&imgtype=0&src=http%3A%2F%2Fbbs-fd.zol-img.com.cn%2Ft_s800x5000%2Fg5%2FM00%2F0A%2F02%2FChMkJ1mMLu6IR9HQAANvMd4yPB8AAfjtANFIV4AA29J401.jpg");
-        Map<String,Object> m=new HashMap();
-        m.put("datemap",o);
-        m.put("imgmap",map2);
-        return fillTemplateImage(response,m,o.get("desiredId"),"staffQuote.pdf",request);
+        
+        return res;
     }
 
 	// 利用模板生成pdf
@@ -238,16 +235,6 @@ public class PdfUtils {
 				System.out.println(2);
 			}
 			 File file = new File(newPDFPath);
-
-	        InputStream ins = null;
-			try {
-				ins = new FileInputStream(file);
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	        /* 设置文件ContentType类型，这样设置，会自动判断下载文件类型 */
-			
 	        response.setContentType("application/pdf");
 	        /* 设置文件头：最后一个参数是设置下载文件名 */
 	        byte[] body = null;
@@ -260,7 +247,8 @@ public class PdfUtils {
 	        headers.add("Content-Disposition", "attchement;filename=" + downloadFielName);
 	        HttpStatus statusCode = HttpStatus.OK;
 	        ResponseEntity<byte[]> entity = new ResponseEntity<byte[]>(body, headers, statusCode);
-			return entity;
+			is.close();
+	        return entity;
 		}
 		// 利用模板生成pdf
 		public static  ResponseEntity<byte[]> fillTemplateImage(HttpServletResponse response,Map<String,Object> o,String fileName,String pdfName,HttpServletRequest request) throws IOException {
@@ -299,6 +287,7 @@ public class PdfUtils {
 	            }
 	            //图片类的内容处理
 	            Map<String,String> imgmap = (Map<String,String>)o.get("imgmap");
+	            if(imgmap.get("img")!=null){
 	            for(String key : imgmap.keySet()) {
 	                String value = imgmap.get(key);
 	                String imgpath = value;
@@ -316,6 +305,7 @@ public class PdfUtils {
 	                image.setAbsolutePosition(x, y);
 	                under.addImage(image);
 	            }
+	            }
 	            stamper.setFormFlattening(true);// 如果为false，生成的PDF文件可以编辑，如果为true，生成的PDF文件不可以编辑
 	            stamper.close();
 	            Document doc = new Document();
@@ -332,16 +322,6 @@ public class PdfUtils {
 	            System.out.println(e);
 	        }
 	        File file = new File(newPDFPath);
-
-	        InputStream ins = null;
-			try {
-				ins = new FileInputStream(file);
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	        /* 设置文件ContentType类型，这样设置，会自动判断下载文件类型 */
-			
 	        response.setContentType("application/pdf");
 	        /* 设置文件头：最后一个参数是设置下载文件名 */
 	        byte[] body = null;
@@ -349,12 +329,11 @@ public class PdfUtils {
 	        body = new byte[is.available()];
 	        is.read(body);
 	        HttpHeaders headers = new HttpHeaders();
-	       // headers.setContentDispositionFormData("attachment", downloadFielName)
 	        String downloadFielName = new String(file.getName().getBytes("UTF-8"),"iso-8859-1");
 	        headers.add("Content-Disposition", "attchement;filename=" + downloadFielName);
 	        HttpStatus statusCode = HttpStatus.OK;
 	        ResponseEntity<byte[]> entity = new ResponseEntity<byte[]>(body, headers, statusCode);
-			return entity;
-	 
+			is.close();
+	        return entity;
 		}
 }

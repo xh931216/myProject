@@ -206,9 +206,7 @@
 	            view: detailview,
 	            detailFormatter: function (index, row) {
 	                 return '<div style="padding:2px"><table class="ddv" id="ddv"></table></div>'; 
-				}
-				
-				,  
+				},  
 			onExpandRow: function(index,row){//父亲级列表，注意此时行索引为index                                  
 				var ddv = $(this).datagrid('getRowDetail',index).find('table.ddv');
 				ddv.datagrid({
@@ -333,25 +331,8 @@
 		function upload(){
 			var row = $("#adminListDg").datagrid("getSelected");
 			var deid = row.deid;
-			$.ajax({
-                type : 'post',
-                async : false,    
-                url : 'getSupplyDesiredPdf.action?deid='+deid,
-        		dataType : 'json',
-                success : function(data) {
-                    if(data.success=="true"){ 
-						 $("#powerDlg1").dialog("open").dialog('setTitle', '信息提示');
-						$("#showMess").html("d:/pdf/"+row.desiredId+"询价单.pdf查看");
-    	            }else{
-    	            	$("#powerDlg1").dialog("open").dialog('setTitle', '信息提示');
-						$("#showMess").html("请关闭文件，重新下载");
-    	            }
-    				$.messager.show({
-    					title : "提示信息",
-    					msg : data.message
-    				});
-                }
-            });
+			var url="getSupplyDesiredPdf.action?deid="+deid;
+	        open(url);
 		}
         //设置报价信息窗口
         function editStaff() {
@@ -366,7 +347,6 @@
 			}else {
 				$.messager.alert('提示', '请选择公司信息', 'info');
 			}
-			
         }
         /**
          * 变量区
@@ -466,26 +446,9 @@
 						}else{
 							state=0;
 						}
-						// 发送请求
-							$.post('getSupplyQuotePdf.action', {
-								deid : row.deid,
-								sid:r1.sid,
-								state:state
-							}, function(data) {
-								
-								if(data.success=="true"){ 
-									$("#powerDlg1").dialog("open").dialog('setTitle', '信息提示');
-									$("#showMess").html("d:/pdf/"+row.desiredId+".pdf查看");
-								}else{
-									$("#powerDlg1").dialog("open").dialog('setTitle', '信息提示');
-									$("#showMess").html("请关闭文件，重新下载");
-								}
-								$.messager.show({
-									title : "提示信息",
-									msg : data.message
-								});
-									
-							}, 'json');
+						var url="getSupplyQuotePdf.action?deid="+row.deid+"&sid="
+								+r1.sid+"&state="+state;
+				        open(url);
 					});
         }
 		

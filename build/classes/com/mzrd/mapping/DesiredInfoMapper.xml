@@ -21,7 +21,7 @@
 		<association property="staffAccountInfo" javaType="com.mzrd.pojo.StaffAccountInfo">
 			<id property="id" column="id2" />
 			<result property="userName" column="userName" />
-			<result property="password" column="password" />
+			
 			<result property="rid" column="rid" />
 			<result property="sname" column="sname" />
 			<result property="phone" column="phone" />

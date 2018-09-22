@@ -83,7 +83,7 @@ public class StaffQuoteInfoController {
 			return result;
 	}
 		//获取报价单pdf
-		@RequestMapping(value="/getSupplyQuotePdf.action",produces = "text/html;charset=UTF-8")
+		@RequestMapping(value="/getSupplyQuotePdf.action")
 		@ResponseBody
 		public ResponseEntity<byte[]> getSupplyQuotePdf(int deid,int sid,int state,HttpServletResponse response,
 				HttpServletRequest request,HttpSession session) throws IOException{
@@ -96,8 +96,7 @@ public class StaffQuoteInfoController {
 			StaffAccountInfo staffInfo = staffAccountInfoService.getStaffAccountById(sa);
 		    QuoteSupplyImageInfo qsi =	quoteSupplyImageInfoService.getImageUrl(deid, sid);
 		    SupplyAccountInfo supplyAccountInfo = supplyAccountInfoService.getStaffQuoteSupply(sid);
-			return pdfUtils.saveStaffQuotePdf(response,list,di,staffInfo,supplyAccountInfo,state,request,qsi);
-			
+			return pdfUtils.saveStaffQuotePdf(response,list,di,staffInfo,supplyAccountInfo,state,request,qsi);	
 		}
 	//获取所有类别
 	@RequestMapping("/getAllQuoteList.action")
