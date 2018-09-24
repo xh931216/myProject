@@ -57,7 +57,10 @@
 			and di.srid=#{srid}
 		</if>
 		<if test="overDate!=null and overDate!=''">
-			and di.overDate like concat('%',#{overDate},'%')
+			and di.overDate > #{overDate}
+		</if>
+		<if test="overDate1!=null and overDate1!=''">
+			and di.overDate &lt;= #{overDate1}
 		</if>
 		ORDER BY di.deid DESC 
 		<if test="start != null and limit != null">
@@ -78,8 +81,12 @@
 		<if test="srid!=null and srid!=''">
 			and di.srid=#{srid}
 		</if>
+		
 		<if test="overDate!=null and overDate!=''">
-			and di.overDate like concat('%',#{overDate},'%')
+			and di.overDate > #{overDate}
+		</if>
+		<if test="overDate1!=null and overDate1!=''">
+			and di.overDate &lt;= #{overDate1}
 		</if>
 		ORDER BY di.deid DESC 
 		<if test="start != null and limit != null">
@@ -103,7 +110,10 @@
 			and di.srid=#{srid}
 		</if>
 		<if test="overDate!=null and overDate!=''">
-			and di.overDate like concat('%',#{overDate},'%')
+			and di.overDate >= #{overDate}
+		</if>
+		<if test="overDate1!=null and overDate1!=''">
+			and di.overDate &lt;= #{overDate1}
 		</if>
 		<if test="userName!=null and userName!=''">
 			and sai.userName like concat('%',#{userName},'%')
@@ -133,7 +143,10 @@
 			and sai.userName like concat('%',#{userName},'%')
 		</if>
 		<if test="overDate!=null and overDate!=''">
-			and di.overDate like concat('%',#{overDate},'%')
+			and di.overDate >= #{overDate}
+		</if>
+		<if test="overDate1!=null and overDate1!=''">
+			and di.overDate &lt;= #{overDate1}
 		</if>
 		 <if test="state != null and state != ''">
 		 and di.state=#{state}

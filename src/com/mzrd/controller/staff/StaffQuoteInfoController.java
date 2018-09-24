@@ -59,12 +59,13 @@ public class StaffQuoteInfoController {
 	@RequestMapping("/getStaffQuoteList.action")
 	@ResponseBody
 	public Map<String, Object> getStaffQuoteList(int page, int rows,String userName,
-			String overDate,String srid,HttpSession session){
+			String overDate,String overDate1,String srid,HttpSession session){
 			StaffAccountInfo staffInfo = (StaffAccountInfo) session.getAttribute("userInfo");
 			System.out.println(staffInfo.toString());
 			Map<String, Object> params = new HashMap<String, Object>();	
 			params.put("srid", srid);
 			params.put("overDate", overDate);
+			params.put("overDate1", overDate1);
 			params.put("userName", userName);
 			if(staffInfo.getPostInfo().getRname().equals("采购员")){
 				params.put("id", staffInfo.getId());
@@ -104,7 +105,13 @@ public class StaffQuoteInfoController {
 	public List getRankAllNameList(QuoteInfo qi){
 		return quoteInfoService.getAllQuoteList(qi);
 	}
-	
+	//员工信息
+	@RequestMapping("/getStaffQuoteSupply.action")
+	@ResponseBody
+	public SupplyAccountInfo getStaffQuoteSupply1(int sid){
+		SupplyAccountInfo si = supplyAccountInfoService.getStaffQuoteSupply(sid);
+		return si;
+	}
 	 @org.springframework.web.bind.annotation.InitBinder
 	 public void InitBinder(ServletRequestDataBinder bin) {
 	        bin.registerCustomEditor(Date.class, new CustomDateEditor(

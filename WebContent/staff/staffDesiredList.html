@@ -33,20 +33,21 @@
 	<!-- 查询窗体 -->
 	<div id="searchOrderTb" style="padding:2px 5px;">
 		<form id="searchPostForm" method="get">
-		 &nbsp;&nbsp;&nbsp; 物资类别 &nbsp; &nbsp; &nbsp;
+		 &nbsp;&nbsp;&nbsp; 物资类别 &nbsp; &nbsp; &nbsp;&nbsp;
 			<input style="width:130px;" id="srname1" class="easyui-combobox" 
 				data-options="valueField:'srid',textField:'srname',url:'getRankAllNameList.action'" />
 			&nbsp;&nbsp;&nbsp; 发布状态 &nbsp; &nbsp; &nbsp;
-			 <select id="state1"  class="easyui-combobox" name="state" style="width:100px;">
+			 <select id="state1"  class="easyui-combobox" name="state" style="width:130px;">
 					<option value="0">未发布</option>
 					<option value="1" selected>已发布</option>
 			</select>
-			<BR />
-			&nbsp;&nbsp;&nbsp; 报价截止时间&nbsp;<input type="text" id="overDate1" 
-			style="width:130px" name="overDate" class="easyui-datebox" />
-			<div id="selectUser"> &nbsp;&nbsp;&nbsp; 询价人 &nbsp; &nbsp; &nbsp;&nbsp;
+			<div id="selectUser"> &nbsp;&nbsp;&nbsp;&nbsp; 询价人 &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;
 			<input class="easyui-textbox" type="text" id="userName" style="width:130px;"
 							name="userName"  ></input></div>
+			&nbsp;&nbsp;&nbsp; 报价截止时间&nbsp;<input type="text" id="overDate1" 
+			style="width:130px" name="overDate" class="easyui-datebox" />到
+			<input type="text" id="overDate2" 
+			style="width:130px" name="overDate1" class="easyui-datebox" />
 		
 			<a href="javascript:void(0)"
 				class="easyui-linkbutton" iconCls="icon-search" plain="true"
@@ -75,8 +76,8 @@
                 <td width="15%" style="text-align: right">询价单位：</td>
                 <td width="35%"><select id="supplier" class="easyui-combobox" name="supplier" style="width:250px;" required="required" >  
     							
-    							<option value="明州热电">明州热电</option>  
-   								<option value="明州生物质">明州生物质</option>
+    							<option value="宁波明州热电有限公司">宁波明州热电有限公司</option>  
+   								<option value="宁波明州生物质发电有限公司">宁波明州生物质发电有限公司</option>
 							</select>  </td>
             </tr>
             <tr>
@@ -315,12 +316,14 @@
 		// 查询询价
 		function searchPostInfo() {
 			var overDate=$('#overDate1').datebox('getValue');
+			var overDate1=$('#overDate2').datebox('getValue');
 			var srid = $('#srname1').combobox("getValue");
 			var state = $('#state1').combobox("getValue");
 			var userName = $("#userName").val();
 			$('#adminListDg').datagrid('load', {
 				srid  : srid,
 				overDate:overDate,
+				overDate1:overDate1,
 				state : state,
 				userName : userName
 			});

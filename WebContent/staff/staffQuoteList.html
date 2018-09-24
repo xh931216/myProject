@@ -28,14 +28,16 @@
 	<!-- 查询窗体 -->
 	<div id="searchOrderTb" style="padding:2px 5px;">
 		<form id="searchPostForm" method="get">
-		 &nbsp;&nbsp;&nbsp; 物资类别 &nbsp;
-			<input style="width:115px;" id="srname1" class="easyui-combobox" 
+		 &nbsp;&nbsp;&nbsp; 物资类别&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+			<input style="width:130px;" id="srname1" class="easyui-combobox" 
 				data-options="valueField:'srid',textField:'srname',url:'getRankAllNameList.action'" />
-			<div id="selectUser"> &nbsp;&nbsp;&nbsp; 询价人 &nbsp; &nbsp; &nbsp;&nbsp;
+			<div id="selectUser"> &nbsp;&nbsp;&nbsp; 询价人 &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
 			<input class="easyui-textbox" type="text" id="userName" style="width:130px;"
 							name="userName"  /></div>
 			&nbsp;&nbsp;&nbsp; 报价截止时间&nbsp;<input type="text" id="overDate1" 
-			style="width:130px" name="overDate" class="easyui-datebox" />
+			style="width:130px" name="overDate" class="easyui-datebox" />到
+			<input type="text" id="overDate2" 
+			style="width:130px" name="overDate1" class="easyui-datebox" />
 			
 			<a href="javascript:void(0)"
 				class="easyui-linkbutton" iconCls="icon-search" plain="true"
@@ -92,6 +94,7 @@
 		</div>
 	</div>
 	<script type="text/javascript">
+	var currentChildRow = -1; 
 	var url = null;
 	function imageShow(){
 		if(url == null){
@@ -113,7 +116,28 @@
 		url = $(this).filebox('getValue');
         PreviewImage($("input[name='file_upload']")[0], 'Img', 'dlg'); 
     };
-	
+    function compareValue(sId){
+    	
+			var arr = sId.split(",");
+			var index = "";
+			for(var i=0;i<arr.length;i++){
+				if(arr[i]!=''){
+					$.ajax({
+				        type : 'post',
+				        async : false,    
+				        url : 'getStaffQuoteSupply.action?sid='+arr[i],
+						dataType : 'json',
+				        success : function(data) {
+				        	index = index+ '单位'+i+": ";
+				        	index += data.abbreviation;
+				        	index+="<br/>";
+				        }
+				   	 });
+				}
+			}	
+    	$.messager.alert('提示', index, 'info');
+    	
+    }
 		$(function() {
 			$.ajax({
 		        type : 'post',
@@ -185,7 +209,9 @@
 					field : 'supplyId',
 					title : '发送公司',
 					width : 100,
+	                sortable : true,
 					formatter: function(value, row,index){
+						var str = null;
 						var sId = row.supplyId;
 						if(sId){
 							var arr = sId.split(",");
@@ -195,19 +221,30 @@
 									index++;
 								}
 							}	
-					        return index+"家";
+							str = "<a href='javascript:void(0)' onclick='compareValue(&apos;" + 
+								sId + "&apos;)'>"+index+"家</a>"; 
+		                   
 						}
+						return str;
 					}
-				},{
+				},
+				{
 					field : 'remark',
 					title : '备注',
 					width : 300
-				} ] ],
+				}] ],
 	            view: detailview,
+	            onMouseOverRow:function(e, rowIndex, rowData){  
+					   $.messager.alert('提示', 'fffffffffffff', 'info');
+				},
+				onMouseOutRow:function(e,rowIndex, rowData){  
+					   $.messager.alert('提示', '33333', 'info');  
+				},
 	            detailFormatter: function (index, row) {
 	                 return '<div style="padding:2px"><table class="ddv" id="ddv"></table></div>'; 
 				},  
-			onExpandRow: function(index,row){//父亲级列表，注意此时行索引为index                                  
+			onExpandRow: function(index,row){//父亲级列表，注意此时行索引为index  
+				currentChildRow = index;
 				var ddv = $(this).datagrid('getRowDetail',index).find('table.ddv');
 				ddv.datagrid({
 					url:"getStaffQuoteSupplyList.action?deid="+row.deid,
@@ -319,11 +356,13 @@
 		// 查询询价
 		function searchPostInfo() {
 			var overDate=$('#overDate1').datebox('getValue');
+			var overDate1=$('#overDate2').datebox('getValue');
 			var srid = $('#srname1').combobox("getValue");
 			var userName =$("#userName").val();
 			$('#adminListDg').datagrid('load', {
 				srid  : srid,
 				overDate:overDate,
+				overDate1:overDate1,
 				userName:userName
 			});
 		}
@@ -336,14 +375,13 @@
 		}
         //设置报价信息窗口
         function editStaff() {
-			var rows = $("#ddv").datagrid('getSelections');
-			if (rows.length >0 && rows.length<=1 ) {
+        	var ddv = $("#adminListDg").datagrid('getRowDetail',currentChildRow).find('table.ddv');
+			var rows = ddv.datagrid('getSelections');
+			if (rows.length >0 ) {
 				var row = $("#adminListDg").datagrid("getSelected");
-				var r = $("#ddv").datagrid("getSelected");
+				var r = ddv.datagrid("getSelected");
 				// 打开“修改”对话框
 				getImageUrl(row.deid,r.sid);
-			} else if(rows.length>1){
-				$.messager.alert('提示', '只能选择一个公司信息', 'info');
 			}else {
 				$.messager.alert('提示', '请选择公司信息', 'info');
 			}
@@ -437,7 +475,8 @@
     
         function submit(){
 				var row = $("#adminListDg").datagrid("getSelected");
-				var r1 = $("#ddv").datagrid("getSelected");
+				var ddv = $("#adminListDg").datagrid('getRowDetail',currentChildRow).find('table.ddv');
+				var r1 = ddv.datagrid("getSelected");
 				    $.messager.defaults = { ok: "是", cancel: "否" ,width:250};
 					$.messager.confirm('提示框', '是否下载附件？', function(r) {
 						var state;

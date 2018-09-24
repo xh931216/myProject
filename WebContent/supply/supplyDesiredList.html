@@ -36,7 +36,9 @@
 				data-options="valueField:'srid',textField:'srname',url:'getRankAllNameList.action'" />
 			
 			&nbsp;&nbsp;&nbsp; 报价截止时间&nbsp;<input type="text" id="overDate1" 
-			style="width:130px" name="overDate" class="easyui-datebox" />
+			style="width:130px" name="overDate" class="easyui-datebox" />到
+			<input type="text" id="overDate2" 
+			style="width:130px" name="overDate2" class="easyui-datebox" />
 			
 			<a href="javascript:void(0)"
 				class="easyui-linkbutton" iconCls="icon-search" plain="true"
@@ -52,7 +54,7 @@
                <div id="hioShareProfitItemForm_tb" style="padding:5px;height:auto;width:98%">
                     <table cellpadding="0" cellspacing="0" >
 						<td>
-                        <a href="javascript:void(0)" class="easyui-linkbutton saveItem" iconCls="icon-save"  plain="true">保存报价</a>
+                        <a href="javascript:void(0)" class="easyui-linkbutton saveItem" iconCls="icon-save"  plain="true">保存</a>
                         </td>
                         <td>
                         <input type="hidden" class="easyui-textbox"  id="deid1" name="deid" value=""/>   
@@ -148,7 +150,7 @@
 					width : 100,
 					formatter: function(value, row,index){
 						if(row.staffAccountInfo){
-					        return row.staffAccountInfo.userName;
+					        return row.staffAccountInfo.sname;
 						}else{
 							value;
 						}
@@ -229,10 +231,12 @@
 		// 查询询价
 		function searchPostInfo() {
 			var overDate=$('#overDate1').datebox('getValue');
+			var overDate1=$('#overDate2').datebox('getValue');
 			var srid = $('#srname1').combobox("getValue");
 			$('#adminListDg').datagrid('load', {
 				srid  : srid,
-				overDate:overDate
+				overDate:overDate,
+				overDate1:overDate1
 			});
 		}
 		var id=0;

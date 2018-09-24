@@ -35,8 +35,8 @@
                 <td width="15%" style="text-align: right">询价单位：</td>
                 <td width="35%"><select id="supplier" class="easyui-combobox" name="supplier" style="width:250px;" required="required" >  
     							
-    							<option value="明州热电">明州热电</option>  
-   								<option value="明州生物质">明州生物质</option>
+    							<option value="宁波明州热电有限公司">宁波明州热电有限公司</option>  
+   								<option value="宁波明州生物质发电有限公司">宁波明州生物质发电有限公司</option>
 							</select>  </td>
             </tr>
             <tr>
@@ -287,7 +287,6 @@
                 var isValid = $(this).form('enableValidation').form('validate');
                 var itemDatas = $('#hioShareProfitItemForm').datagrid('getData');
                 if (isValid){
-                  //  $.messager.progress();
                     var itemDatasJson = JSON.stringify(itemDatas.rows)
                     $('#shareItemDatas').val(itemDatasJson);
                 }
@@ -295,13 +294,15 @@
             },
             success:function(data){
                 eval('data='+data);
-                if(data.success=="true"){  
-                   // $.messager.progress('close');
-	            }
 				$.messager.show({
 					title : "提示信息",
 					msg : data.message
 				});
+                if(data.success=="true"){  
+                	//document.location.reload();
+                	 $('#mainform').form('clear');
+                     $('#hioShareProfitItemForm').datagrid('loadData',{total:0,rows:[]});
+	            }
             }
         });
     }

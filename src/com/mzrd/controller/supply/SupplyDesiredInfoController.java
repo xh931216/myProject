@@ -77,12 +77,13 @@ public class SupplyDesiredInfoController {
 	@RequestMapping("/getSupllyDesiredList.action")
 	@ResponseBody
 	public Map<String, Object> getSupllyDesiredList(int page, int rows,
-			String overDate,String srid,HttpSession session){
+			String overDate,String overDate1,String srid,HttpSession session){
 		SupplyAccountInfo staffInfo = (SupplyAccountInfo) session.getAttribute("userInfo");
 		Map<String, Object> params = new HashMap<String, Object>();	
 		params.put("sid", staffInfo.getSid());
 		params.put("srid", srid);
 		params.put("overDate", overDate);
+		params.put("overDate1", overDate1);
 		System.out.println(params.get("sid"));
 		int totalCount =  desiredInfoService.getSupllyDesiredList(params).size();
 		params.put("start",(page - 1) * rows);
@@ -97,12 +98,13 @@ public class SupplyDesiredInfoController {
 		@RequestMapping("/getSupllyDesiredAllList.action")
 		@ResponseBody
 		public Map<String, Object> getSupllyDesiredAllList(int page, int rows,
-				String overDate,String srid,HttpSession session){
+				String overDate,String overDate1,String srid,HttpSession session){
 			SupplyAccountInfo staffInfo = (SupplyAccountInfo) session.getAttribute("userInfo");
 			Map<String, Object> params = new HashMap<String, Object>();	
 			params.put("sid", staffInfo.getSid());
 			params.put("srid", srid);
 			params.put("overDate", overDate);
+			params.put("overDate1", overDate1);
 			int totalCount =  desiredInfoService.getSupllyDesiredAllList(params).size();
 			params.put("start",(page - 1) * rows);
 			params.put("limit",rows);

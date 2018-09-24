@@ -66,12 +66,13 @@ public class StaffDesiredInfoController {
 	@RequestMapping("/getStaffDesiredList.action")
 	@ResponseBody
 	public Map<String, Object> getStaffDesiredList(int page, int rows,String state,String userName,
-			String overDate,String srid,HttpSession session){
+			String overDate,String overDate1,String srid,HttpSession session){
 		StaffAccountInfo staffInfo = (StaffAccountInfo) session.getAttribute("userInfo");
 		System.out.println(staffInfo.toString());
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("srid", srid);
 		params.put("overDate", overDate);
+		params.put("overDate1", overDate1);
 		params.put("state", state);
 		params.put("userName",userName);
 		if(staffInfo.getPostInfo().getRname().equals("²É¹ºÔ±")){
