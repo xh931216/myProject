@@ -22,6 +22,7 @@ public class DepartmentInfoController {
 	@RequestMapping("/getDepartmentInfoList.action")
 	@ResponseBody
 	public List<DepartmentInfo> getDepartmentInfoList(){
+		System.out.println("aaaaaaaaa");
 		List<DepartmentInfo> diList =  departmentInfoService.getDepartmentList();
 		return diList;
 	}

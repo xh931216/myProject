@@ -36,6 +36,7 @@ public class LoginController {
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
+		System.out.println("fffffffffffff");
 		// µÇÂ¼ÑéÖ¤
 		AdminInfo ai = new AdminInfo();
 		ai.setName(userName);

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mzrd.pojo.DesiredDetailsInfo;
 import com.mzrd.pojo.DesiredInfo;
+import com.mzrd.pojo.QuoteSupplyImageInfo;
 import com.mzrd.pojo.StaffAccountInfo;
 import com.mzrd.pojo.SupplyAccountInfo;
 import com.mzrd.pojo.SupplyRankInfo;
@@ -28,6 +29,7 @@ import com.mzrd.service.AdminInfoService;
 import com.mzrd.service.DesiredDetailsInfoService;
 import com.mzrd.service.DesiredInfoService;
 import com.mzrd.service.PostInfoService;
+import com.mzrd.service.QuoteSupplyImageInfoService;
 import com.mzrd.service.StaffAccountInfoService;
 import com.mzrd.service.SupplyAccountInfoService;
 import com.mzrd.service.SupplyRankInfoService;
@@ -39,6 +41,8 @@ public class SupplyDesiredInfoController {
 	private DesiredInfoService desiredInfoService;
 	@Autowired
 	private DesiredDetailsInfoService desiredDetailsInfoService;
+	@Autowired
+	private QuoteSupplyImageInfoService quoteSupplyImageInfoService;
 	@Autowired
 	private StaffAccountInfoService staffAccountInfoService;
 	PdfUtils pdfUtils = new PdfUtils();
@@ -72,6 +76,24 @@ public class SupplyDesiredInfoController {
 		List<DesiredDetailsInfo> ddi = desiredDetailsInfoService.getStaffDesiredDetailsList(di.getDeid(),supplyInfo.getSid());
 		return pdfUtils.saveQuotePdf(response,supplyInfo,dii, staffInfo, ddi, request,shareItemDatas,quoteDate);
 		
+	}
+	//获取报价单pdf
+	@RequestMapping(value="/getSupplyMyQuotePdf.action")
+	@ResponseBody
+	public ResponseEntity<byte[]> getSupplyMyQuotePdf(HttpServletResponse response,DesiredInfo  di,
+			HttpServletRequest request,HttpSession session) throws IOException{
+		
+		SupplyAccountInfo supplyInfo = (SupplyAccountInfo) session.getAttribute("userInfo");
+		QuoteSupplyImageInfo qi = quoteSupplyImageInfoService.getImageUrl(di.getDeid(),supplyInfo.getSid());
+		String quoteDate = qi.getQuoteDate()+"";
+		DesiredInfo dii = desiredInfoService.getDesiredInfoPdf(di);
+		StaffAccountInfo sa = new StaffAccountInfo();
+		sa.setId(dii.getId());
+		List shareItemDatas =  desiredDetailsInfoService.getStaffDesiredDetailsList(di.getDeid(),supplyInfo.getSid());
+		StaffAccountInfo staffInfo = staffAccountInfoService.getStaffAccountById(sa);
+		List<DesiredDetailsInfo> ddi = desiredDetailsInfoService.getStaffDesiredDetailsList(di.getDeid(),supplyInfo.getSid());
+		return pdfUtils.saveQuotePdf1(response,supplyInfo,dii, staffInfo, ddi, request,shareItemDatas,quoteDate);
+			
 	}
 	//获取所有询价
 	@RequestMapping("/getSupllyDesiredList.action")

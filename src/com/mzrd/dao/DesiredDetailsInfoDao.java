@@ -13,5 +13,6 @@ public interface DesiredDetailsInfoDao {
 	public List getStaffDesiredDetailsList(Map map);
 	public List getStaffDesiredDetaiSupplylsList(Map map);
 	public int addDesiredDetailsInfo(DesiredDetailsInfo di);
+	public String getSupplyCount(Map map);
 	public int deleteDesiredDetails(int deid);
 }

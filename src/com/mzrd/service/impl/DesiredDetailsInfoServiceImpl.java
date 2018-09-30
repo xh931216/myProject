@@ -46,5 +46,12 @@ public class DesiredDetailsInfoServiceImpl implements DesiredDetailsInfoService{
 		map.put("sid", sid);
 		return desiredDetailsInfoDao.getStaffDesiredDetaiSupplylsList(map);
 	}
+	@Override
+	public String getSupplyCount(int deid, int sid) {
+		Map map = new HashMap<>();
+		map.put("deid", deid);
+		map.put("sid", sid);
+		return desiredDetailsInfoDao.getSupplyCount(map);
+	}
 	
 }

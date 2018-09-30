@@ -15,6 +15,7 @@
 <script type="text/javascript" src="../Easyui/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="../Easyui/datagrid-detailview.js"></script>
 <script type="text/javascript" src="../Easyui/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src='../assets/js/ajax.js'> </script>
 <script type="text/javascript" src="../assets/js/image.js"></script>
 </head>
 <body>
@@ -27,6 +28,8 @@
 			iconCls="icon-edit" plain="true" onclick="editStaff();">报价</a>
 			<a id="upload" href="javascript:void(0)" class="easyui-linkbutton"
 			iconCls="icon-cut" plain="true" onclick="upload();">下载询价单</a>
+			<a id="upload" href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-cut" plain="true" onclick="uploadQQ();">下载报价单</a>
 	</div>
 	<!-- 查询窗体 -->
 	<div id="searchOrderTb" style="padding:2px 5px;">
@@ -257,8 +260,22 @@
 				$.messager.alert('提示', '请选择要下载的询价单', 'info');
 			}
 		}
-		
+		function uploadQQ(){
+			
+			var rows = $("#adminListDg").datagrid('getSelections');
+			if(rows.length >0 && rows.length<=1){
+				var row = $("#adminListDg").datagrid("getSelected");
+				var deid = row.deid;
+				var url='getSupplyMyQuotePdf.action?deid='+deid;
+	       		open(url);
+			} else if(rows.length>1){
+				$.messager.alert('提示', '只能选择一个询价单', 'info');
+			}else {
+				$.messager.alert('提示', '请选择要下载的询价单', 'info');
+			}
+		}
 		function uploadQuote(){
+			
 			var rows = $("#adminListDg").datagrid('getSelections');
 			if(rows.length >0 && rows.length<=1){
 			var row = $("#adminListDg").datagrid("getSelected");
@@ -281,7 +298,8 @@
 			if(row.overDate>getNowFormatDate()){
 				// 打开“修改”对话框
 				getImageUrl(row.deid);
-				$.messager.alert('提示', '附件只支持.jpg,.bmp,.gif,.png后缀的图片', 'info');
+				$.messager.alert('提示', '1.附件只支持.jpg,.bmp,.gif,.png后缀的图片<br/>'+
+						'2.附件已经上传，不用重新上传，直接浏览', 'info');
 			}else{
 				$.messager.alert('提示', '报价过期，不能修改报价', 'info');
 			}
@@ -320,13 +338,17 @@
 					$("#deid1").textbox("setValue",deid);
 					initHioShareProfiltItemGrid(deid);
 					$("#quoteDate").datetimebox("setValue",data.quoteDate);
-                	
-				}
-            });
-        	url=null;
-			imageurl=null;
-			$("#Img").attr('src',url); 
-        	$("#file_upload").filebox('setValue','');
+					if(data.imageUrl!=null&&data.imageUrl!=''){
+						url=data.imageUrl;
+						$("#Img").attr('src',url); 
+					}			
+			}
+
+        });
+		/* url=null;
+		imageurl=null;
+		$("#Img").attr('src',url); 
+    	$("#file_upload").filebox('setValue',''); */
         }
         /**
          * 初始化物资明细

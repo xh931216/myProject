@@ -16,15 +16,11 @@
 <script type="text/javascript" src="../Easyui/datagrid-detailview.js"></script>
 <script type="text/javascript" src="../Easyui/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="../assets/js/image.js"></script>
+	<script type="text/javascript" src='../assets/js/ajax.js'> </script>
 </head>
 <body>
 	 <!-- 创建一个table -->
 	<table id="adminListDg" class="easyui-datagrid" style="width:100%"></table>
-	<!-- 工具栏 -->
-	<div id="adminListTb" style="padding:2px 5px;">
-		<a id="aupdate" href="javascript:void(0)" class="easyui-linkbutton"
-			iconCls="icon-edit" plain="true" onclick="editStaff();">查看报价单</a>
-	</div>
 	<!-- 查询窗体 -->
 	<div id="searchOrderTb" style="padding:2px 5px;">
 		<form id="searchPostForm" method="get">
@@ -234,12 +230,6 @@
 					width : 300
 				}] ],
 	            view: detailview,
-	            onMouseOverRow:function(e, rowIndex, rowData){  
-					   $.messager.alert('提示', 'fffffffffffff', 'info');
-				},
-				onMouseOutRow:function(e,rowIndex, rowData){  
-					   $.messager.alert('提示', '33333', 'info');  
-				},
 	            detailFormatter: function (index, row) {
 	                 return '<div style="padding:2px"><table class="ddv" id="ddv"></table></div>'; 
 				},  
@@ -249,14 +239,26 @@
 				ddv.datagrid({
 					url:"getStaffQuoteSupplyList.action?deid="+row.deid,
 					fitColumns:true,
-					singleSelect:true,
+					singleSelect:false,
 					loadMsg:'加载中，请稍后...',
 					autoRowHeight:true,
 					multiSort: true, //启用排序
 					rownumbers : true, //显示行号
 					sortable: true, //启用排序列
 					autoRowHeight: true, //自动行高
-					toolbar : '#adminListTb', //为datagrid添加工具栏
+					toolbar:[{
+						    text:'查询报价单详情',
+						iconCls: 'icon-edit',
+						handler: function(){
+							editStaff();
+						}
+						},'-',{
+							    text:'下载报价单',
+							iconCls: 'icon-cut',
+							handler: function(){
+								uploadAll();
+							}
+							}] ,
 					columns : [ [ { //编辑datagrid的列
 					title : '序号',
 					field : 'sid',
@@ -290,6 +292,26 @@
 					field : 'email',
 					title : '邮箱',
 					width : 200
+				},{
+					field : 'count',
+					title : '报价总和',
+					width : 100,
+	                sortable : true,
+					formatter: function(value, row1,index){
+						var sid = row1.sid;
+						var st = 0;
+						$.ajax({
+			                type : 'post',
+			                async : false,    
+			                url : "getSupplyCount.action?deid="+row.deid+"&sid="+sid,
+			        		dataType : 'json',
+			                success : function(data) { 
+			                	var data = eval('(' + data + ')');
+								st= data;
+							}
+			            });
+						return st;
+					}
 				} ] ],
                 view: detailview,  
                 detailFormatter:function(index,r){  
@@ -373,15 +395,18 @@
 			var url="getSupplyDesiredPdf.action?deid="+deid;
 	        open(url);
 		}
+		
         //设置报价信息窗口
         function editStaff() {
         	var ddv = $("#adminListDg").datagrid('getRowDetail',currentChildRow).find('table.ddv');
 			var rows = ddv.datagrid('getSelections');
-			if (rows.length >0 ) {
+			if (rows.length >0 && rows.length<=1 ) {
 				var row = $("#adminListDg").datagrid("getSelected");
 				var r = ddv.datagrid("getSelected");
 				// 打开“修改”对话框
 				getImageUrl(row.deid,r.sid);
+			}else if (rows.length >1 ) {
+				$.messager.alert('提示', '只能选择一家公司', 'info');
 			}else {
 				$.messager.alert('提示', '请选择公司信息', 'info');
 			}
@@ -430,7 +455,7 @@
          */
         function initHioShareProfiltItemGrid(deid,sid){
             hioShareProfiltItemGrid=$('#hioShareProfitItemForm').datagrid({    
-                url : 'getStaffDesiredDetailsList.action?deid='+deid+"&sid="+sid,
+                url : 'getStaffDesiredDetaiSupplylsList.action?deid='+deid+"&sid="+sid,
                 singleSelect:true,
             enableHeaderClickMenu: false,
             enableHeaderContextMenu: false,
@@ -490,7 +515,27 @@
 				        open(url);
 					});
         }
-		
+        function uploadAll(){
+        	var row = $("#adminListDg").datagrid("getSelected");
+			var ddv = $("#adminListDg").datagrid('getRowDetail',currentChildRow).find('table.ddv');
+			var items = ddv.datagrid('getSelections'); 
+			var ids = [];   
+			$(items).each(function(){   
+				ids.push(this.sid);       
+			});
+			$.messager.defaults = { ok: "是", cancel: "否" ,width:250};
+			$.messager.confirm('提示框', '是否下载附件？', function(r) {
+				var state;
+				if (r) {
+					state=1;
+				}else{
+					state=0;
+				}
+				var url="getSupplyQuoteAllPdf.action?deid="+row.deid+"&sidList="
+						+ids+"&state="+state;
+		        open(url);
+			});
+		}
 		function getNowFormatDate() {
     var date = new Date();
     var seperator1 = "-";

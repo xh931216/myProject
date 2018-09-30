@@ -29,14 +29,16 @@
 	<mvc:default-servlet-handler />
 	
 	<!-- 配置拦截器 -->
-	<!-- <mvc:interceptors>
+	<mvc:interceptors>
 	    <mvc:interceptor>
 	        <mvc:mapping path="/**" />
-	        <mvc:exclude-mapping path="/admininfo/login" />	    
-	        <mvc:exclude-mapping path="/Easyui/**"/>
-		    <bean class="com.mzrd.interceptor.AdminLoginInterceptor">
+	        <mvc:exclude-mapping path="/login.action" />	
+	                
+	        <mvc:exclude-mapping path="/assets/**"/>
+	        <mvc:exclude-mapping path="/Easyui/**"/>    
+		    <bean class="com.mzrd.interceptor.LoginInterceptor">
 		    </bean>
 	    </mvc:interceptor>
-	</mvc:interceptors> -->
+	</mvc:interceptors>
 	
 </beans>

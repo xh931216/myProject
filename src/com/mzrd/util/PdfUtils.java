@@ -118,6 +118,66 @@ public class PdfUtils {
 		}
         return fillTemplate(response,o,o.get("desiredId")+"报价单","supplyQuote.pdf",request);
     }
+	 
+	 public static ResponseEntity<byte[]> saveQuotePdf1(HttpServletResponse response,SupplyAccountInfo supplyInfo,DesiredInfo di,StaffAccountInfo si,List<DesiredDetailsInfo> ddi,
+			 HttpServletRequest request,List shareItemDatas,String quoteDate) throws IOException {
+		 Map<String, String> o = new HashMap<>();
+		 o.put("supplier", di.getSupplier());
+		 o.put("desiredId", di.getDesiredId()+"");
+		 o.put("srname", di.getSupplyRankInfo().getSrname());
+		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		 o.put("newDate", sdf.format(new Date()));
+		 o.put("date", sdf.format(di.getDate()));
+		 o.put("overDate", sdf.format(di.getOverDate()));
+		 if(quoteDate!=null){
+			 o.put("quoteDate", quoteDate+"");
+		 }
+		 if(di.getRemark()!=null){
+			 o.put("remark", di.getRemark());
+		 }
+		 if(si.getSname()!=null){
+			 o.put("sname", si.getSname());
+		 }
+		 if(si.getPhone()!=null){
+			 o.put("phone", si.getPhone());
+		 }
+		 if(supplyInfo.getPhone()!=null){
+			 o.put("phone1", supplyInfo.getPhone());
+		 }
+		 if(supplyInfo.getContact()!=null){
+			 o.put("contact", supplyInfo.getContact());
+		 }
+		 if(supplyInfo.getEmail()!=null){
+			 o.put("email", supplyInfo.getEmail());
+		 }
+		 if(supplyInfo.getAbbreviation()!=null){
+			 o.put("abbreviation", supplyInfo.getAbbreviation());
+		 }
+		 for(int i=0;i<ddi.size();i++){
+			 o.put("fill_"+(i*7+1), ddi.get(i).getDename());
+			 o.put("fill_"+(i*7+2), ddi.get(i).getGuige());
+			 o.put("fill_"+(i*7+3), ddi.get(i).getNumber()+"");
+			 o.put("fill_"+(i*7+4), ddi.get(i).getUnit());
+			 if(ddi.get(i).getBeizhu()!=null ){
+				 o.put("fill_"+(i*7+5), ddi.get(i).getBeizhu());
+			 }
+		 }
+
+		JSONUtil jsonUtil = new JSONUtil();
+		if(shareItemDatas!=null){
+		 List<DesiredDetailsInfo> list = shareItemDatas;
+			for (int i=0;i<list.size();i++) {
+				if(list.get(i).getPrice()!=null ){
+					 o.put("fill_"+(i*7+6), list.get(i).getPrice());
+				 }
+				
+				 if(list.get(i).getRemark()!=null ){
+					 o.put("fill_"+(i*7+7), list.get(i).getRemark());
+				 }
+			}
+		}
+        return fillTemplate(response,o,o.get("desiredId")+"报价单","supplyQuote.pdf",request);
+    }
 	 public static ResponseEntity<byte[]> saveStaffQuotePdf(HttpServletResponse response,List<DesiredDetailsInfo> ddi,
 			 DesiredInfo di,StaffAccountInfo si,SupplyAccountInfo supplyInfo,
 			 int state,HttpServletRequest request,QuoteSupplyImageInfo qsi) throws IOException {
@@ -291,6 +351,9 @@ public class PdfUtils {
 	            for(String key : imgmap.keySet()) {
 	                String value = imgmap.get(key);
 	                String imgpath = value;
+	                System.out.println(key+","+imgpath);
+	                System.out.println(form.getFieldPositions(key));
+	                System.out.println(","+form.getFieldPositions(key).get(0));
 	                int pageNo = form.getFieldPositions(key).get(0).page;
 	                Rectangle signRect = form.getFieldPositions(key).get(0).position;
 	                float x = signRect.getLeft();

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,7 @@ import com.mzrd.service.QuoteInfoService;
 import com.mzrd.service.QuoteSupplyImageInfoService;
 import com.mzrd.service.StaffAccountInfoService;
 import com.mzrd.service.SupplyAccountInfoService;
+import com.mzrd.util.AllPdfUtils;
 import com.mzrd.util.Image1;
 import com.mzrd.util.PdfUtils;
 import com.sun.org.apache.bcel.internal.generic.FMUL;
@@ -55,6 +57,7 @@ public class StaffQuoteInfoController {
 	private QuoteSupplyImageInfoService quoteSupplyImageInfoService;
 	Image1 image = new Image1();
 	PdfUtils pdfUtils = new PdfUtils();
+	AllPdfUtils allpdfUtils = new AllPdfUtils();
 	//获取所有报价
 	@RequestMapping("/getStaffQuoteList.action")
 	@ResponseBody
@@ -99,6 +102,29 @@ public class StaffQuoteInfoController {
 		    SupplyAccountInfo supplyAccountInfo = supplyAccountInfoService.getStaffQuoteSupply(sid);
 			return pdfUtils.saveStaffQuotePdf(response,list,di,staffInfo,supplyAccountInfo,state,request,qsi);	
 		}
+		//获取报价单pdf
+	@RequestMapping(value="/getSupplyQuoteAllPdf.action")
+	@ResponseBody
+	public ResponseEntity<byte[]> getSupplyQuoteAllPdf(int deid,int[] sidList,int state,HttpServletResponse response,
+			HttpServletRequest request,HttpSession session) throws IOException, COSVisitorException{
+		DesiredInfo di = new DesiredInfo();
+		di.setDeid(deid);
+		di = desiredInfoService.getDesiredInfoPdf(di);
+		StaffAccountInfo sa = new StaffAccountInfo();
+		sa.setId(di.getId());
+		StaffAccountInfo staffInfo = staffAccountInfoService.getStaffAccountById(sa);
+		System.out.println(deid+","+sidList);
+		String[] files = new String[sidList.length];
+		for(int i=0;i<sidList.length;i++){
+			int sid = sidList[i];
+			List<DesiredDetailsInfo> list = desiredDetailsInfoService.getStaffDesiredDetaiSupplylsList(deid, sid);
+			QuoteSupplyImageInfo qsi =	quoteSupplyImageInfoService.getImageUrl(deid, sid);
+			files[i] = di.getDesiredId()+"报价单"+qsi.getQiid();
+			SupplyAccountInfo supplyAccountInfo = supplyAccountInfoService.getStaffQuoteSupply(sid);
+			allpdfUtils.saveStaffQuotePdf(response,list,di,staffInfo,supplyAccountInfo,state,request,qsi);
+		}
+		return 	allpdfUtils.outPdf(files,request,di, staffInfo, response);
+	}
 	//获取所有类别
 	@RequestMapping("/getAllQuoteList.action")
 	@ResponseBody

@@ -13,4 +13,5 @@ public interface DesiredDetailsInfoService {
 	public List getStaffDesiredDetailsList(int deid,int sid);
 	public List getStaffDesiredDetaiSupplylsList(int deid,int sid);
 	public int addDesiredDetailsInfo(String shareItemDatas,int deid);
+	public String getSupplyCount(int deid,int sid);
 }

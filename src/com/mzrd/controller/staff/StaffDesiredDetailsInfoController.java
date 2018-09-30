@@ -35,6 +35,12 @@ public class StaffDesiredDetailsInfoController {
 	public List getStaffDesiredDetaiSupplylsList(int deid,int sid){
 		return desiredDetailsInfoService.getStaffDesiredDetaiSupplylsList(deid, sid);
 	}
+	//ªÒ»°—Øº€
+	@RequestMapping(value="/getSupplyCount.action", produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String getSupplyCount(int deid,int sid){
+		return desiredDetailsInfoService.getSupplyCount(deid, sid);
+	}
 	 @org.springframework.web.bind.annotation.InitBinder
 	 public void InitBinder(ServletRequestDataBinder bin) {
 	        bin.registerCustomEditor(Date.class, new CustomDateEditor(
