@@ -12,7 +12,7 @@ public class DesiredDetailsInfo {
 	private String guige;
 	private String unit;
 	private String beizhu;
-	private int  number;
+	private Double  number;
 	private int qid;
 	private int sid;
 	private String price;
@@ -85,13 +85,14 @@ public class DesiredDetailsInfo {
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
-	public int getNumber() {
+
+	
+	public Double getNumber() {
 		return number;
 	}
-	public void setNumber(int number) {
+	public void setNumber(Double number) {
 		this.number = number;
 	}
-	
 	public QuoteSupplyImageInfo getQuoteSupplyImageInfo() {
 		return quoteSupplyImageInfo;
 	}

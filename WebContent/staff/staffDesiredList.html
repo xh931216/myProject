@@ -267,7 +267,7 @@
 				 onExpandRow: function (index, row) {
 		            	var ddv = $(this).datagrid('getRowDetail',index).find('table.ddv');
 						ddv.datagrid({
-		                    url: 'getStaffDesiredDetailsList.action?deid=' + row.deid,
+		                    url: 'getStaffDesiredDetailsList1.action?deid=' + row.deid,
 		                    fitColumns: true,
 		                    singleSelect: true,
 							loadMsg:'加载中，请稍后...',
@@ -450,7 +450,7 @@
         function initHioShareProfiltItemGrid(deid){
             hioShareProfiltItemGrid=$('#hioShareProfitItemForm').datagrid({    
                 idField : 'id',singleSelect:true,
-                url : 'getStaffDesiredDetailsList.action?deid='+deid,
+                url : 'getStaffDesiredDetailsList1.action?deid='+deid,
                 fit:true, fitColumns : true,border : false,striped:true,
                 pagination:false,rownumbers:true,pageNumber:1,pageSize : 10,pageList : [ 5, 10, 15 ],
                 columns:[[    
@@ -460,11 +460,11 @@
                     ,{field:'guige',title:'物资规格',sortable:false,width:70,align:'left',halign:'center',editor:{type:'textbox',
     					options:{required:true,precision:1}}}
                     ,{field:'number',title:'物资数量',sortable:false,width:70,align:'left',halign:'center',editor:{type:'numberbox',
-    					options:{required:true}} }
+    					options:{required:true,precision:2}} }
                     ,{field:'unit',title:'物资单位',sortable:false,width:70,align:'left',halign:'center' ,editor:{type:'textbox',
     					options:{required:true,precision:1}} }
                     ,{field:'beizhu',title:'备注',sortable:false,width:70,align:'left',halign:'center',editor:{type:'textbox',
-    					options:{required:true,precision:1}}}
+    					options:{required:false,precision:1}}}
                     
     				
                 ]],

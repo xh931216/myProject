@@ -24,10 +24,10 @@ public class StaffDesiredDetailsInfoController {
 	@Autowired
 	private DesiredDetailsInfoService desiredDetailsInfoService;
 	//获取询价
-	@RequestMapping("/getStaffDesiredDetailsList.action")
+	@RequestMapping("/getStaffDesiredDetailsList1.action")
 	@ResponseBody
 	public List getStaffDesiredDetailsList(int deid){
-		return desiredDetailsInfoService.getStaffDesiredDetailsList(deid,0);
+		return desiredDetailsInfoService.getStaffDesiredDetailsList1(deid,0);
 	}
 	//获取询价
 	@RequestMapping("/getStaffDesiredDetaiSupplylsList.action")

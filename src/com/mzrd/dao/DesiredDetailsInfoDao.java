@@ -11,6 +11,7 @@ import com.mzrd.pojo.SupplyAccountInfo;
 
 public interface DesiredDetailsInfoDao {
 	public List getStaffDesiredDetailsList(Map map);
+	public List getStaffDesiredDetailsList1(Map map);
 	public List getStaffDesiredDetaiSupplylsList(Map map);
 	public int addDesiredDetailsInfo(DesiredDetailsInfo di);
 	public String getSupplyCount(Map map);

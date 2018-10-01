@@ -26,6 +26,11 @@
 			</if>
 			where si.deid=#{deid} 
 	</select>
+	<select id="getStaffDesiredDetailsList1" parameterType="java.util.Map" 
+		resultMap="getMap">
+			select si.*,si.dedid dedid2  from desired_details_info si
+		  where si.deid=#{deid} 
+	</select>
 	<select id="getSupplyCount" parameterType="java.util.Map" 
 		resultType="java.lang.String">
 			select sum(qi.price*si.number)  from desired_details_info si ,quote_info qi where
