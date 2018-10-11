@@ -29,12 +29,7 @@ public class StaffInfoController {
 	public String updateStaffAccount(StaffAccountInfo si,HttpSession session){
 		StaffAccountInfo staffInfo = (StaffAccountInfo) session.getAttribute("userInfo");
 		
-		String pass = null;
-		try {
-			pass = shaUitl.getPassword(si.getPassword());
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
+		String pass = shaUitl.getPassword(si.getPassword());
 		staffInfo.setPassword(pass);
 		int passOk = staffAccountInfoService.updateStaffAccount(staffInfo);
 		if(passOk == 1){

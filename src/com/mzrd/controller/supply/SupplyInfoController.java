@@ -31,12 +31,7 @@ public class SupplyInfoController {
 		if(supplyInfo == null){
 			return "ÇëÄãÏÈµÇÂ¼";
 		}
-		String pass = null;
-		try {
-			pass = shaUitl.getPassword(newpass);
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
+		String pass = shaUitl.getPassword(newpass);
 		supplyInfo.setPassword(pass);
 		int passOk = supplyAccountInfoService.updateSupply(supplyInfo);
 		if(passOk == 1){

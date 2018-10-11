@@ -66,9 +66,7 @@ public class SupplyDesiredInfoController {
 	@ResponseBody
 	public ResponseEntity<byte[]> getSupplyQuotePdf(HttpServletResponse response,DesiredInfo  di,String shareItemDatas ,String quoteDate,
 			HttpServletRequest request,HttpSession session) throws IOException{
-		System.out.println(quoteDate);
 		SupplyAccountInfo supplyInfo = (SupplyAccountInfo) session.getAttribute("userInfo");
-		
 		DesiredInfo dii = desiredInfoService.getDesiredInfoPdf(di);
 		StaffAccountInfo sa = new StaffAccountInfo();
 		sa.setId(dii.getId());

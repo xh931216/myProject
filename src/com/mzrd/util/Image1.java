@@ -33,7 +33,7 @@ public class Image1 {
             FileOutputStream fileOutputStream = new FileOutputStream(new File(imageName));
             ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[10240];
             int length;
 
             while ((length = dataInputStream.read(buffer)) > 0) {
@@ -65,8 +65,9 @@ public class Image1 {
 	        Calendar date = Calendar.getInstance();
 	        File dateDirs = new File(date.get(Calendar.YEAR)
 	            + File.separator + (date.get(Calendar.MONTH)+1));
+	        String path =filePath+File.separator+dateDirs+File.separator+newFileName;
 	        //新文件
-	        File newFile = new File(filePath+File.separator+dateDirs+File.separator+newFileName);
+	        File newFile = new File(path);
 	        //判断目标文件所在的目录是否存在
 	        if(!newFile.getParentFile().exists()) {
 	            //如果目标文件所在的目录不存在，则创建父目录
@@ -74,8 +75,16 @@ public class Image1 {
 	        }
 	        //将内存中的数据写入磁盘
 	        uploadFile.transferTo(newFile);
+	        
+	        
+        	ImgCompress imgCompress =new ImgCompress(path);
+        	String newPath = path.substring(0,path.length()-4)+"new"+path.substring(path.length()-4);
+        	imgCompress.resizeFix(200, 200,newPath);  
+	        
 	        //完整的url
-	        String fileUrl =  filePath+date.get(Calendar.YEAR)+ "/"+(date.get(Calendar.MONTH)+1)+ "/"+ newFileName;
+	        String fileUrl =  request.getScheme() +"://" + request.getServerName()  
+            + ":" +request.getServerPort() +request.getContextPath();
+	        	fileUrl +=	"/upload/"+date.get(Calendar.YEAR)+ "/"+(date.get(Calendar.MONTH)+1)+ "/"+ newFileName;
 	        return fileUrl;
 	}  
 }

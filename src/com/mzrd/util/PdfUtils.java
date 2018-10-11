@@ -233,8 +233,10 @@ public class PdfUtils {
 		
 		 ResponseEntity<byte[]> res = null;
 		Map<String,String> map2 = new HashMap();
-        if(state == 1){
-        	map2.put("img", qsi.getImageUrl());
+        if(state == 1 && qsi.getImageUrl()!=null && qsi.getImageUrl()!=""){
+        	String path = qsi.getImageUrl();
+        	String newPath = path.substring(0,path.length()-4)+"new"+path.substring(path.length()-4);
+        	map2.put("img", newPath);
         	Map<String,Object> m=new HashMap();
             m.put("datemap",o);
             m.put("imgmap",map2);
@@ -252,12 +254,13 @@ public class PdfUtils {
 	       System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
 	                "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
 	        // 模板路径  
-	       String templatePath = request.getSession().getServletContext()  
-	       .getRealPath("/") + "assets/pdf/"+pdfName;
+	       String fileUrl =  request.getScheme() +"://" + request.getServerName()  
+           + ":" +request.getServerPort() +request.getContextPath();
+	       String templatePath = fileUrl +"/assets/pdf/"+pdfName;
 	        // 生成的新文件路径  
-	        String fileSaveRootPath=request.getSession().getServletContext().getRealPath("/files");
+	       String fileSaveRootPath=request.getSession().getServletContext().getRealPath("/files");
 	           
-	        String newPDFPath = fileSaveRootPath+"\\"+fileName+".pdf" ;
+	        String newPDFPath = fileSaveRootPath+"/"+fileName+".pdf" ;
 	     
 			PdfReader reader;
 			FileOutputStream out;
@@ -265,11 +268,12 @@ public class PdfUtils {
 			PdfStamper stamper;
 			try {
 				BaseFont bf = BaseFont.createFont("c://windows//fonts//simsun.ttc,1" , BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-			
+				 
 				File file = new File(fileSaveRootPath); 
 				if(!file.exists()){  
 				    file.mkdirs();  
 				} 
+				System.out.println("444444444"+fileSaveRootPath);
 				out = new FileOutputStream(newPDFPath);// 输出流
 				reader = new PdfReader(templatePath);// 读取pdf模板
 				bos = new ByteArrayOutputStream();
@@ -315,13 +319,20 @@ public class PdfUtils {
 			// 指定解析器
 	        System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
 	                "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
+	        String fileUrl =  request.getScheme() +"://" + request.getServerName()  
+	           + ":" +request.getServerPort() +request.getContextPath();
+		       String templatePath = fileUrl +"/assets/pdf/"+pdfName;
+		        // 生成的新文件路径  
+		       String fileSaveRootPath=request.getSession().getServletContext().getRealPath("/files");
+		           
+		        String newPDFPath = fileSaveRootPath+"/"+fileName+".pdf" ;
 	        // 模板路径  
-	        String templatePath = request.getSession().getServletContext()  
-	        .getRealPath("/") + "assets/pdf/"+pdfName;
+	        /*String templatePath = request.getSession().getServletContext()  
+	        .getRealPath("/") + "assets/pdf/"+pdfName;*/
 	         // 生成的新文件路径  
-	        String fileSaveRootPath=request.getSession().getServletContext().getRealPath("/files");
+	       // String fileSaveRootPath=request.getSession().getServletContext().getRealPath("/files");
            
-	        String newPDFPath = fileSaveRootPath+"\\"+fileName+".pdf" ;
+	       // String newPDFPath = fileSaveRootPath+"/"+fileName+".pdf" ;
 	        PdfReader reader;
 	        FileOutputStream out;
 	        ByteArrayOutputStream bos;
@@ -351,15 +362,21 @@ public class PdfUtils {
 	            for(String key : imgmap.keySet()) {
 	                String value = imgmap.get(key);
 	                String imgpath = value;
+					System.out.println("323:"+imgpath);
+	                File file1 = new File(imgpath);
+	                if(!file1.exists()){
+		              
 	                System.out.println(key+","+imgpath);
 	                System.out.println(form.getFieldPositions(key));
 	                System.out.println(","+form.getFieldPositions(key).get(0));
 	                int pageNo = form.getFieldPositions(key).get(0).page;
 	                Rectangle signRect = form.getFieldPositions(key).get(0).position;
+	                
 	                float x = signRect.getLeft();
 	                float y = signRect.getBottom();
 	                //根据路径读取图片
 	                Image image = Image.getInstance(imgpath);
+	                System.out.println("image:"+image);
 	                //获取图片页面
 	                PdfContentByte under = stamper.getOverContent(pageNo);
 	                //图片大小自适应
@@ -367,6 +384,8 @@ public class PdfUtils {
 	                //添加图片
 	                image.setAbsolutePosition(x, y);
 	                under.addImage(image);
+	                
+	                }
 	            }
 	            }
 	            stamper.setFormFlattening(true);// 如果为false，生成的PDF文件可以编辑，如果为true，生成的PDF文件不可以编辑

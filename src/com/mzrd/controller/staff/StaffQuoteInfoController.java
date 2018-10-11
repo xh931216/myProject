@@ -113,7 +113,7 @@ public class StaffQuoteInfoController {
 		StaffAccountInfo sa = new StaffAccountInfo();
 		sa.setId(di.getId());
 		StaffAccountInfo staffInfo = staffAccountInfoService.getStaffAccountById(sa);
-		System.out.println(deid+","+sidList);
+		
 		String[] files = new String[sidList.length];
 		for(int i=0;i<sidList.length;i++){
 			int sid = sidList[i];

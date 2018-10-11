@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>询价单列表</title>
+<title>报价单列表</title>
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="cache-control" content="no-cache">
 <meta http-equiv="expires" content="0">
@@ -408,7 +408,7 @@
 			}else if (rows.length >1 ) {
 				$.messager.alert('提示', '只能选择一家公司', 'info');
 			}else {
-				$.messager.alert('提示', '请选择公司信息', 'info');
+				$.messager.alert('提示', '请选择公司', 'info');
 			}
         }
         /**
@@ -499,6 +499,8 @@
     
     
         function submit(){
+        	
+        	
 				var row = $("#adminListDg").datagrid("getSelected");
 				var ddv = $("#adminListDg").datagrid('getRowDetail',currentChildRow).find('table.ddv');
 				var r1 = ddv.datagrid("getSelected");
@@ -516,9 +518,11 @@
 					});
         }
         function uploadAll(){
+        	
         	var row = $("#adminListDg").datagrid("getSelected");
 			var ddv = $("#adminListDg").datagrid('getRowDetail',currentChildRow).find('table.ddv');
 			var items = ddv.datagrid('getSelections'); 
+			if (items.length >0  ) {
 			var ids = [];   
 			$(items).each(function(){   
 				ids.push(this.sid);       
@@ -535,6 +539,10 @@
 						+ids+"&state="+state;
 		        open(url);
 			});
+			
+			}else {
+				$.messager.alert('提示', '请选择公司', 'info');
+			}
 		}
 		function getNowFormatDate() {
     var date = new Date();

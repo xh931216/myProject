@@ -11,7 +11,15 @@
 		resultType="com.mzrd.pojo.QuoteSupplyImageInfo">
 		select * from quote_supply_image_info where deid=#{deid} and sid=#{sid}
 	</select>
+	<select id="getImageUrlList" parameterType="java.util.Map" 
+		resultType="com.mzrd.pojo.QuoteSupplyImageInfo">
+		select * from quote_supply_image_info where deid=#{deid} and sid=#{sid}
+	</select>
 	<update id="updateImageQuoteInfo" parameterType="com.mzrd.pojo.QuoteSupplyImageInfo">
-		update  quote_supply_image_info set sid=#{sid},imageUrl=#{imageUrl},quoteDate=#{quoteDate} where deid=#{deid}
+		update  quote_supply_image_info set quoteDate=#{quoteDate},
+		<if test="imageUrl!=null and imageUrl!=''">
+		imageUrl=#{imageUrl}
+		</if>
+		 where deid=#{deid} and sid=#{sid}
 	</update>
 </mapper>

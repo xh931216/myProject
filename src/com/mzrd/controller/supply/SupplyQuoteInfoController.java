@@ -30,6 +30,7 @@ import com.mzrd.pojo.StaffAccountInfo;
 import com.mzrd.pojo.SupplyAccountInfo;
 import com.mzrd.pojo.SupplyRankInfo;
 import com.mzrd.service.QuoteInfoService;
+import com.mzrd.service.QuoteSupplyImageInfoService;
 import com.mzrd.util.Image1;
 import com.sun.org.apache.bcel.internal.generic.FMUL;
 @RequestMapping("/supply")
@@ -37,6 +38,8 @@ import com.sun.org.apache.bcel.internal.generic.FMUL;
 public class SupplyQuoteInfoController {
 	@Autowired
 	private QuoteInfoService quoteInfoService;
+	@Autowired
+	private QuoteSupplyImageInfoService quoteSupplyImageInfoService;
 	Image1 image = new Image1();
 	//获取所有类别
 	@RequestMapping("/getQuoteList.action")
@@ -68,7 +71,8 @@ public class SupplyQuoteInfoController {
 		if (file != null && file.getSize() > 0) {  
         	imagePath = image.saveFile(file,request); 
         } 
-		List<QuoteInfo> ql =  quoteInfoService.getQuoteInfo(deid,staffInfo.getSid());
+		System.out.println(deid+""+staffInfo.getSid());
+		List<QuoteSupplyImageInfo> ql =  quoteSupplyImageInfoService.getImageUrlList(deid,staffInfo.getSid());
 		if(ql.size()!=0){
 			System.out.println(imagePath+";"+quoteDate);
 			 int qu = quoteInfoService.updateQuoteInfo(shareItemDatas,staffInfo,imagePath,deid,quoteDate);

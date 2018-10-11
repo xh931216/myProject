@@ -30,12 +30,7 @@ public class LoginController {
 	@RequestMapping(value = "/login.action", produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String getAdmin(String userName,String password,HttpSession session){
-		
-		try {
-			password = shaUitl.getPassword(password);
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
+		password = shaUitl.getPassword(password);
 		System.out.println("fffffffffffff");
 		// µÇÂ¼ÑéÖ¤
 		AdminInfo ai = new AdminInfo();

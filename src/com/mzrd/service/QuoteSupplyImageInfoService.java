@@ -7,4 +7,5 @@ import com.mzrd.pojo.*;
 public interface QuoteSupplyImageInfoService {
 	public int addQuoteInfo(QuoteSupplyImageInfo qsi);
 	public QuoteSupplyImageInfo getImageUrl(int deid,int sid);
+	public List<QuoteSupplyImageInfo> getImageUrlList(int deid,int sid);
 }

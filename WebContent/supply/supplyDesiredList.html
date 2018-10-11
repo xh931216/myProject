@@ -76,8 +76,14 @@
 					到货时间：	<input type="text" id="quoteDate" style="width:250px" name="quoteDate" class="easyui-datetimebox" prompt="请输入到货时间" required="required"/>
 						<br/>
 						
-            附       件： <input class="easyui-filebox" style="width:250px" data-options='prompt:"选择报价单照片",buttonText:"选择",onChange:change_photo'
-							  id="file_upload" name="file_upload" />
+             附       件(只支持gif, jpeg, png, jpg, bmp后缀的图片)：<!--  <input class="easyui-filebox" 
+             
+            style="width:250px" data-options="prompt:'选择报价单照片',buttonText:'选择',
+            accept:'image/gif,image/jpeg,image/bmp,image/png', onChange:change_photo"
+							  id="file_upload" name="file_upload" /> -->
+							  
+		<input id="file_upload" style="width:250px" runat="server" name="file_upload" 
+		onchange="javascript:change_photo(this,Img,dlg);" type="file" />
 							  <a href="javascript:void(0)" class="easyui-linkbutton"
 								onclick="imageShow();">浏览报价单</a> 
 								<br/>
@@ -119,9 +125,9 @@
 	            modal: true
 	     }); 
 	};
-	function change_photo(){
-		url = $(this).filebox('getValue');
-        PreviewImage($("input[name='file_upload']")[0], 'Img', 'dlg'); 
+	function change_photo(obj,  imgObjPreview,dlg){
+		url = $('#file_upload').val();
+        PreviewImage(obj, 'Img', 'dlg'); 
     };
 	
 		$(function() {
@@ -282,8 +288,7 @@
 			state =row.state;
 			// 打开“修改”对话框
 			getImageUrl(row.deid);
-			$.messager.alert('提示', '1.附件只支持.jpg,.bmp,.gif,.png后缀的图片<br/>'+
-			'2.附件已经上传，不用重新上传，直接浏览', 'info');
+			
         } else if(rows.length>1){
 			$.messager.alert('提示', '只能选择一个询价单', 'info');
 		}else {
@@ -463,6 +468,66 @@
             });
 			
         }
+        
+        
+        /*加载图片*/
+        function PreviewImage(fileObj,imgPreviewId,divPreviewId){  
+    var allowExtention=".jpg,.jpeg,.bmp,.gif,.png";//允许上传文件的后缀名document.getElementById("hfAllowPicSuffix").value;  
+    var extention=fileObj.value.substring(fileObj.value.lastIndexOf(".")+1).toLowerCase();              
+    var browserVersion= window.navigator.userAgent.toUpperCase();  
+    if(allowExtention.indexOf(extention)>-1){   
+        if(fileObj.files){//HTML5实现预览，兼容chrome、火狐7+等  
+            if(window.FileReader){  
+                var reader = new FileReader();   
+                reader.onload = function(e){  
+                    document.getElementById(imgPreviewId).setAttribute("src",e.target.result);  
+                }    
+                reader.readAsDataURL(fileObj.files[0]);  
+            }else if(browserVersion.indexOf("SAFARI")>-1){  
+            	$.messager. alert("提示","不支持Safari6.0以下浏览器的图片预览!");  
+            }  
+        }else if (browserVersion.indexOf("MSIE")>-1){  
+            if(browserVersion.indexOf("MSIE 6")>-1){//ie6  
+                document.getElementById(imgPreviewId).setAttribute("src",fileObj.value);  
+            }else{//ie[7-9]  
+                fileObj.select();  
+                if(browserVersion.indexOf("MSIE 9")>-1)  
+                    fileObj.blur();//不加上document.selection.createRange().text在ie9会拒绝访问  
+                var newPreview =document.getElementById(divPreviewId+"New");  
+                if(newPreview==null){  
+                    newPreview =document.createElement("div");  
+                    newPreview.setAttribute("id",divPreviewId+"New");  
+                    newPreview.style.width = document.getElementById(imgPreviewId).width+"px";  
+                    newPreview.style.height = document.getElementById(imgPreviewId).height+"px";  
+                    newPreview.style.border="solid 1px #d2e2e2";  
+                }  
+                newPreview.style.filter="progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale',src='" + document.selection.createRange().text + "')";                              
+                var tempDivPreview=document.getElementById(divPreviewId);  
+                tempDivPreview.parentNode.insertBefore(newPreview,tempDivPreview);  
+                tempDivPreview.style.display="none";                      
+            }  
+        }else if(browserVersion.indexOf("FIREFOX")>-1){//firefox  
+            var firefoxVersion= parseFloat(browserVersion.toLowerCase().match(/firefox\/([\d.]+)/)[1]);  
+            if(firefoxVersion<7){//firefox7以下版本  
+                document.getElementById(imgPreviewId).setAttribute("src",fileObj.files[0].getAsDataURL());  
+            }else{//firefox7.0+                      
+                document.getElementById(imgPreviewId).setAttribute("src",window.URL.createObjectURL(fileObj.files[0]));  
+            }  
+        }else{  
+            document.getElementById(imgPreviewId).setAttribute("src",fileObj.value);  
+        }           
+    }else{  
+    	 $.messager. alert("上传图片类型不正确!","仅支持"+allowExtention+"为后缀名的文件!");  
+        fileObj.value="";//清空选中文件  
+        if(browserVersion.indexOf("MSIE")>-1){                          
+            fileObj.select();  
+            document.selection.clear();  
+        }                  
+        fileObj.outerHTML=fileObj.outerHTML;  
+    }  
+}
+    
+
 	</script>
 </body>
 </html>

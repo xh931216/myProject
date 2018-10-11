@@ -89,7 +89,10 @@ public class AllPdfUtils {
 		Map<String,String> map2 = new HashMap();
 		System.out.println("state:"+state);
         if(state == 1 && qsi.getImageUrl()!=null&&qsi.getImageUrl()!=""){
-        	map2.put("img", qsi.getImageUrl());
+        	String path = qsi.getImageUrl();
+        	String newPath = path.substring(0,path.length()-4)+"new"+path.substring(path.length()-4);
+        	
+        	map2.put("img", newPath);
         	Map<String,Object> m=new HashMap();
             m.put("datemap",o);
             m.put("imgmap",map2);
@@ -100,6 +103,11 @@ public class AllPdfUtils {
     }
 
 	 public static ResponseEntity<byte[]> outPdf(String[] files,HttpServletRequest request,DesiredInfo di,StaffAccountInfo si,HttpServletResponse response) throws IOException{
+		 String fileUrl =  request.getScheme() +"://" + request.getServerName()  
+         + ":" +request.getServerPort() +request.getContextPath();
+	        // 生成的新文件路径  
+	      //  String fileSaveRootPath= fileUrl+"/files";
+	          
 		 String fileSaveRootPath=request.getSession().getServletContext().getRealPath("/files");  
 		 String newPDFPath1 = si.getId()+"_"+di.getDesiredId()+"_staffQuote.pdf";
 		 boolean ok = mergePdfFiles(files, newPDFPath1, request);
@@ -107,7 +115,7 @@ public class AllPdfUtils {
 			 System.out.println("合并失败");
 			 return null;
 		 }
-		 String newPDFPath = fileSaveRootPath+"\\"+newPDFPath1 ;
+		 String newPDFPath = fileSaveRootPath+"//"+newPDFPath1 ;
 		 File file = new File(newPDFPath);
 	        response.setContentType("application/pdf");
 	        /* 设置文件头：最后一个参数是设置下载文件名 */
@@ -127,12 +135,16 @@ public class AllPdfUtils {
 
     //合并pdf
      public static boolean mergePdfFiles(String[] files, String newfile,HttpServletRequest request){  
+    	 String fileUrl =  request.getScheme() +"://" + request.getServerName()  
+         + ":" +request.getServerPort() +request.getContextPath();
+	        // 生成的新文件路径  
     	 String fileSaveRootPath=request.getSession().getServletContext().getRealPath("/files");
-    	 newfile = fileSaveRootPath+"\\"+newfile ;
+	          
+    	  newfile = fileSaveRootPath+"/"+newfile ;
 	        boolean retValue = false;  
            Document document = null;  
          try {  
-             document = new Document(new PdfReader(fileSaveRootPath+"\\"+files[0]+".pdf" ).getPageSize(1));  
+             document = new Document(new PdfReader(fileSaveRootPath+"/"+files[0]+".pdf" ).getPageSize(1));  
              File file=new File(newfile);
              if(!file.exists()){
             	 try{
@@ -145,7 +157,7 @@ public class AllPdfUtils {
              PdfCopy copy = new PdfCopy(document, new FileOutputStream(newfile));  
              document.open();  
              for (int i = 0; i < files.length; i++) {  
-            	 String newPDFPath = fileSaveRootPath+"\\"+files[i]+".pdf" ;
+            	 String newPDFPath = fileSaveRootPath+"/"+files[i]+".pdf" ;
             	 System.out.println(newPDFPath);
                  PdfReader reader = new PdfReader(newPDFPath);  
                  int n = reader.getNumberOfPages();  
@@ -170,12 +182,19 @@ public class AllPdfUtils {
 	       System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
 	                "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
 	        // 模板路径  
-	       String templatePath = request.getSession().getServletContext()  
+	       String fileUrl =  request.getScheme() +"://" + request.getServerName()  
+           + ":" +request.getServerPort() +request.getContextPath();
+	       String templatePath = fileUrl +"/assets/pdf/"+pdfName;
+	        // 生成的新文件路径  
+	       String fileSaveRootPath=request.getSession().getServletContext().getRealPath("/files");
+	           
+	        String newPDFPath = fileSaveRootPath+"/"+fileName+".pdf" ;
+	      /* String templatePath = request.getSession().getServletContext()  
 	       .getRealPath("/") + "assets/pdf/"+pdfName;
 	        // 生成的新文件路径  
 	        String fileSaveRootPath=request.getSession().getServletContext().getRealPath("/files");
 	           
-	        String newPDFPath = fileSaveRootPath+"\\"+fileName+".pdf" ;
+	        String newPDFPath = fileSaveRootPath+"/"+fileName+".pdf" ;*/
 	     
 			PdfReader reader;
 			FileOutputStream out;
@@ -219,12 +238,19 @@ public class AllPdfUtils {
 			        System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
 			                "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
 			        // 模板路径  
-			        String templatePath = request.getSession().getServletContext()  
+			        String fileUrl =  request.getScheme() +"://" + request.getServerName()  
+			           + ":" +request.getServerPort() +request.getContextPath();
+				       String templatePath = fileUrl +"/assets/pdf/"+pdfName;
+				        // 生成的新文件路径  
+				       String fileSaveRootPath=request.getSession().getServletContext().getRealPath("/files");
+				           
+				        String newPDFPath = fileSaveRootPath+"/"+fileName+".pdf" ;
+			       /* String templatePath = request.getSession().getServletContext()  
 			        .getRealPath("/") + "assets/pdf/"+pdfName;
 			         // 生成的新文件路径  
 			        String fileSaveRootPath=request.getSession().getServletContext().getRealPath("/files");
 		           
-			        String newPDFPath = fileSaveRootPath+"\\"+fileName+".pdf" ;
+			        String newPDFPath = fileSaveRootPath+"/"+fileName+".pdf" ;*/
 			        PdfReader reader;
 			        FileOutputStream out;
 			        ByteArrayOutputStream bos;
@@ -254,6 +280,10 @@ public class AllPdfUtils {
 			            for(String key : imgmap.keySet()) {
 			                String value = imgmap.get(key);
 			                String imgpath = value;
+			                File file1 = new File(imgpath);
+			                if(!file1.exists()){
+				              
+			                
 			                int pageNo = form.getFieldPositions(key).get(0).page;
 			                Rectangle signRect = form.getFieldPositions(key).get(0).position;
 			                float x = signRect.getLeft();
@@ -267,6 +297,7 @@ public class AllPdfUtils {
 			                //添加图片
 			                image.setAbsolutePosition(x, y);
 			                under.addImage(image);
+			                }
 			            }
 			            }
 			            stamper.setFormFlattening(true);// 如果为false，生成的PDF文件可以编辑，如果为true，生成的PDF文件不可以编辑

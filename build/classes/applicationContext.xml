@@ -12,15 +12,20 @@
     <context:component-scan base-package="com.mzrd" />
     <!-- 配置数据源 -->
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-		<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+	    <!-- <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
         <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/mzrd"></property>
         <property name="user" value="root"></property>
-        <property name="password" value="1234"></property>
-        <!-- <property name="jdbcUrl" value="jdbc:mysql://www.mitoday.club:3306/mzrd"></property>
+        <property name="password" value="1234"></property> -->
+       	<!--  <property name="driverClass" value="com.mysql.cj.jdbc.Driver"></property>
+        <property name="jdbcUrl" value="jdbc:mysql://115.159.157.196:3306/mzrd"></property>
         <property name="user" value="mysql"></property>
         <property name="password" value="Mysql1@#$"></property>  -->
+        <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+        <property name="jdbcUrl" value="jdbc:mysql://47.92.90.250:3306/mzrd"></property>
+        <property name="user" value="root"></property>
+        <property name="password" value="1234"></property> 
         <property name="maxPoolSize" value="1000"></property>
-        <property name="minPoolSize" value="5"></property>
+        <property name="minPoolSize" value="5"></property> 
 	</bean>
 	<!--ajax处理-->
 

@@ -32,11 +32,7 @@ public class AdminInfoController {
 			return "ÇëÄãÏÈµÇÂ¼";
 		}
 		String pass = null;
-		try {
 			pass = shaUitl.getPassword(newpass);
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
 		adminInfo.setPassword(pass);
 		int passOk = adminInfoService.updateAdmin(adminInfo);
 		if(passOk == 1){
